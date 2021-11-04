@@ -29,6 +29,8 @@ namespace TownOfUs.Roles
         {
             Player = player;
             RoleDictionary.Add(player.PlayerId, this);
+            //TotalTasks = player.Data.Tasks.Count;
+            //TasksLeft = TotalTasks;
         }
 
         public static IEnumerable<Role> AllRoles => RoleDictionary.Values.ToList();
@@ -51,6 +53,46 @@ namespace TownOfUs.Roles
         protected float Scale { get; set; } = 1f;
         protected internal Color Color { get; set; }
         protected internal RoleEnum RoleType { get; set; }
+
+        protected internal int TasksLeft { get; set; }
+        protected internal int TotalTasks { get; set; }
+
+        protected bool Tier1 = false;
+        public void SetTier1(bool flag) {
+            bool oldFlag = Tier1;
+            Tier1 = flag;
+            if (!oldFlag && flag) OnTierUp();
+        }
+
+        protected bool Tier2 = false;
+        public void SetTier2(bool flag)
+        {
+            bool oldFlag = Tier2;
+            Tier2 = flag;
+            if (!oldFlag && flag) OnTierUp();
+        }
+
+        protected bool Tier3 = false;
+        public void SetTier3(bool flag)
+        {
+            bool oldFlag = Tier3;
+            Tier3 = flag;
+            if (!oldFlag && flag) OnTierUp();
+        }
+
+        protected bool Tier4 = false;
+        public void SetTier4(bool flag)
+        {
+            bool oldFlag = Tier4;
+            Tier4 = flag;
+            if (!oldFlag && flag) OnTierUp();
+        }
+
+
+        protected virtual void OnTierUp()
+        {
+
+        }
 
         protected internal bool Hidden { get; set; } = false;
 
@@ -164,17 +206,22 @@ namespace TownOfUs.Roles
 
             if (Player == null) return "";
 
-            if (player != null && (MeetingHud.Instance.state == MeetingHud.VoteStates.Proceeding ||
-                                   MeetingHud.Instance.state == MeetingHud.VoteStates.Results)) return Player.name;
+            String PlayerName = Faction == Faction.Crewmates
+                ? $"{Player.name} ({TotalTasks - TasksLeft}/{TotalTasks})"
+                : Player.name;
 
-            if (!CustomGameOptions.RoleUnderName && player == null) return Player.name;
+
+            if (player != null && (MeetingHud.Instance.state == MeetingHud.VoteStates.Proceeding ||
+                                   MeetingHud.Instance.state == MeetingHud.VoteStates.Results)) return PlayerName;
+
+            if (!CustomGameOptions.RoleUnderName && player == null) return PlayerName;
 
             Player.nameText.transform.localPosition = new Vector3(
                 0f,
                 Player.Data.HatId == 0U ? 1.5f : 2.0f,
                 -0.5f
             );
-            return Player.name + "\n" + Name;
+            return PlayerName + "\n" + Name;
         }
 
         public static bool operator ==(Role a, Role b)

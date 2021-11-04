@@ -12,8 +12,6 @@ namespace TownOfUs.Roles
 
         public List<PlayerControl> SnitchTargets = new List<PlayerControl>();
 
-        public int TasksLeft = int.MaxValue;
-
         public Snitch(PlayerControl player) : base(player)
         {
             Name = "Snitch";
