@@ -12,10 +12,10 @@ namespace TownOfUs.Handshake
 {
     public static class ClientHandshake
     {
-        private const byte TOU_ROOT_HANDSHAKE_TAG = 69;
+        private const byte TOU_ROOT_HANDSHAKE_TAG = 75;
         
-        // TODO: super sus but whatever - "2.2.0"
-        private const int TOU_VERSION = 220;
+        // TODO: super sus but whatever - "1.0.0"
+        private const int TOU_VERSION = 100;
 
         [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.OnGameJoined))]
         public static class AmongUsClient_OnGameJoined
