@@ -20,6 +20,20 @@ namespace TownOfUs.CustomOption
         public static CustomNumberOption AltruistOn;
         public static CustomNumberOption ButtonBarryOn;
 
+        // Max Crewmate Roles
+        public static CustomNumberOption MayorMax;
+        public static CustomNumberOption LoversMax;
+        public static CustomNumberOption SheriffMax;
+        public static CustomNumberOption EngineerMax;
+        public static CustomNumberOption SwapperMax;
+        public static CustomNumberOption InvestigatorMax;
+        public static CustomNumberOption TimeLordMax;
+        public static CustomNumberOption MedicMax;
+        public static CustomNumberOption SeerMax;
+        public static CustomNumberOption SpyMax;
+        public static CustomNumberOption SnitchMax;
+        public static CustomNumberOption AltruistMax;
+
         // Enable Neutral Roles
         public static CustomHeaderOption NeutralRoles;
         public static CustomNumberOption JesterOn;
@@ -28,6 +42,14 @@ namespace TownOfUs.CustomOption
         public static CustomNumberOption ExecutionerOn;
         public static CustomNumberOption ArsonistOn;
         public static CustomNumberOption PhantomOn;
+
+        // Max Neutral Roles
+        public static CustomNumberOption JesterMax;
+        public static CustomNumberOption ShifterMax;
+        public static CustomNumberOption GlitchMax;
+        public static CustomNumberOption ExecutionerMax;
+        public static CustomNumberOption ArsonistMax;
+        //public static CustomNumberOption PhantomMax;
 
         // Enable Impostor Roles
         public static CustomHeaderOption ImpostorRoles;
@@ -39,6 +61,16 @@ namespace TownOfUs.CustomOption
         public static CustomNumberOption UndertakerOn;
         public static CustomNumberOption AssassinOn;
         public static CustomNumberOption UnderdogOn;
+
+        // Max Impostor Roles
+        public static CustomNumberOption JanitorMax;
+        public static CustomNumberOption MorphlingMax;
+        public static CustomNumberOption CamouflagerMax;
+        public static CustomNumberOption MinerMax;
+        public static CustomNumberOption SwooperMax;
+        public static CustomNumberOption UndertakerMax;
+        public static CustomNumberOption AssassinMax;
+        public static CustomNumberOption UnderdogMax;
 
         // Enable Modifiers
         public static CustomHeaderOption Modifiers;
@@ -66,6 +98,9 @@ namespace TownOfUs.CustomOption
         public static CustomNumberOption MayorVoteBank;
         public static CustomToggleOption MayorAnonymous;
 
+        // Swapper Settings
+        public static CustomHeaderOption Swapper;
+
         // Lover Settings
         public static CustomHeaderOption Lovers;
         public static CustomToggleOption BothLoversDie;
@@ -79,6 +114,9 @@ namespace TownOfUs.CustomOption
         public static CustomToggleOption SheriffKillsArsonist;
         public static CustomNumberOption SheriffKillCd;
         public static CustomToggleOption SheriffBodyReport;
+
+        // Jester Settings
+        public static CustomHeaderOption Jester;
 
         // Shifter Settings
         public static CustomHeaderOption Shifter;
@@ -119,6 +157,9 @@ namespace TownOfUs.CustomOption
         public static CustomStringOption SeerInfo;
         public static CustomStringOption SeeReveal;
         public static CustomToggleOption NeutralRed;
+
+        // Spy Settings
+        public static CustomHeaderOption Spy;
 
         // Glitch Settings
         public static CustomHeaderOption TheGlitch;
@@ -168,6 +209,9 @@ namespace TownOfUs.CustomOption
         public static CustomNumberOption DouseCooldown;
         public static CustomToggleOption ArsonistGameEnd;
 
+        // Underdog Settings
+        public static CustomHeaderOption Underdog;
+
         // Undertaker Settings
         public static CustomHeaderOption Undertaker;
         public static CustomNumberOption DragCooldown;
@@ -179,6 +223,9 @@ namespace TownOfUs.CustomOption
         public static CustomToggleOption AssassinCrewmateGuess;
         public static CustomToggleOption AssassinMultiKill;
 
+        // Janitor Settings
+        public static CustomHeaderOption Janitor;
+
         public static Func<object, string> PercentFormat { get; } = value => $"{value:0}%";
         private static Func<object, string> CooldownFormat { get; } = value => $"{value:0.0#}s";
 
@@ -189,7 +236,6 @@ namespace TownOfUs.CustomOption
 
             Patches.ExportButton = new Export(num++);
             Patches.ImportButton = new Import(num++);
-
 
             CrewmateRoles = new CustomHeaderOption(num++, "Crewmate Roles");
             MayorOn = new CustomNumberOption(true, num++, "<color=#704FA8FF>Mayor</color>", 0f, 0f, 100f, 10f,
@@ -216,7 +262,6 @@ namespace TownOfUs.CustomOption
                 PercentFormat);
             AltruistOn = new CustomNumberOption(true, num++, "<color=#660000FF>Altruist</color>", 0f, 0f, 100f, 10f,
                 PercentFormat);
-
 
             NeutralRoles = new CustomHeaderOption(num++, "Neutral Roles");
             JesterOn = new CustomNumberOption(true, num++, "<color=#FFBFCCFF>Jester</color>", 0f, 0f, 100f, 10f,
@@ -288,127 +333,174 @@ namespace TownOfUs.CustomOption
             VanillaGame = new CustomNumberOption(num++, "Probability of a completely vanilla game", 0f, 0f, 100f, 5f,
                 PercentFormat);
 
-            Mayor =
+            // Mayor Settings
+            Mayor = 
                 new CustomHeaderOption(num++, "<color=#704FA8FF>Mayor</color>");
-
+            MayorMax = 
+                new CustomNumberOption(num++, "Max Mayors", 1, 1, 15, 1);
             MayorVoteBank =
                 new CustomNumberOption(num++, "Initial Mayor Vote Bank", 1, 1, 5, 1);
-
             MayorAnonymous =
                 new CustomToggleOption(num++, "Mayor Votes Show Anonymous", false);
 
+            // Lover Settings
             Lovers =
                 new CustomHeaderOption(num++, "<color=#FF66CCFF>Lovers</color>");
+            LoversMax = new CustomNumberOption(num++, "Max Lover Pairs", 1, 1, 1, 1);
             BothLoversDie = new CustomToggleOption(num++, "Both Lovers Die");
 
+            // Sheriff Settings
             Sheriff =
                 new CustomHeaderOption(num++, "<color=#FFFF00FF>Sheriff</color>");
-            ShowSheriff = new CustomToggleOption(num++, "Show Sheriff", false);
-
+            SheriffMax =
+                new CustomNumberOption(num++, "Max Sheriffs", 1, 1, 15, 1);
+            ShowSheriff = 
+                new CustomToggleOption(num++, "Show Sheriff", false);
             SheriffKillOther =
                 new CustomToggleOption(num++, "Sheriff Miskill Kills Crewmate", false);
-
             SheriffKillsJester =
                 new CustomToggleOption(num++, "Sheriff Kills Jester", false);
             SheriffKillsGlitch =
                 new CustomToggleOption(num++, "Sheriff Kills The Glitch", false);
             SheriffKillsArsonist =
                 new CustomToggleOption(num++, "Sheriff Kills Arsonist", false);
-
             SheriffKillCd =
                 new CustomNumberOption(num++, "Sheriff Kill Cooldown", 25f, 10f, 40f, 2.5f, CooldownFormat);
             SheriffBodyReport = new CustomToggleOption(num++, "Sheriff can report who they've killed");
 
+            // Swapper Options
+            Swapper =
+                new CustomHeaderOption(num++, "<color=#66E666FF>Swapper</color>");
+            SwapperMax =
+                new CustomNumberOption(num++, "Max Swappers", 1, 1, 15, 1);
 
+            // Engineer Options
             Engineer =
                 new CustomHeaderOption(num++, "<color=#FFA60AFF>Engineer</color>");
+            EngineerMax =
+                new CustomNumberOption(num++, "Max Engineers", 1, 1, 15, 1);
             EngineerPer =
                 new CustomStringOption(num++, "Engineer Fix Per", new[] {"Round", "Game"});
 
-
+            // Investigator Options
             Investigator =
                 new CustomHeaderOption(num++, "<color=#00B3B3FF>Investigator</color>");
+            InvestigatorMax =
+                new CustomNumberOption(num++, "Max Investigators", 1, 1, 15, 1);
             FootprintSize = new CustomNumberOption(num++, "Footprint Size", 4f, 1f, 10f, 1f);
-
             FootprintInterval =
                 new CustomNumberOption(num++, "Footprint Interval", 1f, 0.25f, 5f, 0.25f, CooldownFormat);
-            FootprintDuration = new CustomNumberOption(num++, "Footprint Duration", 10f, 1f, 10f, 0.5f, CooldownFormat);
-            AnonymousFootPrint = new CustomToggleOption(num++, "Anonymous Footprint", false);
-            VentFootprintVisible = new CustomToggleOption(num++, "Footprint Vent Visible", false);
+            FootprintDuration = 
+                new CustomNumberOption(num++, "Footprint Duration", 10f, 1f, 10f, 0.5f, CooldownFormat);
+            AnonymousFootPrint = 
+                new CustomToggleOption(num++, "Anonymous Footprint", false);
+            VentFootprintVisible = 
+                new CustomToggleOption(num++, "Footprint Vent Visible", false);
 
+            // Timelord Options
             TimeLord =
                 new CustomHeaderOption(num++, "<color=#0000FFFF>Time Lord</color>");
-            RewindRevive = new CustomToggleOption(num++, "Revive During Rewind", false);
-            RewindDuration = new CustomNumberOption(num++, "Rewind Duration", 3f, 3f, 15f, 0.5f, CooldownFormat);
-            RewindCooldown = new CustomNumberOption(num++, "Rewind Cooldown", 25f, 10f, 40f, 2.5f, CooldownFormat);
-
+            TimeLordMax =
+                new CustomNumberOption(num++, "Max Timelords", 1, 1, 15, 1);
+            RewindRevive = 
+                new CustomToggleOption(num++, "Revive During Rewind", false);
+            RewindDuration = 
+                new CustomNumberOption(num++, "Rewind Duration", 3f, 3f, 15f, 0.5f, CooldownFormat);
+            RewindCooldown = 
+                new CustomNumberOption(num++, "Rewind Cooldown", 25f, 10f, 40f, 2.5f, CooldownFormat);
             TimeLordVitals =
                 new CustomToggleOption(num++, "Time Lord can use Vitals", false);
 
+            // Medic Options
             Medic =
                 new CustomHeaderOption(num++, "<color=#006600FF>Medic</color>");
-
+            MedicMax =
+                new CustomNumberOption(num++, "Max Medics", 1, 1, 15, 1);
             ShowShielded =
                 new CustomStringOption(num++, "Show Shielded Player",
                     new[] {"Self", "Medic", "Self+Medic", "Everyone"});
-
-            MedicReportSwitch = new CustomToggleOption(num++, "Show Medic Reports");
-
+            MedicReportSwitch = 
+                new CustomToggleOption(num++, "Show Medic Reports");
             MedicReportNameDuration =
                 new CustomNumberOption(num++, "Time Where Medic Reports Will Have Name", 0, 0, 60, 2.5f,
                     CooldownFormat);
-
             MedicReportColorDuration =
                 new CustomNumberOption(num++, "Time Where Medic Reports Will Have Color Type", 15, 0, 120, 2.5f,
                     CooldownFormat);
-
             WhoGetsNotification =
                 new CustomStringOption(num++, "Who gets murder attempt indicator",
                     new[] {"Medic", "Shielded", "Everyone", "Nobody"});
-
             ShieldBreaks = new CustomToggleOption(num++, "Shield breaks on murder attempt", false);
 
+            // Seer Settings
             Seer =
                 new CustomHeaderOption(num++, "<color=#FFCC80FF>Seer</color>");
-
+            SeerMax =
+                new CustomNumberOption(num++, "Max Seers", 1, 1, 15, 1);
             SeerCooldown =
                 new CustomNumberOption(num++, "Seer Cooldown", 25f, 10f, 100f, 2.5f, CooldownFormat);
-
             SeerInfo =
                 new CustomStringOption(num++, "Info that Seer sees", new[] {"Role", "Team"});
-
-
             SeeReveal =
                 new CustomStringOption(num++, "Who Sees That They Are Revealed",
                     new[] {"Crew", "Imps+Neut", "All", "Nobody"});
             NeutralRed =
                 new CustomToggleOption(num++, "Neutrals show up as Impostors", false);
 
-            Snitch = new CustomHeaderOption(num++, "<color=#D4AF37FF>Snitch</color>");
+            // Snitch Settings
+            Snitch = 
+                new CustomHeaderOption(num++, "<color=#D4AF37FF>Snitch</color>");
+            SnitchMax =
+                new CustomNumberOption(num++, "Max Snitches", 1, 1, 15, 1);
             SnitchOnLaunch =
                 new CustomToggleOption(num++, "Snitch knows who they are on Game Start", false);
             SnitchSeesNeutrals = new CustomToggleOption(num++, "Snitch sees neutral roles", false);
 
-            Altruist = new CustomHeaderOption(num++, "<color=#660000FF>Altruist</color>");
+            // Spy Settings
+            Spy =
+                new CustomHeaderOption(num++, "<color=#CCA3CCFF>Spy</color>");
+            SpyMax =
+                new CustomNumberOption(num++, "Max Spies", 1, 1, 15, 1);
+
+            // Altruist Settings
+            Altruist = 
+                new CustomHeaderOption(num++, "<color=#660000FF>Altruist</color>");
+            AltruistMax =
+                new CustomNumberOption(num++, "Max Altruists", 1, 1, 15, 1);
             ReviveDuration =
                 new CustomNumberOption(num++, "Altruist Revive Duration", 10, 1, 30, 1f, CooldownFormat);
             AltruistTargetBody =
                 new CustomToggleOption(num++, "Target's body disappears on beginning of revive", false);
 
+            // Jester Settings
+            Jester =
+                new CustomHeaderOption(num++, "<color=#FFBFCCFF>Jester</color>");
+            JesterMax = 
+                new CustomNumberOption(num++, "Max Jesters", 1, 1, 15, 1);
+
+            // Shifter Settings
             Shifter =
                 new CustomHeaderOption(num++, "<color=#999999FF>Shifter</color>");
+            ShifterMax =
+                new CustomNumberOption(num++, "Max Shifters", 1, 1, 15, 1);
             ShifterCd =
                 new CustomNumberOption(num++, "Shifter Cooldown", 30f, 10f, 60f, 2.5f, CooldownFormat);
             WhoShifts = new CustomStringOption(num++,
                 "Who gets the Shifter role on Shift", new[] {"NoImps", "RegCrew", "Nobody"});
 
-
+            // Gltich Settings
             TheGlitch =
                 new CustomHeaderOption(num++, "<color=#00FF00FF>The Glitch</color>");
-            MimicCooldownOption = new CustomNumberOption(num++, "Mimic Cooldown", 30, 10, 120, 2.5f, CooldownFormat);
-            MimicDurationOption = new CustomNumberOption(num++, "Mimic Duration", 10, 1, 30, 1f, CooldownFormat);
-            HackCooldownOption = new CustomNumberOption(num++, "Hack Cooldown", 30, 10, 120, 2.5f, CooldownFormat);
-            HackDurationOption = new CustomNumberOption(num++, "Hack Duration", 10, 1, 30, 1f, CooldownFormat);
+            GlitchMax =
+                new CustomNumberOption(num++, "Max Glitches", 1, 1, 15, 1);
+            MimicCooldownOption = 
+                new CustomNumberOption(num++, "Mimic Cooldown", 30, 10, 120, 2.5f, CooldownFormat);
+            MimicDurationOption = 
+                new CustomNumberOption(num++, "Mimic Duration", 10, 1, 30, 1f, CooldownFormat);
+            HackCooldownOption = 
+                new CustomNumberOption(num++, "Hack Cooldown", 30, 10, 120, 2.5f, CooldownFormat);
+            HackDurationOption = 
+                new CustomNumberOption(num++, "Hack Duration", 10, 1, 30, 1f, CooldownFormat);
             GlitchKillCooldownOption =
                 new CustomNumberOption(num++, "Glitch Kill Cooldown", 30, 10, 120, 2.5f, CooldownFormat);
             InitialGlitchKillCooldownOption =
@@ -416,54 +508,94 @@ namespace TownOfUs.CustomOption
             GlitchHackDistanceOption =
                 new CustomStringOption(num++, "Glitch Hack Distance", new[] {"Short", "Normal", "Long"});
 
+            // Executioner Settings
             Executioner =
                 new CustomHeaderOption(num++, "<color=#8C4005FF>Executioner</color>");
-            OnTargetDead = new CustomStringOption(num++, "Executioner becomes on Target Dead",
-                new[] {"Crew", "Jester"});
+            ExecutionerMax =
+                new CustomNumberOption(num++, "Max Executioners", 1, 1, 15, 1);
+            OnTargetDead = 
+                new CustomStringOption(num++, "Executioner becomes on Target Dead",
+                    new[] {"Crew", "Jester"});
 
-            Arsonist = new CustomHeaderOption(num++, "<color=#FF4D00FF>Arsonist</color>");
-
+            // Arsonist Settings
+            Arsonist = 
+                new CustomHeaderOption(num++, "<color=#FF4D00FF>Arsonist</color>");
+            ArsonistMax =
+                new CustomNumberOption(num++, "Max Arsonists", 1, 1, 15, 1);
             DouseCooldown =
                 new CustomNumberOption(num++, "Douse Cooldown", 25, 10, 40, 2.5f, CooldownFormat);
+            ArsonistGameEnd = 
+                new CustomToggleOption(num++, "Game keeps going so long as Arsonist is alive", false);
 
-            ArsonistGameEnd = new CustomToggleOption(num++, "Game keeps going so long as Arsonist is alive", false);
-
-
+            // Morphling Settings
             Morphling =
                 new CustomHeaderOption(num++, "<color=#FF0000FF>Morphling</color>");
+            MorphlingMax =
+                 new CustomNumberOption(num++, "Max Morphlings", 1, 1, 3, 1);
             MorphlingCooldown =
                 new CustomNumberOption(num++, "Morphling Cooldown", 25, 10, 40, 2.5f, CooldownFormat);
             MorphlingDuration =
                 new CustomNumberOption(num++, "Morphling Duration", 10, 5, 15, 1f, CooldownFormat);
 
+            // Camouflager Settings
             Camouflager =
                 new CustomHeaderOption(num++, "<color=#FF0000FF>Camouflager</color>");
+            CamouflagerMax =
+                new CustomNumberOption(num++, "Max Camouflagers", 1, 1, 3, 1);
             CamouflagerCooldown =
                 new CustomNumberOption(num++, "Camouflager Cooldown", 25, 10, 40, 2.5f, CooldownFormat);
             CamouflagerDuration =
                 new CustomNumberOption(num++, "Camouflager Duration", 10, 5, 15, 1f, CooldownFormat);
 
+            // Janitor Settings
+            Janitor =
+                new CustomHeaderOption(num++, "<color=#FF0000FF>Janitor</color>");
+            JanitorMax =
+                new CustomNumberOption(num++, "Max Janitors", 1, 1, 3, 1);
 
-            Miner = new CustomHeaderOption(num++, "<color=#FF0000FF>Miner</color>");
-
+            // Miner Settings
+            Miner = 
+                new CustomHeaderOption(num++, "<color=#FF0000FF>Miner</color>");
+            MinerMax =
+                new CustomNumberOption(num++, "Max Miners", 1, 1, 3, 1);
             MineCooldown =
                 new CustomNumberOption(num++, "Mine Cooldown", 25, 10, 40, 2.5f, CooldownFormat);
 
-            Swooper = new CustomHeaderOption(num++, "<color=#FF0000FF>Swooper</color>");
-
+            // Swooper Settings
+            Swooper = 
+                new CustomHeaderOption(num++, "<color=#FF0000FF>Swooper</color>");
+            SwooperMax =
+                new CustomNumberOption(num++, "Max Swoopers", 1, 1, 3, 1);
             SwoopCooldown =
                 new CustomNumberOption(num++, "Swoop Cooldown", 25, 10, 40, 2.5f, CooldownFormat);
             SwoopDuration =
                 new CustomNumberOption(num++, "Swoop Duration", 10, 5, 15, 1f, CooldownFormat);
 
+            // Underdog Settings
+            Underdog =
+                new CustomHeaderOption(num++, "<color=#FF0000FF>Swooper</color>");
+            UnderdogMax =
+                new CustomNumberOption(num++, "Max Underdogs", 1, 1, 3, 1);
+
+            // Undertaker Settings
             Undertaker = new CustomHeaderOption(num++, "<color=#FF0000FF>Undertaker</color>");
+            UndertakerMax =
+                new CustomNumberOption(num++, "Max Undertakers", 1, 1, 3, 1);
             DragCooldown = new CustomNumberOption(num++, "Drag Cooldown", 25, 10, 40, 2.5f, CooldownFormat);
 
-            Assassin = new CustomHeaderOption(num++, "<color=#FF0000FF>Assassin</color>");
-            AssassinKills = new CustomNumberOption(num++, "Number of Assassin Kills", 1, 1, 5, 1);
-            AssassinCrewmateGuess = new CustomToggleOption(num++, "Assassin can Guess \"Crewmate\"", false);
-            AssassinGuessNeutrals = new CustomToggleOption(num++, "Assassin can Guess Neutral roles", false);
-            AssassinMultiKill = new CustomToggleOption(num++, "Assassin can kill more than once per meeting");
+            // Assassin Settings
+            Assassin = 
+                new CustomHeaderOption(num++, "<color=#FF0000FF>Assassin</color>");
+            AssassinMax =
+                new CustomNumberOption(num++, "Max Assassins", 1, 1, 3, 1);
+            AssassinKills = 
+                new CustomNumberOption(num++, "Number of Assassin Kills", 1, 1, 5, 1);
+            AssassinCrewmateGuess = 
+                new CustomToggleOption(num++, "Assassin can Guess \"Crewmate\"", false);
+            AssassinGuessNeutrals = 
+                new CustomToggleOption(num++, "Assassin can Guess Neutral roles", false);
+            AssassinMultiKill = 
+                new CustomToggleOption(num++, "Assassin can kill more than once per meeting");
         }
     }
 }
