@@ -112,5 +112,6 @@ namespace TownOfUs
         public static bool AssassinCrewmateGuess => Generate.AssassinCrewmateGuess.Get();
         public static int AssassinKills => (int) Generate.AssassinKills.Get();
         public static bool AssassinMultiKill => Generate.AssassinMultiKill.Get();
+        public static bool RoleProgressionOn => Generate.RoleProgression.Get();
     }
 }

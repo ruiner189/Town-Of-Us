@@ -102,7 +102,7 @@ namespace TownOfUs.ImpostorRoles.AssassinMod
 
                 nameText.text = newGuess == "None"
                     ? "Guess"
-                    : $"<color=#{role.ColorMapping[newGuess].ToHtmlStringRGBA()}>{newGuess}</color>";
+                    : $"<color=#{role.SortedColorMapping[newGuess].ToHtmlStringRGBA()}>{newGuess}</color>";
             }
 
             return Listener;

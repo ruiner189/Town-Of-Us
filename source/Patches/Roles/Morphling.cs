@@ -21,7 +21,7 @@ namespace TownOfUs.Roles
             Name = "Morphling";
             ImpostorText = () => "Transform into crewmates";
             TaskText = () => "Morph into crewmates to be disguised";
-            Color = Palette.ImpostorRed;
+            Color = Patches.Colors.Impostor;
             RoleType = RoleEnum.Morphling;
             Faction = Faction.Impostors;
         }

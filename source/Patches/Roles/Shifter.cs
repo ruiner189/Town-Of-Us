@@ -10,7 +10,7 @@ namespace TownOfUs.Roles
             Name = "Shifter";
             ImpostorText = () => "Shift around different roles";
             TaskText = () => "Steal other people's roles.\nFake Tasks:";
-            Color = new Color(0.6f, 0.6f, 0.6f, 1f);
+            Color = Patches.Colors.Shifter;
             RoleType = RoleEnum.Shifter;
             Faction = Faction.Neutral;
         }
