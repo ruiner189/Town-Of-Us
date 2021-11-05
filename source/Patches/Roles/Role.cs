@@ -58,13 +58,17 @@ namespace TownOfUs.Roles
         protected internal int TotalTasks { get; set; }
 
         protected bool Tier1 = false;
+        public bool GetTier1 => Tier1;
         public void SetTier1(bool flag) {
             bool oldFlag = Tier1;
             Tier1 = flag;
             if (!oldFlag && flag) OnTierUp();
         }
 
+
+
         protected bool Tier2 = false;
+        public bool GetTier2 => Tier2;
         public void SetTier2(bool flag)
         {
             bool oldFlag = Tier2;
@@ -73,6 +77,7 @@ namespace TownOfUs.Roles
         }
 
         protected bool Tier3 = false;
+        public bool GetTier3 => Tier3;
         public void SetTier3(bool flag)
         {
             bool oldFlag = Tier3;
@@ -81,6 +86,7 @@ namespace TownOfUs.Roles
         }
 
         protected bool Tier4 = false;
+        public bool GetTier4 => Tier4;
         public void SetTier4(bool flag)
         {
             bool oldFlag = Tier4;

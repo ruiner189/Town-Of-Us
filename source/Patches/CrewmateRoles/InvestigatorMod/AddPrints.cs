@@ -12,7 +12,7 @@ namespace TownOfUs.CrewmateRoles.InvestigatorMod
         private static float _time;
 
         public static bool GameStarted = false;
-        private static float Interval => CustomGameOptions.FootprintInterval;
+        private static float GetInterval => CustomGameOptions.FootprintInterval;
         private static bool Vent => CustomGameOptions.VentFootprintVisible;
 
         private static Vector2 Position(PlayerControl player)
@@ -27,6 +27,15 @@ namespace TownOfUs.CrewmateRoles.InvestigatorMod
             // New Footprint
             var investigator = Role.GetRole<Investigator>(PlayerControl.LocalPlayer);
             _time += Time.deltaTime;
+            var Interval = GetInterval;
+            if (CustomGameOptions.RoleProgressionOn) {
+                var role = Role.GetRole(__instance);
+                if (role.GetTier4) Interval *= 0.5f;
+                else if (role.GetTier3) Interval *= 0.625f;
+                else if (role.GetTier2) Interval *= 0.75f;
+                else if (role.GetTier1) Interval *= 0.875f;
+            }
+
             if (_time >= Interval)
             {
                 _time -= Interval;
