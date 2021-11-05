@@ -116,13 +116,14 @@ namespace TownOfUs
                 PhantomOn = false;
             }
 
-            PlayerControl executioner = null;
+            List<PlayerControl> executionerList = new List<PlayerControl>();
 
             foreach (var (type, rpc, _) in crewAndNeutralRoles)
             {
                 if (rpc == CustomRPC.SetExecutioner)
                 {
-                    executioner = crewmates[Random.RandomRangeInt(0, crewmates.Count)];
+                    var executioner = crewmates[Random.RandomRangeInt(0, crewmates.Count)];
+                    executionerList.Add(executioner);
                     crewmates.Remove(executioner);
                     continue;
                 }
@@ -146,28 +147,33 @@ namespace TownOfUs
             foreach (var impostor in impostors)
                 Role.Gen<Role>(typeof(Impostor), impostor, CustomRPC.SetImpostor);
 
-            if (executioner != null)
+            if (executionerList.Count > 0)
             {
                 var targets = Utils.GetCrewmates(impostors).Where(
                     crewmate => Role.GetRole(crewmate)?.Faction == Faction.Crewmates
                 ).ToList();
-                if (targets.Count > 0)
+                foreach (var executioner in executionerList)
                 {
-                    var exec = Role.Gen<Executioner>(
-                        typeof(Executioner),
-                        executioner,
-                        CustomRPC.SetExecutioner
-                    );
-                    var target = exec.target = targets[Random.RandomRangeInt(0, targets.Count)];
+                    if (targets.Count > 0)
+                    {
+                        var exec = Role.Gen<Executioner>(
+                            typeof(Executioner),
+                            executioner,
+                            CustomRPC.SetExecutioner
+                        );
+                        var target = exec.target = targets[Random.RandomRangeInt(0, targets.Count)];
 
-                    var writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId,
-                        (byte)CustomRPC.SetTarget, SendOption.Reliable, -1);
-                    writer.Write(executioner.PlayerId);
-                    writer.Write(target.PlayerId);
-                    AmongUsClient.Instance.FinishRpcImmediately(writer);
+                        var writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId,
+                            (byte)CustomRPC.SetTarget, SendOption.Reliable, -1);
+                        writer.Write(executioner.PlayerId);
+                        writer.Write(target.PlayerId);
+                        AmongUsClient.Instance.FinishRpcImmediately(writer);
+                        targets.Remove(target);
+                    }
+                    else
+                        Role.Gen<Role>(typeof(Crewmate), executioner, CustomRPC.SetExecutioner);
                 }
-                else
-                    Role.Gen<Role>(typeof(Crewmate), executioner, CustomRPC.SetExecutioner);
+
             }
 
             var canHaveModifier = PlayerControl.AllPlayerControls.ToArray().ToList();
