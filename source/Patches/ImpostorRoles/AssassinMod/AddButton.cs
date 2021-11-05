@@ -4,6 +4,7 @@ using Reactor.Extensions;
 using TMPro;
 using TownOfUs.Extensions;
 using TownOfUs.Roles;
+using TownOfUs.Roles.Modifiers;
 using UnityEngine;
 using UnityEngine.UI;
 using Object = UnityEngine.Object;
@@ -121,6 +122,7 @@ namespace TownOfUs.ImpostorRoles.AssassinMod
                 if (currentGuess == "None") return;
 
                 var playerRole = Role.GetRole(voteArea);
+                var playerModifier = Modifier.GetModifier(voteArea);
 
                 var toDie = playerRole.Name == currentGuess ? playerRole.Player : role.Player;
 
@@ -129,7 +131,7 @@ namespace TownOfUs.ImpostorRoles.AssassinMod
                 ShowHideButtons.HideSingle(role, targetId, toDie == role.Player);
                 if (toDie.isLover() && CustomGameOptions.BothLoversDie)
                 {
-                    var lover = ((Lover)playerRole).OtherLover.Player;
+                    var lover = ((Lover)playerModifier).OtherLover.Player;
                     ShowHideButtons.HideSingle(role, lover.PlayerId, false);
                 }
             }

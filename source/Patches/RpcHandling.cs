@@ -116,6 +116,10 @@ namespace TownOfUs
                 PhantomOn = false;
             }
 
+            PluginSingleton<TownOfUs>.Instance.Log.LogMessage($"Lovers? {LoversOn}");
+            if (LoversOn)
+                Lover.Gen(crewmates, impostors);
+
             List<PlayerControl> executionerList = new List<PlayerControl>();
 
             foreach (var (type, rpc, _) in crewAndNeutralRoles)
@@ -130,9 +134,6 @@ namespace TownOfUs
                     
                 Role.Gen<Role>(type, crewmates, rpc);
             }
-
-            if (LoversOn)
-                Lover.Gen(crewmates, impostors);
 
             while (impostors.Count > 0)
             {
@@ -298,7 +299,7 @@ namespace TownOfUs
 
                     case CustomRPC.LoveWin:
                         var winnerlover = Utils.PlayerById(reader.ReadByte());
-                        Role.GetRole<Lover>(winnerlover).Win();
+                        Modifier.GetModifier<Lover>(winnerlover).Win();
                         break;
 
 
@@ -344,12 +345,11 @@ namespace TownOfUs
                     case CustomRPC.SetCouple:
                         var id = reader.ReadByte();
                         var id2 = reader.ReadByte();
-                        var b1 = reader.ReadByte();
                         var lover1 = Utils.PlayerById(id);
                         var lover2 = Utils.PlayerById(id2);
 
-                        var roleLover1 = new Lover(lover1, 1, b1 == 0);
-                        var roleLover2 = new Lover(lover2, 2, b1 == 0);
+                        var roleLover1 = new Lover(lover1);
+                        var roleLover2 = new Lover(lover2);
 
                         roleLover1.OtherLover = roleLover2;
                         roleLover2.OtherLover = roleLover1;

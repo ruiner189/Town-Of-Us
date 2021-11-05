@@ -13,7 +13,6 @@ namespace TownOfUs
         // Crewmate Roles
         public static int MayorOn => (int) Generate.MayorOn.Get();
         public static int JesterOn => (int) Generate.JesterOn.Get();
-        public static int LoversOn => (int) Generate.LoversOn.Get();
         public static int SheriffOn => (int) Generate.SheriffOn.Get();
         public static int JanitorOn => (int) Generate.JanitorOn.Get();
         public static int EngineerOn => (int) Generate.EngineerOn.Get();
@@ -54,7 +53,6 @@ namespace TownOfUs
         #region Max role values
         // Crewmate Roles
         public static int MayorMax => (int) Generate.MayorMax.Get();
-        public static int LoversMax => (int) Generate.LoversMax.Get();
         public static int SheriffMax => (int) Generate.SheriffMax.Get();
         public static int EngineerMax => (int) Generate.EngineerMax.Get();
         public static int SwapperMax => (int) Generate.SwapperMax.Get();
@@ -85,6 +83,8 @@ namespace TownOfUs
         #endregion
 
         // Lover values
+        public static int LoversOn => (int)Generate.LoversOn.Get();
+
         public static bool BothLoversDie => Generate.BothLoversDie.Get();
 
         // Sheriff Values

@@ -2,9 +2,10 @@ using System.Linq;
 using HarmonyLib;
 using TMPro;
 using TownOfUs.Roles;
+using TownOfUs.Roles.Modifiers;
 using UnityEngine;
 
-namespace TownOfUs.CrewmateRoles.LoversMod
+namespace TownOfUs.Modifiers.LoversMod
 {
     [HarmonyPatch(typeof(EndGameManager), nameof(EndGameManager.Start))]
     internal class Outro
@@ -27,8 +28,7 @@ namespace TownOfUs.CrewmateRoles.LoversMod
                 return;
             }
 
-
-            if (!Role.AllRoles.Where(x => x.RoleType == RoleEnum.Lover || x.RoleType == RoleEnum.LoverImpostor)
+            if (!Modifier.AllModifiers.Where(x => x.ModifierType == ModifierEnum.Lover)
                 .Any(x => ((Lover) x).LoveCoupleWins)) return;
             if (Role.GetRoles(RoleEnum.Jester).Any(x => ((Jester) x).VotedOut)) return;
             PoolablePlayer[] array = Object.FindObjectsOfType<PoolablePlayer>();

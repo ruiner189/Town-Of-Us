@@ -1,4 +1,4 @@
-using HarmonyLib;
+﻿using HarmonyLib;
 using Hazel;
 using System;
 using System.Collections.Generic;
@@ -151,9 +151,34 @@ namespace TownOfUs.Roles
                 Player.Data.HatId == 0U ? 1.5f : 2.0f,
                 -0.5f
             );
+            return (DeadCriteria() || ImpostorCriteria() || LoverCriteria() || SelfCriteria());
+        }
+
+        internal bool DeadCriteria()
+        {
             if (PlayerControl.LocalPlayer.Data.IsDead && CustomGameOptions.DeadSeeRoles) return Utils.ShowDeadBodies;
+            return false;
+        }
+
+        internal bool ImpostorCriteria()
+        {
             if (Faction == Faction.Impostors && PlayerControl.LocalPlayer.Data.IsImpostor &&
                 CustomGameOptions.ImpostorSeeRoles) return true;
+            return false;
+        }
+
+        internal bool LoverCriteria()
+        {
+            if (PlayerControl.LocalPlayer.Is(ModifierEnum.Lover))
+            {
+                var lover = Modifier.GetModifier<Lover>(PlayerControl.LocalPlayer);
+                return lover.OtherLover.Player == Player;
+            }
+            return false;
+        }
+
+        internal bool SelfCriteria()
+        {
             return GetRole(PlayerControl.LocalPlayer) == this;
         }
 
@@ -212,10 +237,13 @@ namespace TownOfUs.Roles
 
             if (Player == null) return "";
 
-            String PlayerName = Faction == Faction.Crewmates
-                ? $"{Player.name} ({TotalTasks - TasksLeft}/{TotalTasks})"
-                : Player.name;
 
+            if (!ImpostorCriteria() && !DeadCriteria() && !SelfCriteria() && LoverCriteria())
+                return $"{Player.name} ♥";
+
+            String PlayerName = Player.name;
+            if (Faction == Faction.Crewmates) PlayerName += $" ({TotalTasks - TasksLeft}/{TotalTasks})";
+            if (Player.Is(ModifierEnum.Lover)) PlayerName += " ♥";
 
             if (player != null && (MeetingHud.Instance.state == MeetingHud.VoteStates.Proceeding ||
                                    MeetingHud.Instance.state == MeetingHud.VoteStates.Results)) return PlayerName;
@@ -546,31 +574,13 @@ namespace TownOfUs.Roles
                     var role = GetRole(player);
                     if (role != null && role.Criteria())
                     {
+                        if (role.LoverCriteria() && !role.DeadCriteria() && !role.ImpostorCriteria() && !role.SelfCriteria())
+                        {
+                            player.NameText.text = role.NameText();
+                            continue;
+                        }
                         player.NameText.color = role.Color;
                         player.NameText.text = role.NameText(player);
-                        // if (player.NameText.text.Contains("\n"))
-                        // {
-                        //     var newScale = Vector3.one * 1.8f;
-                        //
-                        //     // TODO: scale
-                        //     var trueScale = player.NameText.transform.localScale / 2;
-                        //
-                        //
-                        //     if (trueScale != newScale) oldScale = trueScale;
-                        //     var newPosition = new Vector3(1.43f, 0.055f, 0f);
-                        //
-                        //     var truePosition = player.NameText.transform.localPosition;
-                        //
-                        //     if (newPosition != truePosition) oldPosition = truePosition;
-                        //
-                        //     player.NameText.transform.localPosition = newPosition;
-                        //     player.NameText.transform.localScale = newScale;
-                        // }
-                        // else
-                        // {
-                        // if (oldPosition != Vector3.zero) player.NameText.transform.localPosition = oldPosition;
-                        // if (oldScale != Vector3.zero) player.NameText.transform.localScale = oldScale;
-                        // }
                     }
                     else
                     {
@@ -606,6 +616,13 @@ namespace TownOfUs.Roles
                     if (role != null)
                         if (role.Criteria())
                         {
+                           
+                            if (role.LoverCriteria() && !role.DeadCriteria() && !role.ImpostorCriteria() && !role.SelfCriteria())
+                            {
+                                player.nameText.text = role.NameText();
+                                continue;
+                            }
+
                             player.nameText.color = role.Color;
                             player.nameText.text = role.NameText();
                             continue;

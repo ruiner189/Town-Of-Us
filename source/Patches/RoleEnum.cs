@@ -5,8 +5,6 @@ namespace TownOfUs
         Sheriff,
         Jester,
         Engineer,
-        LoverImpostor,
-        Lover,
         Mayor,
         Swapper,
         Investigator,
@@ -46,6 +44,7 @@ namespace TownOfUs
         Tiebreaker,
         Drunk,
         BigBoi,
-        ButtonBarry
+        ButtonBarry,
+        Lover
     }
 }

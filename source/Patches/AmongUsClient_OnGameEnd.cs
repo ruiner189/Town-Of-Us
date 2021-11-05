@@ -2,6 +2,7 @@ using System.Linq;
 using HarmonyLib;
 using Il2CppSystem.Collections.Generic;
 using TownOfUs.Roles;
+using TownOfUs.Roles.Modifiers;
 
 namespace TownOfUs
 {
@@ -52,15 +53,15 @@ namespace TownOfUs
                 return;
             }
 
-            var lover = Role.AllRoles
-                .Where(x => x.RoleType == RoleEnum.Lover || x.RoleType == RoleEnum.LoverImpostor)
+            var lover = Modifier.AllModifiers
+                .Where(x => x.ModifierType == ModifierEnum.Lover)
                 .FirstOrDefault(x => ((Lover) x).LoveCoupleWins);
             if (lover != null)
             {
                 var lover1 = (Lover) lover;
                 var lover2 = lover1.OtherLover;
                 var winners = Utils.potentialWinners
-                    .Where(x => x.Name == lover1.PlayerName || x.Name == lover2.PlayerName).ToList();
+                    .Where(x => x.Name == lover1.Player.name || x.Name == lover2.Player.name).ToList();
                 TempData.winners = new List<WinningPlayerData>();
                 foreach (var win in winners) TempData.winners.Add(win);
                 return;

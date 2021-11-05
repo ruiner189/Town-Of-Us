@@ -7,7 +7,6 @@ namespace TownOfUs.CustomOption
         // Enable Crewmate Roles
         public static CustomHeaderOption CrewmateRoles;
         public static CustomNumberOption MayorOn;
-        public static CustomNumberOption LoversOn;
         public static CustomNumberOption SheriffOn;
         public static CustomNumberOption EngineerOn;
         public static CustomNumberOption SwapperOn;
@@ -22,7 +21,6 @@ namespace TownOfUs.CustomOption
 
         // Max Crewmate Roles
         public static CustomNumberOption MayorMax;
-        public static CustomNumberOption LoversMax;
         public static CustomNumberOption SheriffMax;
         public static CustomNumberOption EngineerMax;
         public static CustomNumberOption SwapperMax;
@@ -80,6 +78,8 @@ namespace TownOfUs.CustomOption
         public static CustomNumberOption TiebreakerOn;
         public static CustomNumberOption DrunkOn;
         public static CustomNumberOption BigBoiOn;
+        public static CustomNumberOption LoversOn;
+
 
         // Custom Game Settings
         public static CustomHeaderOption CustomGameSettings;
@@ -240,8 +240,6 @@ namespace TownOfUs.CustomOption
             CrewmateRoles = new CustomHeaderOption(num++, "Crewmate Roles");
             MayorOn = new CustomNumberOption(true, num++, "<color=#704FA8FF>Mayor</color>", 0f, 0f, 100f, 10f,
                 PercentFormat);
-            LoversOn = new CustomNumberOption(true, num++, "<color=#FF66CCFF>Lovers</color>", 0f, 0f, 100f, 10f,
-                PercentFormat);
             SheriffOn = new CustomNumberOption(true, num++, "<color=#FFFF00FF>Sheriff</color>", 0f, 0f, 100f, 10f,
                 PercentFormat);
             EngineerOn = new CustomNumberOption(true, num++, "<color=#FFA60AFF>Engineer</color>", 0f, 0f, 100f, 10f,
@@ -313,6 +311,8 @@ namespace TownOfUs.CustomOption
             ButtonBarryOn =
                 new CustomNumberOption(true, num++, "<color=#E600FFFF>Button Barry</color>", 0f, 0f, 100f, 10f,
                     PercentFormat);
+            LoversOn = new CustomNumberOption(true, num++, "<color=#FF66CCFF>Lovers</color>", 0f, 0f, 100f, 10f,
+                PercentFormat);
 
 
             CustomGameSettings =
@@ -333,6 +333,11 @@ namespace TownOfUs.CustomOption
             VanillaGame = new CustomNumberOption(num++, "Probability of a completely vanilla game", 0f, 0f, 100f, 5f,
                 PercentFormat);
 
+            // Lover Settings
+            Lovers =
+                new CustomHeaderOption(num++, "<color=#FF66CCFF>Lovers</color>");
+            BothLoversDie = new CustomToggleOption(num++, "Both Lovers Die");
+
             // Mayor Settings
             Mayor = 
                 new CustomHeaderOption(num++, "<color=#704FA8FF>Mayor</color>");
@@ -342,12 +347,6 @@ namespace TownOfUs.CustomOption
                 new CustomNumberOption(num++, "Initial Mayor Vote Bank", 1, 1, 5, 1);
             MayorAnonymous =
                 new CustomToggleOption(num++, "Mayor Votes Show Anonymous", false);
-
-            // Lover Settings
-            Lovers =
-                new CustomHeaderOption(num++, "<color=#FF66CCFF>Lovers</color>");
-            LoversMax = new CustomNumberOption(num++, "Max Lover Pairs", 1, 1, 1, 1);
-            BothLoversDie = new CustomToggleOption(num++, "Both Lovers Die");
 
             // Sheriff Settings
             Sheriff =
