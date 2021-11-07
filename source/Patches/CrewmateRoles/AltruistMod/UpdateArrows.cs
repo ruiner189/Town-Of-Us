@@ -1,6 +1,7 @@
 using HarmonyLib;
 using Reactor.Extensions;
 using TownOfUs.Extensions;
+using TownOfUs.Roles;
 
 namespace TownOfUs.CrewmateRoles.AltruistMod
 {
@@ -20,6 +21,14 @@ namespace TownOfUs.CrewmateRoles.AltruistMod
                 }
 
                 Coroutine.Arrow.target = Coroutine.Target.transform.position;
+            }
+            if(Altruist.AltruistArrow != null) {
+                if (LobbyBehaviour.Instance || MeetingHud.Instance || PlayerControl.LocalPlayer.Data.IsDead)
+                {
+                    Altruist.AltruistArrow.Destroy();
+                    Altruist.AltruistArrow = null;
+                }
+                Altruist.AltruistArrow.update();
             }
         }
     }

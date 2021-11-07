@@ -3,6 +3,7 @@ using System.Linq;
 using Hazel;
 using Reactor;
 using TownOfUs.ImpostorRoles.CamouflageMod;
+using TownOfUs.Patches;
 using TownOfUs.Roles.Modifiers;
 using UnityEngine;
 
@@ -15,8 +16,8 @@ namespace TownOfUs.Roles
         {
             Name = "Lover";
             TaskText = () =>
-                "You are in " + ColorString + "Love</color> with " + ColorString + OtherLover.Player.name;
-            Color = new Color(0.6f, 0.9f, 0.6f);
+                "You are in Love with " + OtherLover.Player.name;
+            Color = Colors.Lovers;
             ModifierType = ModifierEnum.Lover;
         }
 

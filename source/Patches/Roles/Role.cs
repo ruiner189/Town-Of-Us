@@ -11,6 +11,7 @@ using UnhollowerBaseLib;
 using UnityEngine;
 using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
+using Reactor;
 
 namespace TownOfUs.Roles
 {
@@ -98,19 +99,23 @@ namespace TownOfUs.Roles
 
         protected virtual void OnTierUp()
         {
+            PluginSingleton<TownOfUs>.Instance.Log.LogMessage("Tier up!");
             if (CustomGameOptions.RoleProgressionOn)
             {
                 if (Local)
                 {
-                    if(CustomGameOptions.RoleProgressionFlash)
-                        Utils.FlashCoroutine(Color);
+                    PluginSingleton<TownOfUs>.Instance.Log.LogMessage("Local!");
+                    if (CustomGameOptions.RoleProgressionFlash)
+                    {
+                        PluginSingleton<TownOfUs>.Instance.Log.LogMessage("Flash!");
+                        Utils.FlashCoroutine(Color, 0.5f, 1.0f);
+                    }
                 }
             }
         }
 
         protected internal bool Hidden { get; set; } = false;
 
-        //public static Faction Faction;
         protected internal Faction Faction { get; set; } = Faction.Crewmates;
 
         protected internal Color FactionColor
@@ -269,7 +274,7 @@ namespace TownOfUs.Roles
             if ((revealModifier || revealLover) && Player.isLover())
                 PlayerName += $" ♥";
 
-            if(revealTasks)
+            if(revealTasks && Faction == Faction.Crewmates)
                 PlayerName += $" ({TotalTasks - TasksLeft}/{TotalTasks})";
 
             if (player != null && (MeetingHud.Instance.state == MeetingHud.VoteStates.Proceeding ||
