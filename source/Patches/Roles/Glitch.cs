@@ -476,10 +476,22 @@ namespace TownOfUs.Roles
                         writer.Write(medic);
                         writer.Write(__gInstance.KillTarget.PlayerId);
                         AmongUsClient.Instance.FinishRpcImmediately(writer);
-                        if (CustomGameOptions.ShieldBreaks) __gInstance.LastKill = DateTime.UtcNow;
 
-                        StopKill.BreakShield(medic, __gInstance.KillTarget.PlayerId,
-                            CustomGameOptions.ShieldBreaks);
+                        if (CustomGameOptions.RoleProgressionOn)
+                        {
+                            var medicPlayer = Utils.PlayerById(medic);
+                            if (medicPlayer.Is(RoleEnum.Medic))
+                            {
+                                var medicRole = Role.GetRole<Medic>(medicPlayer);
+                                if (!medicRole.GetTier3) __gInstance.LastKill = DateTime.UtcNow;
+                                StopKill.BreakShield(medic, __gInstance.KillTarget.PlayerId, !medicRole.GetTier3);
+                            }
+                        }
+                        else
+                        {
+                            if (CustomGameOptions.ShieldBreaks) __gInstance.LastKill = DateTime.UtcNow;
+                            StopKill.BreakShield(medic, __gInstance.KillTarget.PlayerId, CustomGameOptions.ShieldBreaks);
+                        }
 
                         return;
                     }
@@ -542,10 +554,22 @@ namespace TownOfUs.Roles
                         writer.Write(medic);
                         writer.Write(__gInstance.HackTarget.PlayerId);
                         AmongUsClient.Instance.FinishRpcImmediately(writer);
-                        if (CustomGameOptions.ShieldBreaks) __gInstance.LastHack = DateTime.UtcNow;
 
-                        StopKill.BreakShield(medic, __gInstance.HackTarget.PlayerId,
-                            CustomGameOptions.ShieldBreaks);
+                        if (CustomGameOptions.RoleProgressionOn)
+                        {
+                            var medicPlayer = Utils.PlayerById(medic);
+                            if (medicPlayer.Is(RoleEnum.Medic))
+                            {
+                                var medicRole = Role.GetRole<Medic>(medicPlayer);
+                                if (!medicRole.GetTier3) __gInstance.LastHack = DateTime.UtcNow;
+                                StopKill.BreakShield(medic, __gInstance.HackTarget.PlayerId, !medicRole.GetTier3);
+                            }
+                        }
+                        else
+                        {
+                            if (CustomGameOptions.ShieldBreaks) __gInstance.LastHack = DateTime.UtcNow;
+                            StopKill.BreakShield(medic, __gInstance.HackTarget.PlayerId, CustomGameOptions.ShieldBreaks);
+                        }
 
                         return;
                     }

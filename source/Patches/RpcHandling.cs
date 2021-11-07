@@ -439,7 +439,19 @@ namespace TownOfUs
                     case CustomRPC.AttemptSound:
                         var medicId = reader.ReadByte();
                         readByte = reader.ReadByte();
-                        StopKill.BreakShield(medicId, readByte, CustomGameOptions.ShieldBreaks);
+                        if (CustomGameOptions.RoleProgressionOn)
+                        {
+                            var medicPlayer = Utils.PlayerById(medicId);
+                            if (medicPlayer.Is(RoleEnum.Medic))
+                            {
+                                var medicRole = Role.GetRole<Medic>(medicPlayer);
+                                StopKill.BreakShield(medicId, readByte, !medicRole.GetTier3);
+                            }
+                        }
+                        else
+                        {
+                            StopKill.BreakShield(medicId, readByte, CustomGameOptions.ShieldBreaks);
+                        }
                         break;
                     case CustomRPC.SetGlitch:
                         var GlitchId = reader.ReadByte();

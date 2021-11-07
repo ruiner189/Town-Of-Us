@@ -52,26 +52,44 @@ namespace TownOfUs.CrewmateRoles.MedicMod
 
 
                 var showShielded = CustomGameOptions.ShowShielded;
-                if (showShielded == ShieldOptions.Everyone)
+                var progression = CustomGameOptions.RoleProgressionOn;
+                if (!progression)
                 {
-                    player.myRend.material.SetColor("_VisorColor", ProtectedColor);
-                    player.myRend.material.SetFloat("_Outline", 1f);
-                    player.myRend.material.SetColor("_OutlineColor", ProtectedColor);
-                }
-                else if (PlayerControl.LocalPlayer.PlayerId == player.PlayerId && (showShielded == ShieldOptions.Self ||
-                    showShielded == ShieldOptions.SelfAndMedic))
-                {
-                    //System.Console.WriteLine("Setting " + PlayerControl.LocalPlayer.name + "'s shield");
-                    player.myRend.material.SetColor("_VisorColor", ProtectedColor);
-                    player.myRend.material.SetFloat("_Outline", 1f);
-                    player.myRend.material.SetColor("_OutlineColor", ProtectedColor);
-                }
-                else if (PlayerControl.LocalPlayer.Is(RoleEnum.Medic) &&
-                         (showShielded == ShieldOptions.Medic || showShielded == ShieldOptions.SelfAndMedic))
-                {
-                    player.myRend.material.SetColor("_VisorColor", ProtectedColor);
-                    player.myRend.material.SetFloat("_Outline", 1f);
-                    player.myRend.material.SetColor("_OutlineColor", ProtectedColor);
+                    if (showShielded == ShieldOptions.Everyone)
+                    {
+                        player.myRend.material.SetColor("_VisorColor", ProtectedColor);
+                        player.myRend.material.SetFloat("_Outline", 1f);
+                        player.myRend.material.SetColor("_OutlineColor", ProtectedColor);
+                    }
+                    else if (PlayerControl.LocalPlayer.PlayerId == player.PlayerId && (showShielded == ShieldOptions.Self ||
+                        showShielded == ShieldOptions.SelfAndMedic))
+                    {
+                        //System.Console.WriteLine("Setting " + PlayerControl.LocalPlayer.name + "'s shield");
+                        player.myRend.material.SetColor("_VisorColor", ProtectedColor);
+                        player.myRend.material.SetFloat("_Outline", 1f);
+                        player.myRend.material.SetColor("_OutlineColor", ProtectedColor);
+                    }
+                    else if (PlayerControl.LocalPlayer.Is(RoleEnum.Medic) &&
+                             (showShielded == ShieldOptions.Medic || showShielded == ShieldOptions.SelfAndMedic))
+                    {
+                        player.myRend.material.SetColor("_VisorColor", ProtectedColor);
+                        player.myRend.material.SetFloat("_Outline", 1f);
+                        player.myRend.material.SetColor("_OutlineColor", ProtectedColor);
+                    }
+                } else {
+                    // Tier 0
+                    if(medic.Local) {
+                        player.myRend.material.SetColor("_VisorColor", ProtectedColor);
+                        player.myRend.material.SetFloat("_Outline", 1f);
+                        player.myRend.material.SetColor("_OutlineColor", ProtectedColor);
+                    }
+
+                    // Tier 1
+                    if(medic.GetTier1 && PlayerControl.LocalPlayer.PlayerId == player.PlayerId)  {
+                        player.myRend.material.SetColor("_VisorColor", ProtectedColor);
+                        player.myRend.material.SetFloat("_Outline", 1f);
+                        player.myRend.material.SetColor("_OutlineColor", ProtectedColor);
+                    }
                 }
             }
         }

@@ -95,7 +95,7 @@ namespace TownOfUs.Roles
             if (!oldFlag && flag) OnTierUp();
         }
 
-        public bool Local => PlayerControl.LocalPlayer == Player;
+        public bool Local => PlayerControl.LocalPlayer.PlayerId == Player.PlayerId;
 
         protected virtual void OnTierUp()
         {
@@ -108,7 +108,7 @@ namespace TownOfUs.Roles
                     if (CustomGameOptions.RoleProgressionFlash)
                     {
                         PluginSingleton<TownOfUs>.Instance.Log.LogMessage("Flash!");
-                        Utils.FlashCoroutine(Color, 0.5f, 1.0f);
+                        Coroutines.Start(Utils.FlashCoroutine(Color, 0.5f, 0.2f));
                     }
                 }
             }
