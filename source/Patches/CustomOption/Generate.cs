@@ -112,10 +112,12 @@ namespace TownOfUs.CustomOption
         // Sheriff Settings
         public static CustomHeaderOption Sheriff;
         public static CustomToggleOption ShowSheriff;
+        public static CustomToggleOption SheriffFirstRoundOn;
         public static CustomToggleOption SheriffKillOther;
         public static CustomToggleOption SheriffKillsJester;
         public static CustomToggleOption SheriffKillsGlitch;
         public static CustomToggleOption SheriffKillsArsonist;
+        public static CustomToggleOption SheriffKillsSheriff;
         public static CustomNumberOption SheriffKillCd;
         public static CustomToggleOption SheriffBodyReport;
 
@@ -408,8 +410,12 @@ namespace TownOfUs.CustomOption
                 new CustomNumberOption(num++, "Max Sheriffs", 1, 1, 15, 1);
             ShowSheriff = 
                 new CustomToggleOption(num++, "Show Sheriff", false);
+            SheriffFirstRoundOn =
+                new CustomToggleOption(num++, "Sheriff Can Kill First Round", true);
             SheriffKillOther =
                 new CustomToggleOption(num++, "Sheriff Miskill Kills Crewmate", false);
+            SheriffKillsSheriff =
+                new CustomToggleOption(num++, "Sheriff Kills Sheriff", false);
             SheriffKillsJester =
                 new CustomToggleOption(num++, "Sheriff Kills Jester", false);
             SheriffKillsGlitch =

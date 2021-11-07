@@ -23,8 +23,8 @@ namespace TownOfUs.Roles
 
         public List<KillButtonManager> ExtraButtons = new List<KillButtonManager>();
 
-        protected Func<string> ImpostorText;
-        protected Func<string> TaskText;
+        public Func<string> ImpostorText;
+        public Func<string> TaskText;
 
         protected Role(PlayerControl player)
         {
@@ -214,8 +214,24 @@ namespace TownOfUs.Roles
             return false;
         }
 
-        protected virtual void IntroPrefix(IntroCutscene._CoBegin_d__14 __instance)
+        public virtual List<PlayerControl> GetTeammates()
         {
+            var team = new List<PlayerControl>();
+            if (Faction == Faction.Impostors) {
+                foreach(var player in PlayerControl.AllPlayerControls)
+                {
+                    if (player.Data.IsImpostor) team.Add(player);
+                }
+            } else if (Faction == Faction.Neutral) {
+                team.Add(PlayerControl.LocalPlayer);
+            } else if (Faction == Faction.Crewmates) {
+                foreach (var player in PlayerControl.AllPlayerControls)
+                {
+                    team.Add(player);
+                }
+            }
+
+            return team;
         }
 
         public static void NobodyWinsFunc()
@@ -375,93 +391,6 @@ namespace TownOfUs.Roles
             return AllRoles.Where(x => x.RoleType == roletype);
         }
 
-        public static class IntroCutScenePatch
-        {
-            public static TextMeshPro ModifierText;
-
-            public static float Scale;
-
-            [HarmonyPatch(typeof(IntroCutscene), nameof(IntroCutscene.BeginCrewmate))]
-            public static class IntroCutscene_BeginCrewmate
-            {
-                public static void Postfix(IntroCutscene __instance)
-                {
-                    //System.Console.WriteLine("REACHED HERE - CREW");
-                    var modifier = Modifier.GetModifier(PlayerControl.LocalPlayer);
-                    if (modifier != null)
-                        ModifierText = Object.Instantiate(__instance.Title, __instance.Title.transform.parent, false);
-                    //System.Console.WriteLine("MODIFIER TEXT PLEASE WORK");
-                    //                        Scale = ModifierText.scale;
-                    else
-                        ModifierText = null;
-
-                    Lights.SetLights();
-                }
-            }
-
-            [HarmonyPatch(typeof(IntroCutscene), nameof(IntroCutscene.BeginImpostor))]
-            public static class IntroCutscene_BeginImpostor
-            {
-                public static void Postfix(IntroCutscene __instance)
-                {
-                    //System.Console.WriteLine("REACHED HERE - IMP");
-                    var modifier = Modifier.GetModifier(PlayerControl.LocalPlayer);
-                    if (modifier != null)
-                        ModifierText = Object.Instantiate(__instance.Title, __instance.Title.transform.parent, false);
-                    //System.Console.WriteLine("MODIFIER TEXT PLEASE WORK");
-                    //                        Scale = ModifierText.scale;
-                    else
-                        ModifierText = null;
-                    Lights.SetLights();
-                }
-            }
-
-            [HarmonyPatch(typeof(IntroCutscene._CoBegin_d__14), nameof(IntroCutscene._CoBegin_d__14.MoveNext))]
-            public static class IntroCutscene_CoBegin__d_MoveNext
-            {
-                public static float TestScale;
-
-                public static void Prefix(IntroCutscene._CoBegin_d__14 __instance)
-                {
-                    var role = GetRole(PlayerControl.LocalPlayer);
-
-                    if (role != null) role.IntroPrefix(__instance);
-                }
-
-                public static void Postfix(IntroCutscene._CoBegin_d__14 __instance)
-                {
-                    var role = GetRole(PlayerControl.LocalPlayer);
-                    var alpha = __instance.__4__this.Title.color.a;
-                    if (role != null && !role.Hidden)
-                    {
-                        __instance.__4__this.Title.text = role.Name;
-                        __instance.__4__this.Title.color = role.Color;
-                        __instance.__4__this.ImpostorText.text = role.ImpostorText();
-                        __instance.__4__this.ImpostorText.gameObject.SetActive(true);
-                        __instance.__4__this.BackgroundBar.material.color = role.Color;
-                        //                        TestScale = Mathf.Max(__instance.__this.Title.scale, TestScale);
-                        //                        __instance.__this.Title.scale = TestScale / role.Scale;
-                    }
-                    /*else if (!__instance.isImpostor)
-                    {
-                        __instance.__this.ImpostorText.text = "Haha imagine being a boring old crewmate";
-                    }*/
-
-                    if (ModifierText != null)
-                    {
-                        var modifier = Modifier.GetModifier(PlayerControl.LocalPlayer);
-                        ModifierText.text = "<size=4>Modifier: " + modifier.Name + "</size>";
-                        ModifierText.color = modifier.Color;
-
-                        //
-                        ModifierText.transform.position =
-                            __instance.__4__this.transform.position - new Vector3(0f, 2.0f, 0f);
-                        ModifierText.gameObject.SetActive(true);
-                    }
-                }
-            }
-        }
-
         [HarmonyPatch(typeof(PlayerControl._CoSetTasks_d__83), nameof(PlayerControl._CoSetTasks_d__83.MoveNext))]
         public static class PlayerControl_SetTasks
         {
@@ -489,24 +418,6 @@ namespace TownOfUs.Roles
                 player.myTasks.Insert(0, task);
             }
         }
-
-        /*[HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.FixedUpdate))]
-        public static class ButtonsFix
-        {
-            public static void Postfix(PlayerControl __instance)
-            {
-                if (__instance != PlayerControl.LocalPlayer) return;
-                var role = GetRole(PlayerControl.LocalPlayer);
-                if (role == null) return;
-                var instance = DestroyableSingleton<HudManager>.Instance;
-                var position = instance.KillButton.transform.position;
-                foreach (var button in role.ExtraButtons)
-                {
-                    button.transform.position = new Vector3(position.x,
-                        instance.ReportButton.transform.position.y, position.z);
-                }
-            }
-        }*/
 
         [HarmonyPatch(typeof(ShipStatus), nameof(ShipStatus.CheckEndCriteria))]
         public static class ShipStatus_KMPKPPGPNIH
@@ -538,16 +449,13 @@ namespace TownOfUs.Roles
                 var result = true;
                 foreach (var role in AllRoles)
                 {
-                    //System.Console.WriteLine(role.Name);
                     var isend = role.EABBNOODFGL(__instance);
-                    //System.Console.WriteLine(isend);
                     if (!isend) result = false;
                 }
 
                 if (!NobodyEndCriteria(__instance)) result = false;
 
                 return result;
-                //return true;
             }
         }
 

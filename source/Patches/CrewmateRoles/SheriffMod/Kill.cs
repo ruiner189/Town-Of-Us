@@ -20,6 +20,7 @@ namespace TownOfUs.CrewmateRoles.SheriffMod
             if (PlayerControl.LocalPlayer.Data.IsDead) return false;
             var flag2 = role.SheriffKillTimer() == 0f;
             if (!flag2) return false;
+            if (!CustomGameOptions.SheriffFirstRoundOn && !role.FirstRound) return false;
             if (!__instance.enabled || role.ClosestPlayer == null) return false;
             var distBetweenPlayers = Utils.getDistBetweenPlayers(PlayerControl.LocalPlayer, role.ClosestPlayer);
             var flag3 = distBetweenPlayers < GameOptionsData.KillDistances[PlayerControl.GameOptions.KillDistance];
@@ -55,7 +56,8 @@ namespace TownOfUs.CrewmateRoles.SheriffMod
             var flag4 = role.ClosestPlayer.Data.IsImpostor ||
                         role.ClosestPlayer.Is(RoleEnum.Jester) && CustomGameOptions.SheriffKillsJester ||
                         role.ClosestPlayer.Is(RoleEnum.Glitch) && CustomGameOptions.SheriffKillsGlitch ||
-                        role.ClosestPlayer.Is(RoleEnum.Arsonist) && CustomGameOptions.SheriffKillsArsonist;
+                        role.ClosestPlayer.Is(RoleEnum.Arsonist) && CustomGameOptions.SheriffKillsArsonist ||
+                        role.ClosestPlayer.Is(RoleEnum.Sheriff) && CustomGameOptions.SheriffKillsSheriff;
             if (!flag4)
             {
                 if (CustomGameOptions.SheriffKillOther)

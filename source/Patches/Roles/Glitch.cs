@@ -98,13 +98,6 @@ namespace TownOfUs.Roles
             Player.Data.IsImpostor = true;
         }
 
-        protected override void IntroPrefix(IntroCutscene._CoBegin_d__14 __instance)
-        {
-            var glitchTeam = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
-            glitchTeam.Add(PlayerControl.LocalPlayer);
-            __instance.yourTeam = glitchTeam;
-        }
-
         public void Update(HudManager __instance)
         {
             if (!Player.Data.IsDead)

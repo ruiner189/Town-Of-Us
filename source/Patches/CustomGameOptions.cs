@@ -89,7 +89,9 @@ namespace TownOfUs
 
         // Sheriff Values
         public static bool ShowSheriff => Generate.ShowSheriff.Get();
+        public static bool SheriffFirstRoundOn => Generate.SheriffFirstRoundOn.Get();
         public static bool SheriffKillOther => Generate.SheriffKillOther.Get();
+        public static bool SheriffKillsSheriff => Generate.SheriffKillsSheriff.Get();
         public static bool SheriffKillsJester => Generate.SheriffKillsJester.Get();
         public static bool SheriffKillsGlitch => Generate.SheriffKillsGlitch.Get();
         public static bool SheriffKillsArsonist => Generate.SheriffKillsArsonist.Get();

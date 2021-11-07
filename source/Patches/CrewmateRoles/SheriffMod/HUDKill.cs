@@ -26,7 +26,9 @@ namespace TownOfUs.CrewmateRoles.SheriffMod
             {
                 var role = Role.GetRole<Sheriff>(PlayerControl.LocalPlayer);
                 var isDead = PlayerControl.LocalPlayer.Data.IsDead;
-                if (isDead)
+                var firstRound = CustomGameOptions.SheriffFirstRoundOn && !role.FirstRound;
+
+                if (isDead || firstRound)
                 {
                     KillButton.gameObject.SetActive(false);
                     KillButton.isActive = false;

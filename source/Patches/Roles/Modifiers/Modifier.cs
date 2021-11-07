@@ -12,7 +12,7 @@ namespace TownOfUs.Roles.Modifiers
     public abstract class Modifier
     {
         public static readonly Dictionary<byte, Modifier> ModifierDictionary = new Dictionary<byte, Modifier>();
-        protected internal Func<string> TaskText;
+        public Func<string> TaskText;
 
         protected Modifier(PlayerControl player)
         {
@@ -63,6 +63,12 @@ namespace TownOfUs.Roles.Modifiers
         {
             return (from entry in ModifierDictionary where entry.Key == player.PlayerId select entry.Value)
                 .FirstOrDefault();
+        }
+
+        public virtual List<PlayerControl> GetTeammates()
+        {
+            var team = new List<PlayerControl>();
+            return team;
         }
 
         public static T GetModifier<T>(PlayerControl player) where T : Modifier

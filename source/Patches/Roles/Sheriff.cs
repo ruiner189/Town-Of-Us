@@ -16,6 +16,7 @@ namespace TownOfUs.Roles
 
         public PlayerControl ClosestPlayer;
         public DateTime LastKilled { get; set; }
+        public bool FirstRound { get; set; } = false;
 
         public float SheriffKillTimer()
         {

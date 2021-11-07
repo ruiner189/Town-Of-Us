@@ -18,13 +18,6 @@ namespace TownOfUs.Roles
             Faction = Faction.Neutral;
         }
 
-        protected override void IntroPrefix(IntroCutscene._CoBegin_d__14 __instance)
-        {
-            var jesterTeam = new List<PlayerControl>();
-            jesterTeam.Add(PlayerControl.LocalPlayer);
-            __instance.yourTeam = jesterTeam;
-        }
-
         internal override bool EABBNOODFGL(ShipStatus __instance)
         {
             if (!VotedOut || !Player.Data.IsDead && !Player.Data.Disconnected) return true;

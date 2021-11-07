@@ -66,7 +66,7 @@ namespace TownOfUs.CrewmateRoles.MedicMod
                     {
                         if (!target.getMedic().GetTier3)
                             PlayerControl.LocalPlayer.SetKillTimer(PlayerControl.GameOptions.KillCooldown);
-                        PluginSingleton<TownOfUs>.Instance.Log.LogMessage($"{medic.Player.PlayerId}, {target.PlayerId}, {!medic.GetTier3}");
+                        PluginSingleton<TownOfUs>.Instance.Log.LogMessage($"{target.getMedic().Player.PlayerId}, {target.PlayerId}, {!target.getMedic().GetTier3}");
                         BreakShield(target.getMedic().Player.PlayerId, target.PlayerId, !target.getMedic().GetTier3);
                     } else
                     {

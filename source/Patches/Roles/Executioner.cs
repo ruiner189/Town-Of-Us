@@ -23,13 +23,6 @@ namespace TownOfUs.Roles
             Scale = 1.4f;
         }
 
-        protected override void IntroPrefix(IntroCutscene._CoBegin_d__14 __instance)
-        {
-            var executionerteam = new List<PlayerControl>();
-            executionerteam.Add(PlayerControl.LocalPlayer);
-            __instance.yourTeam = executionerteam;
-        }
-
         internal override bool EABBNOODFGL(ShipStatus __instance)
         {
             if (Player.Data.IsDead) return true;
