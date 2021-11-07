@@ -16,7 +16,7 @@ namespace TownOfUs.CrewmateRoles.TimeLordMod
             var role = Role.GetRole<TimeLord>(PlayerControl.LocalPlayer);
             if (!PlayerControl.LocalPlayer.CanMove) return false;
             if (PlayerControl.LocalPlayer.Data.IsDead) return false;
-            var flag2 = (role.TimeLordRewindTimer() == 0f) & !RecordRewind.rewinding;
+            var flag2 = (role.TimeLordRewindTimer(role) == 0f) & !RecordRewind.rewinding;
             if (!flag2) return false;
             if (!__instance.enabled) return false;
             StartStop.StartRewind(role);

@@ -108,7 +108,7 @@ namespace TownOfUs.Patches
                     var modifier = Modifier.GetModifier(PlayerControl.LocalPlayer);
                     if(modifier.GetType() == typeof(Lover))
                     {
-                        ModifierText.text = $"<size=3>Modifier: {modifier.TaskText()}</size>";
+                        ModifierText.text = $"<size=3>{modifier.TaskText()}</size>";
                         ModifierText.color = modifier.Color;
                         ModifierText.transform.position =
                             __instance.__4__this.transform.position - new Vector3(0f, -1f, 0f);

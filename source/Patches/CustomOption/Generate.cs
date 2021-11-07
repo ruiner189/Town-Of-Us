@@ -430,7 +430,7 @@ namespace TownOfUs.CustomOption
             Swapper =
                 new CustomHeaderOption(num++, "<color=#66E666FF>Swapper</color>");
             SwapperMax =
-                new CustomNumberOption(num++, "Max Swappers", 1, 1, 15, 1);
+                new CustomNumberOption(num++, "Max Swappers", 1, 1, 1, 1);
 
             // Engineer Options
             Engineer =
@@ -459,7 +459,7 @@ namespace TownOfUs.CustomOption
             TimeLord =
                 new CustomHeaderOption(num++, "<color=#0000FFFF>Time Lord</color>");
             TimeLordMax =
-                new CustomNumberOption(num++, "Max Timelords", 1, 1, 15, 1);
+                new CustomNumberOption(num++, "Max Timelords", 1, 1, 1, 1);
             RewindRevive = 
                 new CustomToggleOption(num++, "Revive During Rewind", false);
             RewindDuration = 

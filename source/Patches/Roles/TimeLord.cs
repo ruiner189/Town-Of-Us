@@ -16,10 +16,18 @@ namespace TownOfUs.Roles
             Scale = 1.4f;
         }
 
+        public float GetRewindDuration()
+        {
+            var value = CustomGameOptions.RewindDuration;
+            if (Tier4) return value * 1.25f;
+            if (Tier3) return value * 1.125f;
+            return value;
+        }
+
         public DateTime StartRewind { get; set; }
         public DateTime FinishRewind { get; set; }
 
-        public float TimeLordRewindTimer()
+        public float TimeLordRewindTimer(TimeLord timeLord)
         {
             var utcNow = DateTime.UtcNow;
 
@@ -30,7 +38,7 @@ namespace TownOfUs.Roles
             if (RecordRewind.rewinding)
             {
                 timespan = utcNow - StartRewind;
-                num = CustomGameOptions.RewindDuration * 1000f / 3f;
+                num = timeLord.GetRewindDuration() * 1000f / 3f;
             }
             else
             {
@@ -44,6 +52,9 @@ namespace TownOfUs.Roles
             return (num - (float) timespan.TotalMilliseconds) / 1000f;
         }
 
+        protected override void OnTierUp() {
+            if (Tier2) base.OnTierUp();
+        }
 
         public float GetCooldown()
         {

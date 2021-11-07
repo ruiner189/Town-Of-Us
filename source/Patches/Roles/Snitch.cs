@@ -28,6 +28,7 @@ namespace TownOfUs.Roles
         public bool OneTaskLeft => TasksLeft <= 1;
         public bool TasksDone => TasksLeft <= 0;
 
+        protected override void OnTierUp() { return; }
 
         internal override bool Criteria()
         {
