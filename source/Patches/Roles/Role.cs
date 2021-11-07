@@ -94,10 +94,18 @@ namespace TownOfUs.Roles
             if (!oldFlag && flag) OnTierUp();
         }
 
+        public bool Local => PlayerControl.LocalPlayer == Player;
 
         protected virtual void OnTierUp()
         {
-
+            if (CustomGameOptions.RoleProgressionOn)
+            {
+                if (Local)
+                {
+                    if(CustomGameOptions.RoleProgressionFlash)
+                        Utils.FlashCoroutine(Color);
+                }
+            }
         }
 
         protected internal bool Hidden { get; set; } = false;
@@ -193,9 +201,9 @@ namespace TownOfUs.Roles
                 Snitch snitch = (Snitch)this;
                 var localPlayer = PlayerControl.LocalPlayer;
                 if (localPlayer.Data.IsImpostor) {
-                    return !snitch.Hidden;
+                    return snitch.OneTaskLeft;
                 } else if (Role.GetRole(localPlayer).Faction == Faction.Neutral) {
-                    return !snitch.Hidden && CustomGameOptions.SnitchSeesNeutrals;
+                    return snitch.OneTaskLeft && CustomGameOptions.SnitchSeesNeutrals;
                 }
             }
             return false;

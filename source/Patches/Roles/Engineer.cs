@@ -31,6 +31,7 @@ namespace TownOfUs.Roles
 
         protected override void OnTierUp()
         {
+            base.OnTierUp();
             if (CustomGameOptions.RoleProgressionOn)
             {
                 if (RemainingRounds > 0 && UsedThisRound)
