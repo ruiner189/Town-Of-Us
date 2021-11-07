@@ -57,6 +57,8 @@ namespace TownOfUs.Roles
         protected internal int TasksLeft { get; set; }
         protected internal int TotalTasks { get; set; }
 
+        //protected internal bool ShowRoleFlag => SelfCriteria() || ImpostorCriteria() || DeadCriteria();
+
         protected bool Tier1 = false;
         public bool GetTier1 => Tier1;
         public void SetTier1(bool flag) {
@@ -64,8 +66,6 @@ namespace TownOfUs.Roles
             Tier1 = flag;
             if (!oldFlag && flag) OnTierUp();
         }
-
-
 
         protected bool Tier2 = false;
         public bool GetTier2 => Tier2;
@@ -151,7 +151,12 @@ namespace TownOfUs.Roles
                 Player.Data.HatId == 0U ? 1.5f : 2.0f,
                 -0.5f
             );
-            return (DeadCriteria() || ImpostorCriteria() || LoverCriteria() || SelfCriteria());
+            return (DeadCriteria() || ImpostorCriteria() || LoverCriteria() || SelfCriteria() || SnitchCriteria());
+        }
+
+        internal virtual bool ColorCriteria()
+        {
+            return SelfCriteria() || DeadCriteria() || ImpostorCriteria() || SnitchCriteria();
         }
 
         internal bool DeadCriteria()
@@ -180,6 +185,20 @@ namespace TownOfUs.Roles
         internal bool SelfCriteria()
         {
             return GetRole(PlayerControl.LocalPlayer) == this;
+        }
+
+        internal bool SnitchCriteria()
+        {
+            if(GetType() == typeof(Snitch)){
+                Snitch snitch = (Snitch)this;
+                var localPlayer = PlayerControl.LocalPlayer;
+                if (localPlayer.Data.IsImpostor) {
+                    return !snitch.Hidden;
+                } else if (Role.GetRole(localPlayer).Faction == Faction.Neutral) {
+                    return !snitch.Hidden && CustomGameOptions.SnitchSeesNeutrals;
+                }
+            }
+            return false;
         }
 
         protected virtual void IntroPrefix(IntroCutscene._CoBegin_d__14 __instance)
@@ -231,30 +250,31 @@ namespace TownOfUs.Roles
             return true;
         }
 
-        protected virtual string NameText(PlayerVoteArea player = null)
+        protected virtual string NameText(bool revealTasks, bool revealRole, bool revealModifier, bool revealLover, PlayerVoteArea player = null)
         {
             if (CamouflageUnCamouflage.IsCamoed && player == null) return "";
 
             if (Player == null) return "";
 
-
-            if (!ImpostorCriteria() && !DeadCriteria() && !SelfCriteria() && LoverCriteria())
-                return $"{Player.name} ♥";
-
             String PlayerName = Player.name;
-            if (Faction == Faction.Crewmates) PlayerName += $" ({TotalTasks - TasksLeft}/{TotalTasks})";
-            if (Player.Is(ModifierEnum.Lover)) PlayerName += " ♥";
+
+            if ((revealModifier || revealLover) && Player.isLover())
+                PlayerName += $" ♥";
+
+            if(revealTasks)
+                PlayerName += $" ({TotalTasks - TasksLeft}/{TotalTasks})";
 
             if (player != null && (MeetingHud.Instance.state == MeetingHud.VoteStates.Proceeding ||
                                    MeetingHud.Instance.state == MeetingHud.VoteStates.Results)) return PlayerName;
 
-            if (!CustomGameOptions.RoleUnderName && player == null) return PlayerName;
+            if (!revealRole) return PlayerName;
 
             Player.nameText.transform.localPosition = new Vector3(
                 0f,
                 Player.Data.HatId == 0U ? 1.5f : 2.0f,
                 -0.5f
             );
+
             return PlayerName + "\n" + Name;
         }
 
@@ -574,13 +594,20 @@ namespace TownOfUs.Roles
                     var role = GetRole(player);
                     if (role != null && role.Criteria())
                     {
-                        if (role.LoverCriteria() && !role.DeadCriteria() && !role.ImpostorCriteria() && !role.SelfCriteria())
-                        {
-                            player.NameText.text = role.NameText();
-                            continue;
-                        }
-                        player.NameText.color = role.Color;
-                        player.NameText.text = role.NameText(player);
+                        bool selfFlag = role.SelfCriteria();
+                        bool deadFlag = role.DeadCriteria();
+                        bool impostorFlag = role.ImpostorCriteria();
+                        bool loverFlag = role.LoverCriteria();
+                        bool snitchFlag = role.SnitchCriteria();
+                        player.NameText.text = role.NameText(
+                            selfFlag || deadFlag,
+                            selfFlag || deadFlag || impostorFlag || snitchFlag,
+                            selfFlag || deadFlag,
+                            loverFlag,
+                            player
+                        );
+                        if(role.ColorCriteria())
+                            player.NameText.color = role.Color;
                     }
                     else
                     {
@@ -616,16 +643,21 @@ namespace TownOfUs.Roles
                     if (role != null)
                         if (role.Criteria())
                         {
-                           
-                            if (role.LoverCriteria() && !role.DeadCriteria() && !role.ImpostorCriteria() && !role.SelfCriteria())
-                            {
-                                player.nameText.text = role.NameText();
-                                continue;
-                            }
 
-                            player.nameText.color = role.Color;
-                            player.nameText.text = role.NameText();
-                            continue;
+                            bool selfFlag = role.SelfCriteria();
+                            bool deadFlag = role.DeadCriteria();
+                            bool impostorFlag = role.ImpostorCriteria();
+                            bool loverFlag = role.LoverCriteria();
+                            bool snitchFlag = role.SnitchCriteria();
+                            player.nameText.text = role.NameText(
+                                selfFlag || deadFlag,
+                                selfFlag || deadFlag || impostorFlag || snitchFlag,
+                                selfFlag || deadFlag,
+                                loverFlag
+                             );
+
+                            if (role.ColorCriteria())
+                                player.nameText.color = role.Color;
                         }
 
                     if (player.Data != null && PlayerControl.LocalPlayer.Data.IsImpostor && player.Data.IsImpostor) continue;
