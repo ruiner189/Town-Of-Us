@@ -1,5 +1,5 @@
 # Town of Us: Redux
-A Town of Us Fork with the goal of adding more customization and making it similar to Town of Salem. More roles influenced from Town of Salem is planned.
+A Town of Us Fork with the goal of adding more customization and making it similar to Town of Salem. More roles influenced from Town of Salem is planned. Join our [discord](https://discord.gg/pvQDmKBk7y) to help improve the mod, or to play with other people!
 
 ![Roles](./Images/Roles3.png)
 
@@ -735,7 +735,7 @@ Custom hats have been added, made by some very talented artists. These are mostl
 
 -----------------------
 # Bug / Suggestions
-If you have any bugs or any need to contact me, join the [Discord server](https://discord.gg/polus) or create a ticket on GitHub.
+If you have any bugs or any need to contact me, join the [Discord server](https://discord.gg/pvQDmKBk7y) or create a ticket on GitHub.
 
 -----------------------
 # Credits & Resources
