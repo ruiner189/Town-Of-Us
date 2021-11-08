@@ -449,8 +449,12 @@ namespace TownOfUs.Roles
                 var result = true;
                 foreach (var role in AllRoles)
                 {
-                    var isend = role.EABBNOODFGL(__instance);
-                    if (!isend) result = false;
+                    var roleIsEnd = role.EABBNOODFGL(__instance);
+                    var modifier = Modifier.GetModifier(role.Player);
+                    bool modifierIsEnd = true;
+                    if (modifier != null)
+                        modifierIsEnd = modifier.EABBNOODFGL(__instance);
+                    if (!roleIsEnd || !modifierIsEnd) result = false;
                 }
 
                 if (!NobodyEndCriteria(__instance)) result = false;

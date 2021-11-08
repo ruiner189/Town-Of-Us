@@ -21,23 +21,6 @@ namespace TownOfUs.Roles
             ModifierType = ModifierEnum.Lover;
         }
 
-        /**
-        public Lover(PlayerControl player, int num, bool loverImpostor) : base(player)
-        {
-            var imp = num == 2 && loverImpostor;
-            Name = imp ? "Loving Impostor" : "Lover";
-            Color = Patches.Colors.Lovers;
-            ImpostorText = () =>
-                "You are in " + ColorString + "Love</color> with " + ColorString + OtherLover.Player.name;
-            TaskText = () => $"Stay alive with your love {OtherLover.Player.name} \n and win together";
-            RoleType = imp ? RoleEnum.LoverImpostor : RoleEnum.Lover;
-            Num = num;
-            LoverImpostor = loverImpostor;
-            Scale = imp ? 2.3f : 1f;
-            Faction = imp ? Faction.Impostors : Faction.Crewmates;
-        }
-        */
-
         public Lover OtherLover { get; set; }
         public bool LoveCoupleWins { get; set; }
         public int Num { get; set; }
@@ -55,11 +38,9 @@ namespace TownOfUs.Roles
 
         public static void Gen(List<PlayerControl> crewmates, List<PlayerControl> impostors)
         {
-            PluginSingleton<TownOfUs>.Instance.Log.LogMessage($"Lovers 1 {crewmates} -- {impostors}");
             // Check to make sure there is enough players for lovers
             if (crewmates.Count <= 1 && impostors.Count < 1) return;
 
-            PluginSingleton<TownOfUs>.Instance.Log.LogMessage($"Lovers 2");
             // Chooses a completely random player as the first lover.
             var allPlayers = new List<PlayerControl>();
             allPlayers.AddRange(crewmates);
@@ -70,7 +51,6 @@ namespace TownOfUs.Roles
 
             var isImpostor = impostors.Contains(firstLover);
 
-            PluginSingleton<TownOfUs>.Instance.Log.LogMessage($"Lovers 3 : {num}");
             // Chooses second lover. If first is an impostor, the second will not be.
             PlayerControl secondLover;
             if (isImpostor) {
@@ -81,7 +61,6 @@ namespace TownOfUs.Roles
                 secondLover = allPlayers[num];
             }
 
-            PluginSingleton<TownOfUs>.Instance.Log.LogMessage($"Lovers 4 : {num}");
             var writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId,
                 (byte) CustomRPC.SetCouple, SendOption.Reliable, -1);
             writer.Write(firstLover.PlayerId);
@@ -96,7 +75,7 @@ namespace TownOfUs.Roles
             PluginSingleton<TownOfUs>.Instance.Log.LogMessage($"Lovers 5 {writer}");
         }
 
-        internal bool EABBNOODFGL(ShipStatus __instance)
+        internal override bool EABBNOODFGL(ShipStatus __instance)
         {
             if (FourPeopleLeft()) return false;
 

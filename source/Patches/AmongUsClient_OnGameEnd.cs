@@ -1,6 +1,7 @@
 using System.Linq;
 using HarmonyLib;
 using Il2CppSystem.Collections.Generic;
+using Reactor;
 using TownOfUs.Roles;
 using TownOfUs.Roles.Modifiers;
 
@@ -23,76 +24,96 @@ namespace TownOfUs
     {
         public static void Prefix()
         {
-            var jester = Role.AllRoles.FirstOrDefault(x => x.RoleType == RoleEnum.Jester && ((Jester) x).VotedOut);
-            var executioner = Role.AllRoles.FirstOrDefault(x =>
-                x.RoleType == RoleEnum.Executioner && ((Executioner) x).TargetVotedOut);
             if (Role.NobodyWins)
             {
                 TempData.winners = new List<WinningPlayerData>();
                 return;
             }
-
-            if (jester != null)
+            foreach(var role in Role.AllRoles)
             {
-                var winners = Utils.potentialWinners.Where(x => x.Name == jester.PlayerName).ToList();
-                TempData.winners = new List<WinningPlayerData>();
-                foreach (var win in winners)
+                var type = role.RoleType;
+
+                if(type == RoleEnum.Jester)
                 {
-                    win.IsDead = false;
-                    TempData.winners.Add(win);
+                    var jester = (Jester)role;
+                    if (jester.VotedOut) {
+                        var winners = Utils.potentialWinners.Where(x => x.Name == jester.PlayerName).ToList();
+                        TempData.winners = new List<WinningPlayerData>();
+                        foreach (var win in winners)
+                        {
+                            win.IsDead = false;
+                            TempData.winners.Add(win);
+                        }
+
+                        return;
+                    }
+                } 
+                else if (type == RoleEnum.Executioner)
+                {
+                    var executioner = (Executioner) role;
+                    if (executioner.TargetVotedOut)
+                    {
+                        var winners = Utils.potentialWinners.Where(x => x.Name == executioner.PlayerName).ToList();
+                        TempData.winners = new List<WinningPlayerData>();
+                        foreach (var win in winners) TempData.winners.Add(win);
+                        return;
+                    }
                 }
-
-                return;
+                else if (type == RoleEnum.Glitch)
+                {
+                    var glitch = (Glitch) role;
+                    if (glitch.GlitchWins)
+                    {
+                        var winners = Utils.potentialWinners.Where(x => x.Name == glitch.PlayerName).ToList();
+                        TempData.winners = new List<WinningPlayerData>();
+                        foreach (var win in winners) TempData.winners.Add(win);
+                        return;
+                    }
+                }
+                else if (type == RoleEnum.Arsonist)
+                {
+                    var arsonist = (Arsonist)role;
+                    if (arsonist.ArsonistWins)
+                    {
+                        var winners = Utils.potentialWinners.Where(x => x.Name == arsonist.PlayerName).ToList();
+                        TempData.winners = new List<WinningPlayerData>();
+                        foreach (var win in winners) TempData.winners.Add(win);
+                        return;
+                    }
+                } else if (type == RoleEnum.Phantom)
+                {
+                    var phantom = (Phantom)role;
+                    if(phantom.CompletedTasks)
+                    {
+                        var winners = Utils.potentialWinners.Where(x => x.Name == phantom.PlayerName).ToList();
+                        TempData.winners = new List<WinningPlayerData>();
+                        foreach (var win in winners) TempData.winners.Add(win);
+                    }
+                }
             }
 
-            if (executioner != null)
+            foreach(var modifier in Modifier.AllModifiers)
             {
-                var winners = Utils.potentialWinners.Where(x => x.Name == executioner.PlayerName).ToList();
-                TempData.winners = new List<WinningPlayerData>();
-                foreach (var win in winners) TempData.winners.Add(win);
-                return;
-            }
+                var type = modifier.ModifierType;
 
-            var lover = Modifier.AllModifiers
-                .Where(x => x.ModifierType == ModifierEnum.Lover)
-                .FirstOrDefault(x => ((Lover) x).LoveCoupleWins);
-            if (lover != null)
-            {
-                var lover1 = (Lover) lover;
-                var lover2 = lover1.OtherLover;
-                var winners = Utils.potentialWinners
-                    .Where(x => x.Name == lover1.Player.name || x.Name == lover2.Player.name).ToList();
-                TempData.winners = new List<WinningPlayerData>();
-                foreach (var win in winners) TempData.winners.Add(win);
-                return;
-            }
+                if(type == ModifierEnum.Lover)
+                {
 
-            var glitch = Role.AllRoles.FirstOrDefault(x => x.RoleType == RoleEnum.Glitch && ((Glitch) x).GlitchWins);
-            if (glitch != null)
-            {
-                var winners = Utils.potentialWinners.Where(x => x.Name == glitch.PlayerName).ToList();
-                TempData.winners = new List<WinningPlayerData>();
-                foreach (var win in winners) TempData.winners.Add(win);
-                return;
-            }
+                    var lover = (Lover)modifier;
+                    if (lover.LoveCoupleWins)
+                    {
+                        var otherLover = lover.OtherLover;
+                        List<WinningPlayerData> winners = new List<WinningPlayerData>();
+                        foreach(var player in Utils.potentialWinners){
+                            if (player.Name == lover.PlayerName ||
+                               player.Name == otherLover.PlayerName) winners.Add(player);
+                        }
+                        TempData.winners = new List<WinningPlayerData>();
+                        foreach (var win in winners) TempData.winners.Add(win);
+                        return;
+                    }
 
-            var arsonist =
-                Role.AllRoles.FirstOrDefault(x => x.RoleType == RoleEnum.Arsonist && ((Arsonist) x).ArsonistWins);
-            if (arsonist != null)
-            {
-                var winners = Utils.potentialWinners.Where(x => x.Name == arsonist.PlayerName).ToList();
-                TempData.winners = new List<WinningPlayerData>();
-                foreach (var win in winners) TempData.winners.Add(win);
-                return;
-            }
-
-            var phantom =
-                Role.AllRoles.FirstOrDefault(x => x.RoleType == RoleEnum.Phantom && ((Phantom) x).CompletedTasks);
-            if (phantom != null)
-            {
-                var winners = Utils.potentialWinners.Where(x => x.Name == phantom.PlayerName).ToList();
-                TempData.winners = new List<WinningPlayerData>();
-                foreach (var win in winners) TempData.winners.Add(win);
+                }
             }
         }
     }

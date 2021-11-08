@@ -94,6 +94,15 @@ namespace TownOfUs
             crewmates.Shuffle();
             impostors.Shuffle();
 
+            while(CrewmateRoles.Count + NeutralRoles.Count < crewmates.Count)
+            {
+                CrewmateRoles.Add((typeof(Crewmate), CustomRPC.SetCrewmate, 1));
+            }
+            while(ImpostorRoles.Count < impostors.Count)
+            {
+                ImpostorRoles.Add((typeof(Impostor), CustomRPC.SetImpostor, 1));
+            }
+
             SortRoles(CrewmateRoles);
             SortRoles(NeutralRoles, CustomGameOptions.MaxNeutralRoles);
             SortRoles(ImpostorRoles, Math.Min(impostors.Count, CustomGameOptions.MaxImpostorRoles));
@@ -348,11 +357,11 @@ namespace TownOfUs
                         var lover1 = Utils.PlayerById(id);
                         var lover2 = Utils.PlayerById(id2);
 
-                        var roleLover1 = new Lover(lover1);
-                        var roleLover2 = new Lover(lover2);
+                        var modifierLover1 = new Lover(lover1);
+                        var modifierLover2 = new Lover(lover2);
 
-                        roleLover1.OtherLover = roleLover2;
-                        roleLover2.OtherLover = roleLover1;
+                        modifierLover1.OtherLover = modifierLover2;
+                        modifierLover2.OtherLover = modifierLover1;
 
                         break;
 
