@@ -20,7 +20,7 @@ namespace TownOfUs
                 $"Ping: {AmongUsClient.Instance.Ping}ms\n" +
                 (!MeetingHud.Instance
                     ? "<color=#00FF00FF>Original mod by slushiegoose</color>\n" +
-                    "<color=#00FF00FF>Adapted by Ruiner189</color" +
+                    "<color=#00FF00FF>Adapted by Ruiner189</color>" +
                     ""
                     : "");
         }
