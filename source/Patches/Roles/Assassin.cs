@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using TMPro;
+using TownOfUs.Patches;
 using UnityEngine;
 
 namespace TownOfUs.Roles
@@ -10,21 +11,9 @@ namespace TownOfUs.Roles
         public Dictionary<byte, (GameObject, GameObject, TMP_Text)> Buttons = new Dictionary<byte, (GameObject, GameObject, TMP_Text)>();
 
 
-        public Dictionary<string, Color> ColorMapping = new Dictionary<string, Color>
-        {
-            { "Mayor", new Color(0.44f, 0.31f, 0.66f, 1f) },
-            { "Sheriff", Color.yellow },
-            { "Engineer", new Color(1f, 0.65f, 0.04f, 1f) },
-            { "Swapper", new Color(0.4f, 0.9f, 0.4f, 1f) },
-            { "Investigator", new Color(0f, 0.7f, 0.7f, 1f) },
-            { "Time Lord", new Color(0f, 0f, 1f, 1f) },
-            { "Lover", new Color(1f, 0.4f, 0.8f, 1f) },
-            { "Medic", new Color(0f, 0.4f, 0f, 1f) },
-            { "Seer", new Color(1f, 0.8f, 0.5f, 1f) },
-            { "Spy", new Color(0.8f, 0.64f, 0.8f, 1f) },
-            { "Snitch", new Color(0.83f, 0.69f, 0.22f, 1f) },
-            { "Altruist", new Color(0.4f, 0f, 0f, 1f) }
-        };
+        private Dictionary<string, Color> ColorMapping = new Dictionary<string, Color>();
+
+        public Dictionary<string, Color> SortedColorMapping;
 
         public Dictionary<byte, string> Guesses = new Dictionary<byte, string>();
 
@@ -34,28 +23,47 @@ namespace TownOfUs.Roles
             Name = "Assassin";
             ImpostorText = () => "Kill during meetings if you can guess their roles";
             TaskText = () => "Guess the roles of the people and kill them mid-meeting";
-            Color = Palette.ImpostorRed;
+            Color = Patches.Colors.Impostor;
             RoleType = RoleEnum.Assassin;
             Faction = Faction.Impostors;
 
             RemainingKills = CustomGameOptions.AssassinKills;
 
+            // Adds all the roles that have a non-zero chance of being in the game.
+            if (CustomGameOptions.MayorOn > 0) ColorMapping.Add("Mayor", Colors.Mayor);
+            if (CustomGameOptions.SheriffOn > 0) ColorMapping.Add("Sheriff", Colors.Sheriff);
+            if (CustomGameOptions.EngineerOn > 0) ColorMapping.Add("Engineer", Colors.Engineer);
+            if (CustomGameOptions.SwapperOn > 0) ColorMapping.Add("Swapper", Colors.Swapper);
+            if (CustomGameOptions.InvestigatorOn > 0) ColorMapping.Add("Investigator", Colors.Investigator);
+            if (CustomGameOptions.TimeLordOn > 0) ColorMapping.Add("Time Lord", Colors.TimeLord);
+           // if (CustomGameOptions.LoversOn > 0) ColorMapping.Add("Lover", Colors.Lovers);
+            if (CustomGameOptions.MedicOn > 0) ColorMapping.Add("Medic", Colors.Medic);
+            if (CustomGameOptions.SeerOn > 0) ColorMapping.Add("Seer", Colors.Seer);
+            if (CustomGameOptions.SpyOn > 0) ColorMapping.Add("Spy", Colors.Spy);
+            if (CustomGameOptions.SnitchOn > 0) ColorMapping.Add("Snitch", Colors.Snitch);
+            if (CustomGameOptions.AltruistOn > 0) ColorMapping.Add("Altruist", Colors.Altruist);
+
+            // Add Neutral roles if enabled
             if (CustomGameOptions.AssassinGuessNeutrals)
             {
-                ColorMapping.Add("Jester", new Color(1f, 0.75f, 0.8f, 1f));
-                ColorMapping.Add("Shifter", new Color(0.6f, 0.6f, 0.6f, 1f));
-                ColorMapping.Add("Executioner", new Color(0.55f, 0.25f, 0.02f, 1f));
-                ColorMapping.Add("The Glitch", Color.green);
-                ColorMapping.Add("Arsonist", new Color(1f, 0.3f, 0f));
+                if(CustomGameOptions.JesterOn > 0) ColorMapping.Add("Jester", Colors.Jester);
+                if(CustomGameOptions.ShifterOn > 0) ColorMapping.Add("Shifter", Colors.Shifter);
+                if(CustomGameOptions.ExecutionerOn > 0) ColorMapping.Add("Executioner", Colors.Executioner);
+                if(CustomGameOptions.GlitchOn > 0) ColorMapping.Add("The Glitch", Colors.Glitch);
+                if(CustomGameOptions.ArsonistOn > 0) ColorMapping.Add("Arsonist", Colors.Arsonist);
             }
 
-            if (CustomGameOptions.AssassinCrewmateGuess) ColorMapping.Add("Crewmate", Color.white);
+            // Add vanilla crewmate if enabled
+            if (CustomGameOptions.AssassinCrewmateGuess) ColorMapping.Add("Crewmate", Colors.Crewmate);
+
+            // Sorts the list alphabetically. 
+            SortedColorMapping = ColorMapping.OrderBy(x => x.Key).ToDictionary(x => x.Key, x => x.Value);
         }
 
         public bool GuessedThisMeeting { get; set; } = false;
 
         public int RemainingKills { get; set; }
 
-        public List<string> PossibleGuesses => ColorMapping.Keys.ToList();
+        public List<string> PossibleGuesses => SortedColorMapping.Keys.ToList();
     }
 }

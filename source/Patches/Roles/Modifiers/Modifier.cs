@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Hazel;
+using Reactor;
 using Reactor.Extensions;
 using TownOfUs.Extensions;
 using UnityEngine;
@@ -12,7 +13,7 @@ namespace TownOfUs.Roles.Modifiers
     public abstract class Modifier
     {
         public static readonly Dictionary<byte, Modifier> ModifierDictionary = new Dictionary<byte, Modifier>();
-        protected internal Func<string> TaskText;
+        public Func<string> TaskText;
 
         protected Modifier(PlayerControl player)
         {
@@ -22,7 +23,19 @@ namespace TownOfUs.Roles.Modifiers
 
         public static IEnumerable<Modifier> AllModifiers => ModifierDictionary.Values.ToList();
         protected internal string Name { get; set; }
-        public PlayerControl Player { get; set; }
+        public string PlayerName { get; set; }
+        private PlayerControl _player { get; set; }
+        public PlayerControl Player
+        {
+            get => _player;
+            set
+            {
+                if (_player != null) _player.nameText.color = Color.white;
+
+                _player = value;
+                PlayerName = value.Data.PlayerName;
+            }
+        }
         protected internal Color Color { get; set; }
         protected internal ModifierEnum ModifierType { get; set; }
         public string ColorString => "<color=#" + Color.ToHtmlStringRGBA() + ">";
@@ -30,6 +43,11 @@ namespace TownOfUs.Roles.Modifiers
         private bool Equals(Modifier other)
         {
             return Equals(Player, other.Player) && ModifierType == other.ModifierType;
+        }
+
+        internal virtual bool EABBNOODFGL(ShipStatus __instance)
+        {
+            return true;
         }
 
         public override bool Equals(object obj)
@@ -63,6 +81,12 @@ namespace TownOfUs.Roles.Modifiers
         {
             return (from entry in ModifierDictionary where entry.Key == player.PlayerId select entry.Value)
                 .FirstOrDefault();
+        }
+
+        public virtual List<PlayerControl> GetTeammates()
+        {
+            var team = new List<PlayerControl>();
+            return team;
         }
 
         public static T GetModifier<T>(PlayerControl player) where T : Modifier

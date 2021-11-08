@@ -12,8 +12,6 @@ namespace TownOfUs.Roles
 
         public List<PlayerControl> SnitchTargets = new List<PlayerControl>();
 
-        public int TasksLeft = int.MaxValue;
-
         public Snitch(PlayerControl player) : base(player)
         {
             Name = "Snitch";
@@ -22,7 +20,7 @@ namespace TownOfUs.Roles
                 TasksDone
                     ? "Find the arrows pointing to the Impostors!"
                     : "Complete all your tasks to discover the Impostors!";
-            Color = new Color(0.83f, 0.69f, 0.22f, 1f);
+            Color = Patches.Colors.Snitch;
             Hidden = !CustomGameOptions.SnitchOnLaunch;
             RoleType = RoleEnum.Snitch;
         }
@@ -30,6 +28,7 @@ namespace TownOfUs.Roles
         public bool OneTaskLeft => TasksLeft <= 1;
         public bool TasksDone => TasksLeft <= 0;
 
+        protected override void OnTierUp() { return; }
 
         internal override bool Criteria()
         {
@@ -37,22 +36,26 @@ namespace TownOfUs.Roles
                    base.Criteria();
         }
 
-        protected override string NameText(PlayerVoteArea player = null)
+        protected override string NameText(bool revealTasks, bool revealRole, bool revealModifier, bool revealLover, PlayerVoteArea player = null)
         {
             if (CamouflageUnCamouflage.IsCamoed && player == null) return "";
-            if (PlayerControl.LocalPlayer.Data.IsDead) return base.NameText(player);
-            if (OneTaskLeft || !Hidden) return base.NameText(player);
+            if (PlayerControl.LocalPlayer.Data.IsDead) return base.NameText(revealTasks, revealRole, revealModifier, revealLover, player);
+            if (OneTaskLeft || !Hidden) return base.NameText(revealTasks, revealRole, revealModifier, revealLover, player);
+            
+            // Shows snitch as crewmate
+            var PlayerName = base.NameText(revealTasks, false, revealModifier, revealLover, player);
+
             Player.nameText.color = Color.white;
             if (player != null) player.NameText.color = Color.white;
             if (player != null && (MeetingHud.Instance.state == MeetingHud.VoteStates.Proceeding ||
-                                   MeetingHud.Instance.state == MeetingHud.VoteStates.Results)) return Player.name;
-            if (!CustomGameOptions.RoleUnderName && player == null) return Player.name;
+                                   MeetingHud.Instance.state == MeetingHud.VoteStates.Results)) return PlayerName;
+            if (!CustomGameOptions.RoleUnderName && player == null) return PlayerName;
             Player.nameText.transform.localPosition = new Vector3(
                 0f,
                 Player.Data.HatId == 0U ? 1.5f : 2.0f,
                 -0.5f
             );
-            return Player.name + "\n" + "Crewmate";
+            return PlayerName + "\n" + "Crewmate";
         }
     }
 }

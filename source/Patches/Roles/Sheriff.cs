@@ -10,12 +10,13 @@ namespace TownOfUs.Roles
             Name = "Sheriff";
             ImpostorText = () => "Shoot the <color=#FF0000FF>Impostor</color>";
             TaskText = () => "Kill off the impostor but don't kill crewmates.";
-            Color = Color.yellow;
+            Color = Patches.Colors.Sheriff;
             RoleType = RoleEnum.Sheriff;
         }
 
         public PlayerControl ClosestPlayer;
         public DateTime LastKilled { get; set; }
+        public bool FirstRound { get; set; } = false;
 
         public float SheriffKillTimer()
         {

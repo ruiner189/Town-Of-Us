@@ -22,21 +22,27 @@ namespace TownOfUs.CrewmateRoles.MedicMod
             if (CustomGameOptions.NotificationShield == NotificationOptions.Everyone)
                 Coroutines.Start(Utils.FlashCoroutine(new Color(0f, 0.5f, 0f, 1f)));
 
+            PluginSingleton<TownOfUs>.Instance.Log.LogMessage($"Flag? {flag}");
             if (!flag)
                 return;
 
             var player = Utils.PlayerById(playerId);
-            foreach (var role in Role.GetRoles(RoleEnum.Medic))
-                if (((Medic) role).ShieldedPlayer.PlayerId == playerId)
+            PluginSingleton<TownOfUs>.Instance.Log.LogMessage($"Player? {player}");
+            var medicPlayer = Utils.PlayerById(medicId);
+            PluginSingleton<TownOfUs>.Instance.Log.LogMessage($"Medic? {medicPlayer}");
+            if (medicPlayer.Is(RoleEnum.Medic))
+            {
+                var medic = Role.GetRole<Medic>(medicPlayer);
+                if(medic.ShieldedPlayer.PlayerId == playerId)
                 {
-                    ((Medic) role).ShieldedPlayer = null;
-                    ((Medic) role).exShielded = player;
-                    System.Console.WriteLine(player.name + " Is Ex-Shielded");
+                    medic.ShieldedPlayer = null;
+                    medic.exShielded = player;
+                    PluginSingleton<TownOfUs>.Instance.Log.LogMessage($"{player.name} is Ex-Shielded");
                 }
+            }
 
             player.myRend.material.SetColor("_VisorColor", Palette.VisorColor);
             player.myRend.material.SetFloat("_Outline", 0f);
-            //System.Console.WriteLine("Broke " + player.name + "'s shield");
         }
 
         [HarmonyPriority(Priority.First)]
@@ -56,11 +62,19 @@ namespace TownOfUs.CrewmateRoles.MedicMod
                     writer.Write(target.PlayerId);
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
 
-                    System.Console.WriteLine(CustomGameOptions.ShieldBreaks + "- shield break");
-                    if (CustomGameOptions.ShieldBreaks)
-                        PlayerControl.LocalPlayer.SetKillTimer(PlayerControl.GameOptions.KillCooldown);
+                    if (CustomGameOptions.RoleProgressionOn)
+                    {
+                        if (!target.getMedic().GetTier3)
+                            PlayerControl.LocalPlayer.SetKillTimer(PlayerControl.GameOptions.KillCooldown);
+                        PluginSingleton<TownOfUs>.Instance.Log.LogMessage($"{target.getMedic().Player.PlayerId}, {target.PlayerId}, {!target.getMedic().GetTier3}");
+                        BreakShield(target.getMedic().Player.PlayerId, target.PlayerId, !target.getMedic().GetTier3);
+                    } else
+                    {
+                        if (CustomGameOptions.ShieldBreaks)
+                            PlayerControl.LocalPlayer.SetKillTimer(PlayerControl.GameOptions.KillCooldown);
+                        BreakShield(target.getMedic().Player.PlayerId, target.PlayerId, CustomGameOptions.ShieldBreaks);
+                    }
 
-                    BreakShield(target.getMedic().Player.PlayerId, target.PlayerId, CustomGameOptions.ShieldBreaks);
                 }
 
 

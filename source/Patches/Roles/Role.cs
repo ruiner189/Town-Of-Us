@@ -1,4 +1,4 @@
-using HarmonyLib;
+﻿using HarmonyLib;
 using Hazel;
 using System;
 using System.Collections.Generic;
@@ -11,6 +11,7 @@ using UnhollowerBaseLib;
 using UnityEngine;
 using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
+using Reactor;
 
 namespace TownOfUs.Roles
 {
@@ -22,13 +23,15 @@ namespace TownOfUs.Roles
 
         public List<KillButtonManager> ExtraButtons = new List<KillButtonManager>();
 
-        protected Func<string> ImpostorText;
-        protected Func<string> TaskText;
+        public Func<string> ImpostorText;
+        public Func<string> TaskText;
 
         protected Role(PlayerControl player)
         {
             Player = player;
             RoleDictionary.Add(player.PlayerId, this);
+            //TotalTasks = player.Data.Tasks.Count;
+            //TasksLeft = TotalTasks;
         }
 
         public static IEnumerable<Role> AllRoles => RoleDictionary.Values.ToList();
@@ -52,9 +55,67 @@ namespace TownOfUs.Roles
         protected internal Color Color { get; set; }
         protected internal RoleEnum RoleType { get; set; }
 
+        protected internal int TasksLeft { get; set; }
+        protected internal int TotalTasks { get; set; }
+
+        //protected internal bool ShowRoleFlag => SelfCriteria() || ImpostorCriteria() || DeadCriteria();
+
+        protected bool Tier1 = false;
+        public bool GetTier1 => Tier1;
+        public void SetTier1(bool flag) {
+            bool oldFlag = Tier1;
+            Tier1 = flag;
+            if (!oldFlag && flag) OnTierUp();
+        }
+
+        protected bool Tier2 = false;
+        public bool GetTier2 => Tier2;
+        public void SetTier2(bool flag)
+        {
+            bool oldFlag = Tier2;
+            Tier2 = flag;
+            if (!oldFlag && flag) OnTierUp();
+        }
+
+        protected bool Tier3 = false;
+        public bool GetTier3 => Tier3;
+        public void SetTier3(bool flag)
+        {
+            bool oldFlag = Tier3;
+            Tier3 = flag;
+            if (!oldFlag && flag) OnTierUp();
+        }
+
+        protected bool Tier4 = false;
+        public bool GetTier4 => Tier4;
+        public void SetTier4(bool flag)
+        {
+            bool oldFlag = Tier4;
+            Tier4 = flag;
+            if (!oldFlag && flag) OnTierUp();
+        }
+
+        public bool Local => PlayerControl.LocalPlayer.PlayerId == Player.PlayerId;
+
+        protected virtual void OnTierUp()
+        {
+            PluginSingleton<TownOfUs>.Instance.Log.LogMessage("Tier up!");
+            if (CustomGameOptions.RoleProgressionOn)
+            {
+                if (Local)
+                {
+                    PluginSingleton<TownOfUs>.Instance.Log.LogMessage("Local!");
+                    if (CustomGameOptions.RoleProgressionFlash)
+                    {
+                        PluginSingleton<TownOfUs>.Instance.Log.LogMessage("Flash!");
+                        Coroutines.Start(Utils.FlashCoroutine(Color, 0.5f, 0.2f));
+                    }
+                }
+            }
+        }
+
         protected internal bool Hidden { get; set; } = false;
 
-        //public static Faction Faction;
         protected internal Faction Faction { get; set; } = Faction.Crewmates;
 
         protected internal Color FactionColor
@@ -103,14 +164,74 @@ namespace TownOfUs.Roles
                 Player.Data.HatId == 0U ? 1.5f : 2.0f,
                 -0.5f
             );
+            return (DeadCriteria() || ImpostorCriteria() || LoverCriteria() || SelfCriteria() || SnitchCriteria());
+        }
+
+        internal virtual bool ColorCriteria()
+        {
+            return SelfCriteria() || DeadCriteria() || ImpostorCriteria() || SnitchCriteria();
+        }
+
+        internal bool DeadCriteria()
+        {
             if (PlayerControl.LocalPlayer.Data.IsDead && CustomGameOptions.DeadSeeRoles) return Utils.ShowDeadBodies;
+            return false;
+        }
+
+        internal bool ImpostorCriteria()
+        {
             if (Faction == Faction.Impostors && PlayerControl.LocalPlayer.Data.IsImpostor &&
                 CustomGameOptions.ImpostorSeeRoles) return true;
+            return false;
+        }
+
+        internal bool LoverCriteria()
+        {
+            if (PlayerControl.LocalPlayer.Is(ModifierEnum.Lover))
+            {
+                var lover = Modifier.GetModifier<Lover>(PlayerControl.LocalPlayer);
+                return lover.OtherLover.Player == Player;
+            }
+            return false;
+        }
+
+        internal bool SelfCriteria()
+        {
             return GetRole(PlayerControl.LocalPlayer) == this;
         }
 
-        protected virtual void IntroPrefix(IntroCutscene._CoBegin_d__14 __instance)
+        internal bool SnitchCriteria()
         {
+            if(GetType() == typeof(Snitch)){
+                Snitch snitch = (Snitch)this;
+                var localPlayer = PlayerControl.LocalPlayer;
+                if (localPlayer.Data.IsImpostor) {
+                    return snitch.OneTaskLeft;
+                } else if (Role.GetRole(localPlayer).Faction == Faction.Neutral) {
+                    return snitch.OneTaskLeft && CustomGameOptions.SnitchSeesNeutrals;
+                }
+            }
+            return false;
+        }
+
+        public virtual List<PlayerControl> GetTeammates()
+        {
+            var team = new List<PlayerControl>();
+            if (Faction == Faction.Impostors) {
+                foreach(var player in PlayerControl.AllPlayerControls)
+                {
+                    if (player.Data.IsImpostor) team.Add(player);
+                }
+            } else if (Faction == Faction.Neutral) {
+                team.Add(PlayerControl.LocalPlayer);
+            } else if (Faction == Faction.Crewmates) {
+                foreach (var player in PlayerControl.AllPlayerControls)
+                {
+                    team.Add(player);
+                }
+            }
+
+            return team;
         }
 
         public static void NobodyWinsFunc()
@@ -158,23 +279,32 @@ namespace TownOfUs.Roles
             return true;
         }
 
-        protected virtual string NameText(PlayerVoteArea player = null)
+        protected virtual string NameText(bool revealTasks, bool revealRole, bool revealModifier, bool revealLover, PlayerVoteArea player = null)
         {
             if (CamouflageUnCamouflage.IsCamoed && player == null) return "";
 
             if (Player == null) return "";
 
-            if (player != null && (MeetingHud.Instance.state == MeetingHud.VoteStates.Proceeding ||
-                                   MeetingHud.Instance.state == MeetingHud.VoteStates.Results)) return Player.name;
+            String PlayerName = Player.name;
 
-            if (!CustomGameOptions.RoleUnderName && player == null) return Player.name;
+            if ((revealModifier || revealLover) && Player.isLover())
+                PlayerName += $" ♥";
+
+            if(revealTasks && Faction == Faction.Crewmates)
+                PlayerName += $" ({TotalTasks - TasksLeft}/{TotalTasks})";
+
+            if (player != null && (MeetingHud.Instance.state == MeetingHud.VoteStates.Proceeding ||
+                                   MeetingHud.Instance.state == MeetingHud.VoteStates.Results)) return PlayerName;
+
+            if (!revealRole) return PlayerName;
 
             Player.nameText.transform.localPosition = new Vector3(
                 0f,
                 Player.Data.HatId == 0U ? 1.5f : 2.0f,
                 -0.5f
             );
-            return Player.name + "\n" + Name;
+
+            return PlayerName + "\n" + Name;
         }
 
         public static bool operator ==(Role a, Role b)
@@ -261,93 +391,6 @@ namespace TownOfUs.Roles
             return AllRoles.Where(x => x.RoleType == roletype);
         }
 
-        public static class IntroCutScenePatch
-        {
-            public static TextMeshPro ModifierText;
-
-            public static float Scale;
-
-            [HarmonyPatch(typeof(IntroCutscene), nameof(IntroCutscene.BeginCrewmate))]
-            public static class IntroCutscene_BeginCrewmate
-            {
-                public static void Postfix(IntroCutscene __instance)
-                {
-                    //System.Console.WriteLine("REACHED HERE - CREW");
-                    var modifier = Modifier.GetModifier(PlayerControl.LocalPlayer);
-                    if (modifier != null)
-                        ModifierText = Object.Instantiate(__instance.Title, __instance.Title.transform.parent, false);
-                    //System.Console.WriteLine("MODIFIER TEXT PLEASE WORK");
-                    //                        Scale = ModifierText.scale;
-                    else
-                        ModifierText = null;
-
-                    Lights.SetLights();
-                }
-            }
-
-            [HarmonyPatch(typeof(IntroCutscene), nameof(IntroCutscene.BeginImpostor))]
-            public static class IntroCutscene_BeginImpostor
-            {
-                public static void Postfix(IntroCutscene __instance)
-                {
-                    //System.Console.WriteLine("REACHED HERE - IMP");
-                    var modifier = Modifier.GetModifier(PlayerControl.LocalPlayer);
-                    if (modifier != null)
-                        ModifierText = Object.Instantiate(__instance.Title, __instance.Title.transform.parent, false);
-                    //System.Console.WriteLine("MODIFIER TEXT PLEASE WORK");
-                    //                        Scale = ModifierText.scale;
-                    else
-                        ModifierText = null;
-                    Lights.SetLights();
-                }
-            }
-
-            [HarmonyPatch(typeof(IntroCutscene._CoBegin_d__14), nameof(IntroCutscene._CoBegin_d__14.MoveNext))]
-            public static class IntroCutscene_CoBegin__d_MoveNext
-            {
-                public static float TestScale;
-
-                public static void Prefix(IntroCutscene._CoBegin_d__14 __instance)
-                {
-                    var role = GetRole(PlayerControl.LocalPlayer);
-
-                    if (role != null) role.IntroPrefix(__instance);
-                }
-
-                public static void Postfix(IntroCutscene._CoBegin_d__14 __instance)
-                {
-                    var role = GetRole(PlayerControl.LocalPlayer);
-                    var alpha = __instance.__4__this.Title.color.a;
-                    if (role != null && !role.Hidden)
-                    {
-                        __instance.__4__this.Title.text = role.Name;
-                        __instance.__4__this.Title.color = role.Color;
-                        __instance.__4__this.ImpostorText.text = role.ImpostorText();
-                        __instance.__4__this.ImpostorText.gameObject.SetActive(true);
-                        __instance.__4__this.BackgroundBar.material.color = role.Color;
-                        //                        TestScale = Mathf.Max(__instance.__this.Title.scale, TestScale);
-                        //                        __instance.__this.Title.scale = TestScale / role.Scale;
-                    }
-                    /*else if (!__instance.isImpostor)
-                    {
-                        __instance.__this.ImpostorText.text = "Haha imagine being a boring old crewmate";
-                    }*/
-
-                    if (ModifierText != null)
-                    {
-                        var modifier = Modifier.GetModifier(PlayerControl.LocalPlayer);
-                        ModifierText.text = "<size=4>Modifier: " + modifier.Name + "</size>";
-                        ModifierText.color = modifier.Color;
-
-                        //
-                        ModifierText.transform.position =
-                            __instance.__4__this.transform.position - new Vector3(0f, 2.0f, 0f);
-                        ModifierText.gameObject.SetActive(true);
-                    }
-                }
-            }
-        }
-
         [HarmonyPatch(typeof(PlayerControl._CoSetTasks_d__83), nameof(PlayerControl._CoSetTasks_d__83.MoveNext))]
         public static class PlayerControl_SetTasks
         {
@@ -375,24 +418,6 @@ namespace TownOfUs.Roles
                 player.myTasks.Insert(0, task);
             }
         }
-
-        /*[HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.FixedUpdate))]
-        public static class ButtonsFix
-        {
-            public static void Postfix(PlayerControl __instance)
-            {
-                if (__instance != PlayerControl.LocalPlayer) return;
-                var role = GetRole(PlayerControl.LocalPlayer);
-                if (role == null) return;
-                var instance = DestroyableSingleton<HudManager>.Instance;
-                var position = instance.KillButton.transform.position;
-                foreach (var button in role.ExtraButtons)
-                {
-                    button.transform.position = new Vector3(position.x,
-                        instance.ReportButton.transform.position.y, position.z);
-                }
-            }
-        }*/
 
         [HarmonyPatch(typeof(ShipStatus), nameof(ShipStatus.CheckEndCriteria))]
         public static class ShipStatus_KMPKPPGPNIH
@@ -424,16 +449,17 @@ namespace TownOfUs.Roles
                 var result = true;
                 foreach (var role in AllRoles)
                 {
-                    //System.Console.WriteLine(role.Name);
-                    var isend = role.EABBNOODFGL(__instance);
-                    //System.Console.WriteLine(isend);
-                    if (!isend) result = false;
+                    var roleIsEnd = role.EABBNOODFGL(__instance);
+                    var modifier = Modifier.GetModifier(role.Player);
+                    bool modifierIsEnd = true;
+                    if (modifier != null)
+                        modifierIsEnd = modifier.EABBNOODFGL(__instance);
+                    if (!roleIsEnd || !modifierIsEnd) result = false;
                 }
 
                 if (!NobodyEndCriteria(__instance)) result = false;
 
                 return result;
-                //return true;
             }
         }
 
@@ -493,31 +519,20 @@ namespace TownOfUs.Roles
                     var role = GetRole(player);
                     if (role != null && role.Criteria())
                     {
-                        player.NameText.color = role.Color;
-                        player.NameText.text = role.NameText(player);
-                        // if (player.NameText.text.Contains("\n"))
-                        // {
-                        //     var newScale = Vector3.one * 1.8f;
-                        //
-                        //     // TODO: scale
-                        //     var trueScale = player.NameText.transform.localScale / 2;
-                        //
-                        //
-                        //     if (trueScale != newScale) oldScale = trueScale;
-                        //     var newPosition = new Vector3(1.43f, 0.055f, 0f);
-                        //
-                        //     var truePosition = player.NameText.transform.localPosition;
-                        //
-                        //     if (newPosition != truePosition) oldPosition = truePosition;
-                        //
-                        //     player.NameText.transform.localPosition = newPosition;
-                        //     player.NameText.transform.localScale = newScale;
-                        // }
-                        // else
-                        // {
-                        // if (oldPosition != Vector3.zero) player.NameText.transform.localPosition = oldPosition;
-                        // if (oldScale != Vector3.zero) player.NameText.transform.localScale = oldScale;
-                        // }
+                        bool selfFlag = role.SelfCriteria();
+                        bool deadFlag = role.DeadCriteria();
+                        bool impostorFlag = role.ImpostorCriteria();
+                        bool loverFlag = role.LoverCriteria();
+                        bool snitchFlag = role.SnitchCriteria();
+                        player.NameText.text = role.NameText(
+                            selfFlag || deadFlag,
+                            selfFlag || deadFlag || impostorFlag || snitchFlag,
+                            selfFlag || deadFlag,
+                            loverFlag,
+                            player
+                        );
+                        if(role.ColorCriteria())
+                            player.NameText.color = role.Color;
                     }
                     else
                     {
@@ -553,9 +568,21 @@ namespace TownOfUs.Roles
                     if (role != null)
                         if (role.Criteria())
                         {
-                            player.nameText.color = role.Color;
-                            player.nameText.text = role.NameText();
-                            continue;
+
+                            bool selfFlag = role.SelfCriteria();
+                            bool deadFlag = role.DeadCriteria();
+                            bool impostorFlag = role.ImpostorCriteria();
+                            bool loverFlag = role.LoverCriteria();
+                            bool snitchFlag = role.SnitchCriteria();
+                            player.nameText.text = role.NameText(
+                                selfFlag || deadFlag,
+                                selfFlag || deadFlag || impostorFlag || snitchFlag,
+                                selfFlag || deadFlag,
+                                loverFlag
+                             );
+
+                            if (role.ColorCriteria())
+                                player.nameText.color = role.Color;
                         }
 
                     if (player.Data != null && PlayerControl.LocalPlayer.Data.IsImpostor && player.Data.IsImpostor) continue;

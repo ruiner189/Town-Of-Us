@@ -27,7 +27,7 @@ namespace TownOfUs.Roles
         public Glitch(PlayerControl owner) : base(owner)
         {
             Name = "The Glitch";
-            Color = Color.green;
+            Color = Patches.Colors.Glitch;
             LastHack = DateTime.UtcNow;
             LastMimic = DateTime.UtcNow;
             LastKill = DateTime.UtcNow;
@@ -96,13 +96,6 @@ namespace TownOfUs.Roles
         public void Loses()
         {
             Player.Data.IsImpostor = true;
-        }
-
-        protected override void IntroPrefix(IntroCutscene._CoBegin_d__14 __instance)
-        {
-            var glitchTeam = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
-            glitchTeam.Add(PlayerControl.LocalPlayer);
-            __instance.yourTeam = glitchTeam;
         }
 
         public void Update(HudManager __instance)
@@ -476,10 +469,22 @@ namespace TownOfUs.Roles
                         writer.Write(medic);
                         writer.Write(__gInstance.KillTarget.PlayerId);
                         AmongUsClient.Instance.FinishRpcImmediately(writer);
-                        if (CustomGameOptions.ShieldBreaks) __gInstance.LastKill = DateTime.UtcNow;
 
-                        StopKill.BreakShield(medic, __gInstance.KillTarget.PlayerId,
-                            CustomGameOptions.ShieldBreaks);
+                        if (CustomGameOptions.RoleProgressionOn)
+                        {
+                            var medicPlayer = Utils.PlayerById(medic);
+                            if (medicPlayer.Is(RoleEnum.Medic))
+                            {
+                                var medicRole = Role.GetRole<Medic>(medicPlayer);
+                                if (!medicRole.GetTier3) __gInstance.LastKill = DateTime.UtcNow;
+                                StopKill.BreakShield(medic, __gInstance.KillTarget.PlayerId, !medicRole.GetTier3);
+                            }
+                        }
+                        else
+                        {
+                            if (CustomGameOptions.ShieldBreaks) __gInstance.LastKill = DateTime.UtcNow;
+                            StopKill.BreakShield(medic, __gInstance.KillTarget.PlayerId, CustomGameOptions.ShieldBreaks);
+                        }
 
                         return;
                     }
@@ -542,10 +547,22 @@ namespace TownOfUs.Roles
                         writer.Write(medic);
                         writer.Write(__gInstance.HackTarget.PlayerId);
                         AmongUsClient.Instance.FinishRpcImmediately(writer);
-                        if (CustomGameOptions.ShieldBreaks) __gInstance.LastHack = DateTime.UtcNow;
 
-                        StopKill.BreakShield(medic, __gInstance.HackTarget.PlayerId,
-                            CustomGameOptions.ShieldBreaks);
+                        if (CustomGameOptions.RoleProgressionOn)
+                        {
+                            var medicPlayer = Utils.PlayerById(medic);
+                            if (medicPlayer.Is(RoleEnum.Medic))
+                            {
+                                var medicRole = Role.GetRole<Medic>(medicPlayer);
+                                if (!medicRole.GetTier3) __gInstance.LastHack = DateTime.UtcNow;
+                                StopKill.BreakShield(medic, __gInstance.HackTarget.PlayerId, !medicRole.GetTier3);
+                            }
+                        }
+                        else
+                        {
+                            if (CustomGameOptions.ShieldBreaks) __gInstance.LastHack = DateTime.UtcNow;
+                            StopKill.BreakShield(medic, __gInstance.HackTarget.PlayerId, CustomGameOptions.ShieldBreaks);
+                        }
 
                         return;
                     }

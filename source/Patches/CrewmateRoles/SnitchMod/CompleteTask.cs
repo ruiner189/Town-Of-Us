@@ -19,13 +19,14 @@ namespace TownOfUs.CrewmateRoles.SnitchMod
 
             var tasksLeft = taskinfos.Count(x => !x.Complete);
             var role = Role.GetRole<Snitch>(__instance);
+            var localRole = Role.GetRole(PlayerControl.LocalPlayer);
             role.TasksLeft = tasksLeft;
             switch (tasksLeft)
             {
                 case 1:
 
                     role.RegenTask();
-                    if (PlayerControl.LocalPlayer.Is(RoleEnum.Snitch))
+                    if (role == localRole)
                     {
                         Coroutines.Start(Utils.FlashCoroutine(role.Color));
                     }

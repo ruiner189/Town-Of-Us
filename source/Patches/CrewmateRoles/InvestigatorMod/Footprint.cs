@@ -7,7 +7,7 @@ namespace TownOfUs.CrewmateRoles.InvestigatorMod
 {
     public class Footprint
     {
-        public readonly PlayerControl Player;
+        public  PlayerControl Player;
         private GameObject _gameObject;
         private SpriteRenderer _spriteRenderer;
         private readonly float _time;
@@ -31,7 +31,7 @@ namespace TownOfUs.CrewmateRoles.InvestigatorMod
             role.AllPrints.Add(this);
         }
 
-        public static float Duration => CustomGameOptions.FootprintDuration;
+        public static float GetDuration => CustomGameOptions.FootprintDuration;
 
         public static bool Grey =>
             CustomGameOptions.AnonymousFootPrint || CamouflageUnCamouflage.IsCamoed;
@@ -67,17 +67,37 @@ namespace TownOfUs.CrewmateRoles.InvestigatorMod
         public bool Update()
         {
             var currentTime = Time.time;
+            var Duration = GetDuration;
+
+            if (CustomGameOptions.RoleProgressionOn) {
+                if (Role.GetTier4) Duration *= 1.5f;
+                else if (Role.GetTier3) Duration *= 1.375f;
+                else if (Role.GetTier2) Duration *= 1.25f;
+                else if (Role.GetTier1) Duration *= 1.125f;
+            }
+
             var alpha = Mathf.Max(1f - (currentTime - _time) / Duration, 0f);
 
             if (alpha < 0 || alpha > 1)
                 alpha = 0;
-
-            if (RainbowUtils.IsRainbow(Player.Data.ColorId) & !Grey)
-                Color = RainbowUtils.Rainbow;
-            else if (Grey)
-                Color = new Color(0.2f, 0.2f, 0.2f, 1f);
-            else
-                Color = Palette.PlayerColors[Player.Data.ColorId];
+            if (CustomGameOptions.RoleProgressionOn) {
+                if (Role.GetTier4) {
+                    if (RainbowUtils.IsRainbow(Player.Data.ColorId))
+                        Color = RainbowUtils.Rainbow;
+                    else 
+                        Color = Palette.PlayerColors[Player.Data.ColorId];
+                } else {
+                    // Grey Coloring
+                    Color = new Color(0.2f, 0.2f, 0.2f, 1f);
+                }
+            } else {
+                if (RainbowUtils.IsRainbow(Player.Data.ColorId) & !Grey)
+                    Color = RainbowUtils.Rainbow;
+                else if (Grey)
+                    Color = new Color(0.2f, 0.2f, 0.2f, 1f);
+                else
+                    Color = Palette.PlayerColors[Player.Data.ColorId];
+            }
 
             Color = new Color(Color.r, Color.g, Color.b, alpha);
             _spriteRenderer.color = Color;

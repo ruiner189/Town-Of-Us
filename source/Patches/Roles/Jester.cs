@@ -13,16 +13,9 @@ namespace TownOfUs.Roles
             Name = "Jester";
             ImpostorText = () => "Get voted out";
             TaskText = () => "Get voted out!\nFake Tasks:";
-            Color = new Color(1f, 0.75f, 0.8f, 1f);
+            Color = Patches.Colors.Jester;
             RoleType = RoleEnum.Jester;
             Faction = Faction.Neutral;
-        }
-
-        protected override void IntroPrefix(IntroCutscene._CoBegin_d__14 __instance)
-        {
-            var jesterTeam = new List<PlayerControl>();
-            jesterTeam.Add(PlayerControl.LocalPlayer);
-            __instance.yourTeam = jesterTeam;
         }
 
         internal override bool EABBNOODFGL(ShipStatus __instance)

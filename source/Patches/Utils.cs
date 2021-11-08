@@ -147,7 +147,7 @@ namespace TownOfUs
 
         public static bool isLover(this PlayerControl player)
         {
-            return player.Is(RoleEnum.Lover) || player.Is(RoleEnum.LoverImpostor);
+            return player.Is(ModifierEnum.Lover) || player.Is(ModifierEnum.Lover);
         }
 
         public static bool Is(this PlayerControl player, RoleEnum roleType)

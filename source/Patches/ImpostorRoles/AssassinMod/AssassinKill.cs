@@ -5,6 +5,7 @@ using TownOfUs.Roles;
 using UnityEngine;
 using UnityEngine.UI;
 using TownOfUs.CrewmateRoles.MedicMod;
+using TownOfUs.Roles.Modifiers;
 
 namespace TownOfUs.ImpostorRoles.AssassinMod
 {
@@ -89,7 +90,7 @@ namespace TownOfUs.ImpostorRoles.AssassinMod
             }
             player.Die(DeathReason.Kill);
             if (checkLover && player.isLover() && CustomGameOptions.BothLoversDie)
-                MurderPlayer(Role.GetRole<Lover>(player).OtherLover.Player, false);
+                MurderPlayer(Modifier.GetModifier<Lover>(player).OtherLover.Player, false);
 
             var meetingHud = MeetingHud.Instance;
             if (amOwner)

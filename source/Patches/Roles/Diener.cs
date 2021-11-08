@@ -11,7 +11,7 @@ namespace TownOfUs.Roles
             Name = "Undertaker";
             ImpostorText = () => "Drag bodies and hide them";
             TaskText = () => "Drag bodies around to hide them from being reported";
-            Color = Palette.ImpostorRed;
+            Color = Patches.Colors.Impostor;
             RoleType = RoleEnum.Undertaker;
             Faction = Faction.Impostors;
         }

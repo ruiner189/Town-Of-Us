@@ -9,9 +9,10 @@ namespace TownOfUs
 {
     public static class CustomGameOptions
     {
+        #region Role chance values
+        // Crewmate Roles
         public static int MayorOn => (int) Generate.MayorOn.Get();
         public static int JesterOn => (int) Generate.JesterOn.Get();
-        public static int LoversOn => (int) Generate.LoversOn.Get();
         public static int SheriffOn => (int) Generate.SheriffOn.Get();
         public static int JanitorOn => (int) Generate.JanitorOn.Get();
         public static int EngineerOn => (int) Generate.EngineerOn.Get();
@@ -21,12 +22,16 @@ namespace TownOfUs
         public static int TimeLordOn => (int) Generate.TimeLordOn.Get();
         public static int MedicOn => (int) Generate.MedicOn.Get();
         public static int SeerOn => (int) Generate.SeerOn.Get();
+
+        // Neutral Roles
         public static int GlitchOn => (int) Generate.GlitchOn.Get();
         public static int MorphlingOn => (int) Generate.MorphlingOn.Get();
         public static int CamouflagerOn => (int) Generate.CamouflagerOn.Get();
         public static int ExecutionerOn => (int) Generate.ExecutionerOn.Get();
         public static int SpyOn => (int) Generate.SpyOn.Get();
         public static int SnitchOn => (int) Generate.SnitchOn.Get();
+
+        // Impostor Roles
         public static int MinerOn => (int) Generate.MinerOn.Get();
         public static int SwooperOn => (int) Generate.SwooperOn.Get();
         public static int ArsonistOn => (int) Generate.ArsonistOn.Get();
@@ -43,9 +48,50 @@ namespace TownOfUs
         public static int BigBoiOn => (int) Generate.BigBoiOn.Get();
         public static int ButtonBarryOn => (int) Generate.ButtonBarryOn.Get();
         public static int VanillaGame => (int) Generate.VanillaGame.Get();
+        #endregion
+
+        #region Max role values
+        // Crewmate Roles
+        public static int MayorMax => (int) Generate.MayorMax.Get();
+        public static int SheriffMax => (int) Generate.SheriffMax.Get();
+        public static int EngineerMax => (int) Generate.EngineerMax.Get();
+        public static int SwapperMax => (int) Generate.SwapperMax.Get();
+        public static int InvestigatorMax => (int) Generate.InvestigatorMax.Get();
+        public static int TimeLordMax => (int) Generate.TimeLordMax.Get();
+        public static int MedicMax => (int) Generate.MedicMax.Get();
+        public static int SeerMax => (int) Generate.SeerMax.Get();
+        public static int SpyMax => (int) Generate.SpyMax.Get();
+        public static int SnitchMax => (int) Generate.SnitchMax.Get();
+        public static int AltruistMax => (int) Generate.AltruistMax.Get();
+
+        // Neutral Roles
+        public static int JesterMax => (int) Generate.JesterMax.Get();
+        public static int ShifterMax => (int) Generate.ShifterMax.Get();
+        public static int GlitchMax => (int) Generate.GlitchMax.Get();
+        public static int ExecutionerMax => (int) Generate.ExecutionerMax.Get();
+        public static int ArsonistMax => (int) Generate.ArsonistMax.Get();
+
+        // Impostor Roles
+        public static int JanitorMax => (int) Generate.JanitorMax.Get();
+        public static int MorphlingMax => (int) Generate.MorphlingMax.Get();
+        public static int CamouflagerMax => (int) Generate.CamouflagerMax.Get();
+        public static int MinerMax => (int) Generate.MinerMax.Get();
+        public static int SwooperMax => (int) Generate.SwooperMax.Get();
+        public static int UndertakerMax => (int) Generate.UndertakerMax.Get();
+        public static int AssassinMax => (int) Generate.AssassinMax.Get();
+        public static int UnderdogMax => (int) Generate.UnderdogMax.Get();
+        #endregion
+
+        // Lover values
+        public static int LoversOn => (int)Generate.LoversOn.Get();
+
         public static bool BothLoversDie => Generate.BothLoversDie.Get();
+
+        // Sheriff Values
         public static bool ShowSheriff => Generate.ShowSheriff.Get();
+        public static bool SheriffFirstRoundOn => Generate.SheriffFirstRoundOn.Get();
         public static bool SheriffKillOther => Generate.SheriffKillOther.Get();
+        public static bool SheriffKillsSheriff => Generate.SheriffKillsSheriff.Get();
         public static bool SheriffKillsJester => Generate.SheriffKillsJester.Get();
         public static bool SheriffKillsGlitch => Generate.SheriffKillsGlitch.Get();
         public static bool SheriffKillsArsonist => Generate.SheriffKillsArsonist.Get();
@@ -112,5 +158,7 @@ namespace TownOfUs
         public static bool AssassinCrewmateGuess => Generate.AssassinCrewmateGuess.Get();
         public static int AssassinKills => (int) Generate.AssassinKills.Get();
         public static bool AssassinMultiKill => Generate.AssassinMultiKill.Get();
+        public static bool RoleProgressionOn => Generate.RoleProgressionOn.Get();
+        public static bool RoleProgressionFlash => Generate.RoleProgressionFlash.Get();
     }
 }

@@ -1,19 +1,10 @@
- ## *Note. This repository is depricated in favour of Polus.gg, and is now read-only as it will not be recieving updates. Please visit our [steam page](https://store.steampowered.com/app/1653240/Polusgg/) and our [discord](https://discord.gg/polus) for all updates**
+# Town of Us: Redux
+A Town of Us Fork with the goal of adding more customization and making it similar to Town of Salem. More roles influenced from Town of Salem is planned.
 
-
-[![Discord](./Images/Polus.png)](https://discord.gg/polus)
-
-![LOGO](./Images/TOU-logo.png)
 ![Roles](./Images/Roles3.png)
-
-An Among Us mod that adds a bunch of roles, modifiers and game settings
-
-
-
 
 **Crewmate Roles**
 - [Mayor](#mayor)
-- [Lovers](#lovers)
 - [Sheriff](#sheriff)
 - [Engineer](#engineer)
 - [Swapper](#swapper)
@@ -51,6 +42,7 @@ An Among Us mod that adds a bunch of roles, modifiers and game settings
 - [Drunk](#drunk)
 - [Giant](#giant)
 - [Button Barry](#button-barry)
+- [Lovers](#lovers)
 
 
 
@@ -59,197 +51,26 @@ An Among Us mod that adds a bunch of roles, modifiers and game settings
 | Among Us - Version| Mod Version | Link |
 |----------|-------------|-----------------|
 | 2021.6.30s & 2021.6.30e & 2021.7.20e | v2.2.1 | [Download](https://github.com/polusgg/Town-Of-Us/releases/download/v2.2.1/TOU_221.zip) |
-| 2021.6.30s & 2021.6.30e & 2021.7.20e | v2.2.0 | [Download](https://github.com/polusgg/Town-Of-Us/releases/download/v2.2.0/TOU_220.zip) |
-| 2021.6.15s & 2021.6.15e | v2.1.4 | [Download](https://github.com/polusgg/Town-Of-Us/releases/download/v2.1.4/TOU_214.zip) |
-| 2021.6.15s & 2021.6.15e | v2.1.3 | [Download](https://github.com/polusgg/Town-Of-Us/releases/download/v2.1.3/TownOfUs213_1.zip) |
-| 2021.6.15s & 2021.6.15e | v2.1.2 | [Download](https://github.com/polusgg/Town-Of-Us/releases/download/v2.1.2/TownOfUs212_1.zip) |
-| 2021.6.15s & 2021.6.15e | v2.1.1 | [Download](https://github.com/polusgg/Town-Of-Us/releases/download/v2.1.1/TownOfUs211_1.zip) |
-| 2021.5.10s | v2.0.4 | [Download](https://github.com/polusgg/Town-Of-Us/releases/download/v2.0.4/TownOfUs-v2.0.4.zip) |
-| 2021.5.10s | v2.0.3 | [Download](https://github.com/polusgg/Town-Of-Us/releases/download/v2.0.3/TownOfUs-v2.0.3.zip) |
-| 2021.4.12s & 2021.4.14s | v2.0.2 | [Download](https://github.com/polusgg/Town-Of-Us/releases/download/v2.0.2/TownOfUs-v2.0.2.zip) |
-| 2021.4.12s | v2.0.1 | [Download](https://github.com/polusgg/Town-Of-Us/releases/download/v2.0.1/TownOfUs-v2.0.1.zip) |
-| 2021.3.31.3s | v2.0.0 | [Download](https://github.com/polusgg/Town-Of-Us/releases/download/v2.0.0/TownOfUs-v2.0.0.zip) |
-| 2021.3.5s | v1.2.0 | [Download](https://github.com/polusgg/Town-Of-Us/releases/download/v1.2.0/TownOfUs-v1.2.0.zip) |
-| 2021.3.5s | v1.1.0 | [Download](https://github.com/polusgg/Town-Of-Us/releases/download/v1.1.0/TownOfUs-v1.1.0-2021.3.5s.zip) |
-| 2020.12.19s | v1.1.0 | [Download](https://github.com/polusgg/Town-Of-Us/releases/download/v1.1.0/TownOfUs-v1.1.0-2020.12.9s.zip) |
-| 2020.12.19s | v1.0.3 | [Download](https://github.com/polusgg/Town-Of-Us/releases/download/v1.0.3/TownOfUs-v1.0.3.zip) |
-| 2020.12.19s | v1.0.2 | [Download](https://github.com/polusgg/Town-Of-Us/releases/download/v1.0.2/TownOfUs-v1.0.2.zip) |
-| 2020.12.19s | v1.0.1 | [Download](https://github.com/polusgg/Town-Of-Us/releases/download/v1.0.1/TownOfUs-v1.0.1.zip) |
-| 2020.12.19s | v1.0.0 | [Download](https://github.com/polusgg/Town-Of-Us/releases/download/v1.0.0/TownOfUs-v1.0.0.zip) |
 
 <details>
   <summary> Changelog </summary>
   <details>
-  <summary> v2.2.1 </summary>
-  <ul> <li>Fix for the credits removed in v2.0.3 </li> </ul>
-  </details>
-  <details>
-  <summary> v2.2.0 </summary>
-  <ul> <li> Compatibility for v2021.6.30 </li> </ul>
-  <ul> <li> Role percentages now change by 10%, or 5% if you hold shift </li> </ul>
-  <ul> <li> New Drag/Drop Buttons for the Undertaker </li> </ul>
-  <ul> <li> New Button Image for the Button Barry </li> </ul>
-  <ul> <li> Phantom can't switch between vents </li> </ul>
-  <ul> <li> Increased Max Cooldown for the Shifter to 60s </li> </ul>
-  <ul> <li> Swapper can no longer get the Button Barry Modifier </li> </ul>
-  <ul> <li> Glitch can no longer get the Button Barry Modifier </li> </ul>
-  <ul> <li> Mayor votes are refunded if the player disconnects </li> </ul>
-  <ul> <li> Mayor votes are refunded if the player is killed by the assassin </li> </ul>
-  <ul> <li> Handshake refactor </li> </ul>
-  <ul> <li> Fix for the Crashing Issues </li> </ul>
-  <ul> <li> Fix for the Interaction Shifter/Giant </li> </ul>
-  <ul> <li> Fix for the Interaction Shifter/Engineer </li> </ul>    
-  <ul> <li> Fix for the Interaction Glitch/Jester </li> </ul>
-  <ul> <li> Fix for the Interaction Morphling/Giant </li> </ul>
-  <ul> <li> Fix for the Altruist Body Issues </li> </ul>
-  <ul> <li> Fix for the Assassin DC Issues </li> </ul>
-  <ul> <li> Fix for the Executioner Spawn Issues </li> </ul>
-  <ul> <li> Fix for the Phantom Vent Spawn Issues </li> </ul>    
-  <ul> <li> Fix for the Phantom Walking Through Walls Issues </li> </ul>
-  <ul> <li> Fix for the Phantom Doors Issues </li> </ul>
-  <ul> <li> Fix for the Phantom Tasks Issues </li> </ul>
-  <ul> <li> Fix for the Swooper Invisible Issues </li> </ul>    
-  <ul> <li> Fix for the Time Lord Flashing Ability Issues </li> </ul>
-  <ul> <li> Fix for the Time Lord Rewind Vent Issues </li> </ul>
-  <ul> <li> Fix for the Undertaker Dragging Issues </li> </ul>    
-  <ul> <li> Fix for the Underdog Cooldown Issues </li> </ul>
-  <ul> <li> Fix for the Giant Modifier Size Issues </li> </ul>
-  <ul> <li> Fix for the State Of Dead/DC Bodies In Meeting Issues </li> </ul>   
-  <ul> <li> Fix for the Voting Visual Issues </li> </ul>      
-  <ul> <li> Minor enhancements and bug fixes </li> </ul>
- </details>
-  <details>
-  <summary> v2.1.4 </summary>
-  <ul> <li> New Role (Phantom, Undertaker, Underdog) </li> </ul>
-  <ul> <li> Custom Color </li> </ul>
-  <ul> <li> Hats </li> </ul>
-  <ul> <li> Fix for launching issues </li> </ul>
-  <ul> <li> Fix for the Voting issues </li> </ul>
-  <ul> <li> Fix for the disconnect issue</li> </ul>
-  <ul> <li> Fix for the username placement </li> </ul>
-  <ul> <li> Fix for the Medic  </li> </ul>
-  <ul> <li> Fix for the Spy </li> </ul>
-  <ul> <li> Fix for the Mayor </li> </ul>
-  <ul> <li> Fix for the Arsonist </li> </ul>
-  <ul> <li> Fix for the Assassin </li> </ul>
-  <ul> <li> Fix for the Phantom </li> </ul>
-  <ul> <li> Modded Handshake </li> </ul>
-  <ul> <li> Child is removed </li> </ul>
-  <ul> <li> Minor enhancements and bug fixes </li> </ul>
- </details>
- <details>
-  <summary> v2.1.3 </summary>
-  <ul> <li> Fix the launch issue </li> </ul>
-  <ul> <li> Fix for the swooper role </li> </ul>
-  <ul> <li> Fix for the janitor role </li> </ul>
-  <ul> <li> Minor enhancements and bug fixes </li> </ul>
- </details>
- <details>
-  <summary> v2.1.2 </summary>
-  <ul> <li> Crucial bug fixes </li> </ul>
- </details>
- <details>
-  <summary> v2.1.1 </summary>
-  <ul> <li> 2021.6.15 support, Epic Games compatibility and Assassin Role </li> </ul>
- </details>
-  <details>
-  <summary> v2.0.4 </summary>
-  <ul> <li> Crucial bug fixes </li> </ul>
- </details>
- <details>
-  <summary> v2.0.3 </summary>
-  <ul> <li> 2021.5.10s support </li> </ul>
- </details>
- <details>
-  <summary> v2.0.2 </summary>
-  <ul> <li> 2021.4.14s support and temporary auth fixes </li> </ul>
- </details>
- <details>
-  <summary> v2.0.1 </summary>
-  <ul> <li> 2021.4.12s support </li> </ul>
- </details>
- <details>
-  <summary> v2.0.0 </summary>
-  <ul>
-   <li> Airship support! </li>
-   <li> New role - Altruist </li>
-   <li> New modifiers - Giant & Button Barry </li>
-   <li> Airship comms fix built-in </li>
-   <li> Bug fixes with Lovers, Time Lord etc. </li>
-   <li> New hats based on streamers! </li>
-   <li> Investigator cannot spawn on airship due to too much lag with handling footprints </li>
-  </ul>
- </details>
-  
- <details>
-  <summary> v1.2.0 </summary>
-  <ul>
-    <li> New roles (see above)</a>
-    <li> New modifiers (see above)</li>
-    <li> Exporting and Importing game settings which sync between versions 1.2.0 and future versions</li>
-    <li> Disconnect fix </li>
-    <li> Mayor additions - Abstain button, Option for Mayor's extra votes to be anonymous </li>
-    <li> Option for dead to see the roles of everyone </li>
-    <li> Custom colours now work! </li>
-  </ul>
- </details>
- <details>
-  <summary> v1.1.0 </summary>
-  <ul>
-    <li> New roles (see above)</a>
-    <li> New modifiers (see above)</li>
-    <li> The Engineer has been changed to the <a href="https://github.com/NotHunter101/ExtraRolesAmongUs">ExtraRoles</a> version </li>
-    <li> Backend overhaul! This will make it easier to add new roles </li>
-    <li> New Button Art! </li>
-    <li> Maps and Impostor Count can be changed from the Lobby! </li>
-    <li> Shadows for the Custom Colours </li>
-    <li> Fixes </li>
-    <ul>
-      <li> The Jester and The Shifter unable to fix Sabotages </li>
-      <li> The Time Lord's Rewind not auto-force closing tasks </li>
-      <li> The Q button not working for Sheriff </li>
-      <li> The Shifter's Shift looking too much like a Kill </li>
-      <li> Changing colours would render you weirdly green in normal Among Us </li>
-    </ul>
-  </ul>
-  </details>
-
-
-  <details>
-  <summary> v1.0.3 </summary>
-  <p> Fixes: </p>
-  <ul>
-    <li> Engineer being able to Fix every sabotage </li>
-    <li> The Investigator being able to revive people voted out (and instead made it an option) </li>
-    <li> Footprints not appearing if a person walks over old footprints </li>
-    <li> Graphical glitch where Jester and Lovers simultaneously win </li>
-    <li> Players spawning back into positions from the last game when time is rewound right at the beginning of a new game </li>
-    <li> Graphical Bug of Time Lord's name not being blue in Meetings </li>
-    <li> Fixed Medbay Scan not working for custom colours </li>
-  </ul>
-  </details>
-
-  <details>
-  <summary> v1.0.2 </summary>
-  <p> Fixes: </p>
-  <ul>
-    <li>  The Swapper being unable to vote </li>
-    Swapper unable to vote
-    <li> Mayor Vote Bank ending up negative </li>
-    <li> Anonymous Voting not working when Mayor is in a game </li>
-    <li> Chats not working in the lobby </li>
-    <li> Sheriff desync (I think) </li>
-    <li> Buttons being able to be used during meetings </li>
-  </ul>
-  <hr>
-  </details>
-
-  <details>
-  <summary> v1.0.1 </summary>
-  <p> Fixes errors of not being able to launch. </p>
+  <summary> v1.0.0 </summary>
+  <ul> <li> Added ability to add multiple roles to most roles </li> </ul>
+  <ul> <li> Moved lover from role to modifier </li> </ul>
+  <ul> <li> Assassin cycle now only includes roles that have a chance to spawn. </li> </ul>
+  <ul> <li> Assassin cycle is now sorted alphabetically </li> </ul>
+  <ul> <li> Added a new Role Progression mechanic. This mechanic can be turned off </li> </ul>
+  <ul> <li> Added Role Progression to Medic </li> </ul>
+  <ul> <li> Added Role Progression to Engineer </li> </ul>
+  <ul> <li> Added Role Progression to Investigator </li> </ul>
+  <ul> <li> Added Role Progression to Altruist </li> </ul>
+  <ul> <li> Added Role Progression to Timelord </li> </ul>
+  <ul> <li> Added Option to allow sheriffs to kill other sheriffs </li> </ul>
+  <ul> <li> Added Option to make sheriffs not able to kill on first round </li> </ul>
+  <ul> <li> Fixed game not starting if not enough roles being selected. </li> </ul>
   </details>
 </details>
-
 
 -----------------------
 # Installation
@@ -323,6 +144,21 @@ A first launch may take up to 5 minutes, so be patient if it doesn't launch imme
 If you have issues installing Town of Us, you can join our [Discord](https://discord.gg/polus) to receive help.
 
 -----------------------
+# Role Progression
+If role progression is turned on, that means that some crewmate roles become stronger as they complete tasks!
+## Tiers
+| Tier | Tasks |
+|------|:-----:|
+| 0 | 0% |
+| 1 | 25% |
+| 2 | 50% |
+| 3 | 75% |
+| 4 | 100% |
+## Game Options
+| Name | Description | Type | Default |
+|------|:-----------:|:----:|:-------:|
+| Role Progression | Turns on role progression for roles that support this feature | Toggle | false |
+| Flash on Upgrade | Flashes the screen on tier up | Toggle | false |
 # Roles
 # Crewmate Roles
 ## Mayor
@@ -340,22 +176,6 @@ As long as not everyone has voted, the Mayor can use as many votes from their Vo
 | Mayor Votes Show Anonymous | Whether the Mayor's extra votes will show up anonymously | Toggle | False |
 
 -----------------------
-## Lovers
-### **Team: Crewmates or Impostors**
-The Lovers are two players who are linked together.\
-These two players get picked randomly between Crewmates and Impostors.\
-They gain the primary objective to stay alive together.\
-If they are both among the last 3 players, they win.\
-In order to so, they gain access to a private chat, only visible by them in between meetings.\
-However, they can also win with their respective team, hence why the Lovers do not know the role of the other lover.
-
-### Game Options
-| Name | Description | Type | Default |
-|----------|:-------------:|:------:|:------:|
-| Lovers | The percentage probability of the Lovers appearing | Percentage | 0% |
-| Both Lovers Die | Whether the other Lover automatically dies if the other does | Toggle | True |
-
------------------------
 ## Sheriff
 ### **Team: Crewmates**
 The Sheriff is a Crewmate that has the ability to eliminate the Impostors using their kill button.\
@@ -365,8 +185,10 @@ However, if they kill a Crewmate or a Neutral player they can't kill, they inste
 | Name | Description | Type | Default |
 |----------|:-------------:|:------:|:------:|
 | Sheriff | The percentage probability of the Sheriff appearing | Percentage | 0% |
+| Max Sheriff | The max amount of sheriffs in one game | Number | 1 |
 | Show Sheriff | Whether everybody can see who the Sheriff is | Toggle | False |
 | Sheriff Miskill Kills Crewmate | Whether the other player is killed if the Sheriff Misfires | Toggle | False |
+| Sheriff Kills Sheriff | Whether the Sheriff is able to another Sheriff | Toggle | False |
 | Sheriff Kills Jester | Whether the Sheriff is able to kill the Jester | Toggle | False |
 | Sheriff Kills The Glitch | Whether the Sheriff is able to kill The Glitch | Toggle | False |
 | Sheriff Kills Arsonist | Whether the Sheriff is able to kill the Arsonist | Toggle | False |
@@ -383,7 +205,17 @@ They can use vents to get across the map easily.
 | Name | Description | Type | Default |
 |----------|:-------------:|:------:|:------:|
 | Engineer | The percentage probability of the Engineer appearing | Percentage | 0% |
-| Engineer Fix Per | Whether the Engineer can fix 1 sabotage per round or per game | Round / Game | Round |
+| Max Engineers | The max amount of engineers in one game | Number | 1 |
+| Engineer Fix Per[^1] | Whether the Engineer can fix 1 sabotage per round or per game | Round / Game | Round |
+
+### Role Progression
+| Tier | Description|
+|------|:----------:|
+| 0 | Engineer can fix a max of 0 sabotages |
+| 1 | Engineer can fix a max of 1 sabotage |
+| 2 | Engineer can fix a max of 2 sabotages |
+| 3 | Engineer can fix a max of 3 sabotages |
+| 4 | Engineer can fix a max of 4 sabotages |
 
 -----------------------
 ## Swapper
@@ -395,6 +227,7 @@ All the votes for the first player will instead be counted towards the second pl
 | Name | Description | Type | Default |
 |----------|:-------------:|:------:|:------:|
 | Swapper | The percentage probability of the Swapper appearing | Percentage | 0% |
+| Max Swappers | The amount of swappers in one game | Number | 1 |
 
 -----------------------
 ## Investigator
@@ -406,11 +239,21 @@ Every footprint disappears after a set amount of time.
 | Name | Description | Type | Default |
 |----------|:-------------:|:------:|:------:|
 | Investigator | The percentage probability of the Investigator appearing | Percentage | 0% |
+| Max Investigator | The max amount of investigators in one game | Number | 1 |
 | Footprint Size | The size of the footprint on a scale of 1 to 10 | Number | 4 |
 | Footprint Interval | The time interval between two footprints | Time | 1s |
 | Footprint Duration | The amount of time that the footprint stays on the ground for | Time | 10s |
-| Anonymous Footprint | When enabled, all footprints are grey instead of the player's colors | Toggle | False
+| Anonymous Footprint[^1] | When enabled, all footprints are grey instead of the player's colors | Toggle | False
 | Footprint Vent Visible | Whether footprints near vents are shown | Toggle | False
+
+### Role Progression
+| Tier | Footprint Interval | Footprint Duration | Footprint |
+|------|:------------------:|:------------------:|:-------------------:|
+| 0 | Footprint Interval setting | Footprint Duration Setting | Anonymous |
+| 1 | 12.5% more frequent | Lifespan increased by 12.5% | Anonymous |
+| 2 | 25% more frequent | Lifespan increased by 25% | Anonymous |
+| 3 | 37.5% more frequent | Lifespan increased by 37.5% | Anonymous |
+| 4 | 50% more frequent | Lifespan increased by 50% | Color |
 
 -----------------------
 ## Time Lord
@@ -424,10 +267,20 @@ If enabled, the Time Lord can't use Vitals to make things more balanced.
 | Name | Description | Type | Default |
 |----------|:-------------:|:------:|:------:|
 | Time Lord | The percentage probability of the Time Lord appearing | Percentage | 0% |
-| Revive During Rewind | Whether the Time Lord revives dead players when rewinding | Toggle | False |
+| Max Time Lords | The max amount of Time lords in one game | Number | 1 |
+| Revive During Rewind[^1] | Whether the Time Lord revives dead players when rewinding | Toggle | False |
 | Rewind Duration | How far the rewind goes back in time | Time | 3s |
 | Rewind Cooldown | The cooldown of the Time Lord's Rewind button | Time | 25s |
 | Time Lord can use Vitals | Whether the Time Lord has the ability to use Vitals | Toggle | False |
+
+### Role Progression
+| Tier | Rewind Duration | Can Revive |
+|------|:---------------:|:----------:|
+| 0 | 0% longer | False |
+| 1 | 0% longer | False |
+| 2 | 0% longer | True |
+| 3 | 12.5% longer | True |
+| 4 | 25% longer | True |
 
 -----------------------
 ## Medic
@@ -469,12 +322,22 @@ A report can contain the name of the killer or the color type (Darker/Lighter)
 | Name | Description | Type | Default |
 |----------|:-------------:|:------:|:------:|
 | Medic | The percentage probability of the Medic appearing | Percentage | 0% |
-| Show Shielded Player | Who should be able to see who is Shielded | Self / Medic / Self + Medic / Everyone | Self |
+| Max Medics | The max amount of Medics in one game | Number | 1 |
+| Show Shielded Player [^1]| Who should be able to see who is Shielded | Self / Medic / Self + Medic / Everyone | Self |
 | Show Medic Reports | Whether the Medic should get information when reporting a body | Toggle | True |
 | Time Where Medic Reports Will Have Name | If a body has been dead for shorter than this amount, the Medic's report will contain the killer's name | Time | 0s |
 | Time Where Medic Reports Will Have Color Type | If a body has been dead for shorter than this amount, the Medic's report will have the type of color | Time | 15s |
 | Who gets murder attempt indicator | Who will receive an indicator when someone tries to Shift into, Hack or Kill them | Medic / Shielded / Everyone / Nobody | Medic |
-| Shield breaks on murder attempt | Whether the Shield breaks when someone attempts to Shift into, Hack or Kill them | Toggle | False |
+| Shield breaks on murder attempt [^1]| Whether the Shield breaks when someone attempts to Shift into, Hack or Kill them | Toggle | False |
+
+### Role Progression
+| Tier | Shield breakable | Shield visible | Can reshield if shielded player dies |
+|------|:----------------:|:--------------:|:------------------------------------:|
+| 0 | Breakable | Medic | False |
+| 1 | Breakable | Medic + Shielded | False |
+| 2 | Breakable | Medic + Shielded | False |
+| 3 | Doesn't Break | Medic + Shielded | False |
+| 4 | Doesn't Break | Medic + Shielded| True |
 
 -----------------------
 ## Seer
@@ -487,6 +350,7 @@ If the Seer investigates someone, the Seer's name will change color to inform th
 | Name | Description | Type | Default |
 |----------|:-------------:|:------:|:------:|
 | Seer | The percentage probability of the Seer appearing | Percentage | 0% |
+| Max Seers | The max amount of Seers in one game | Number | 1 |
 | Seer Cooldown | The Cooldown of the Seer's Reveal button | Time | 25s |
 | Info that Seer sees | Whether the Seer sees the Role or the Team of a player | Role / Team | Role |
 | Who Sees That They Are Revealed | Which roles see the Seer's identity once the Seer has seen their role | Crewmates / Impostors + Neutral / All / Nobody | Crewmates |
@@ -503,6 +367,7 @@ On Vitals, the Spy can see how long killed bodies have been dead for.
 | Name | Description | Type | Default |
 |----------|:-------------:|:------:|:------:|
 | Spy | The percentage probability of the Spy appearing | Percentage | 0% |
+| Max Spies | The amount of Spies in one game | Number | 1 |
 
 -----------------------
 ## Snitch
@@ -516,6 +381,7 @@ However, when they only have a single task left, the Impostors get an arrow poin
 | Name | Description | Type | Default |
 |----------|:-------------:|:------:|:------:|
 | Snitch | The percentage probability of the Snitch appearing | Percentage | 0% |
+| Max Snitches | The max amount of Snitches in one game | Number | 1 |
 | Snitch knows who they are on Game Start | Whether the Snitch knows their role at the start of a game | Toggle | False |
 
 -----------------------
@@ -530,8 +396,19 @@ After a set period of time, the player will be resurrected, if the revival isn't
 | Name | Description | Type | Default |
 |----------|:-------------:|:------:|:------:|
 | Altruist | The percentage probability of the Altruist appearing | Percentage | 0% |
+| Max Altruists | The max amount of Altruists in one game | Number | 1 |
 | Altruist Revive Duration | The time it takes for the Altruist to revive a dead body | Time | 10s |
 | Target's body disappears on beginning of revive | Whether the dead body of the player the Altruist is reviving disappears upon revival | Toggle | False |
+
+### Role Progression
+Adds an arrow that points to the nearest dead body within a certain range.
+| Tier | Arrow Distance |
+|------|:--------------:|
+| 0 | 0 |
+| 1 | 5 | 
+| 2 | 6 |
+| 3 | 7 |
+| 4 | 9 |
 
 -----------------------
 # Neutral Roles
@@ -545,6 +422,8 @@ However, the Jester does not win if the Crewmates, Impostors or another Neutral 
 | Name | Description | Type | Default |
 |----------|:-------------:|:------:|:------:|
 | Jester | The percentage probability of the Jester appearing | Percentage | 0% |
+| Max Jesters | The max amount of Jesters in one game. Does not include roles that turn into Jesters | Number | 1 |
+
 
 -----------------------
 ## Shifter
@@ -560,6 +439,7 @@ Swapping roles with an Impostor fails and kills the Shifter.
 | Name | Description | Type | Default |
 |----------|:-------------:|:------:|:------:|
 | Shifter | The percentage probability of the Shifter appearing | Percentage | 0% |
+| Max Shifters | The max amount of Shifters in one game | Number | 1 |
 | Shifter Cooldown | The cooldown on the Shifter's Shift button | Time | 30s |
 | Who gets the Shifter role on Shift | Who will receive the Shifter role upon getting Shifted into | Non-Impostors / Regular Crewmates / Nobody | Non-Impostors |
 
@@ -577,6 +457,7 @@ The Glitch can Mimic someone, which results in them looking exactly like the oth
 | Name | Description | Type | Default |
 |----------|:-------------:|:------:|:------:|
 | The Glitch | The percentage probability of The Glitch appearing | Percentage | 0% |
+| Max Glitches | The max amount of Glitches in one game | Number | 1 |
 | Mimic Cooldown | The cooldown of The Glitch's Mimic button | Time | 30s |
 | Mimic Duration | How long The Glitch can Mimic a player | Time | 10s |
 | Hack Cooldown | The cooldown of The Glitch's Hack button | Time | 30s |
@@ -596,6 +477,7 @@ If that player gets voted out, they win the game.
 | Name | Description | Type | Default |
 |----------|:-------------:|:------:|:------:|
 | Executioner | The percentage probability of the Executioner appearing | Percentage | 0% |
+| Max Executioners | The max amount of Executioners in one game | Number | 1 |
 | Executioner becomes on Target Dead | Which role the Executioner becomes when their target dies | Crewmate / Jester | Crewmate |
 
 -----------------------
@@ -610,6 +492,7 @@ Upon Igniting every player, they win the game.
 | Name | Description | Type | Default |
 |----------|:-------------:|:------:|:------:|
 | Arsonist | The percentage probability of the Arsonist appearing | Percentage | 0% |
+| Max Arsonists | The max amount of Arsonists in one game | Number | 1 |
 | Douse Cooldown | The cooldown of the Arsonist's Douse button | Time | 25s |
 | Game keeps going so long as Arsonist is alive | Whether the game keeps going while the Arsonist remains | Toggle | False |
 
@@ -635,6 +518,7 @@ Both their Kill and Clean ability have a shared cooldown, meaning they have to c
 | Name | Description | Type | Default |
 |----------|:-------------:|:------:|:------:|
 | Janitor | The percentage probability of the Janitor appearing | Percentage | 0% |
+| Max Janitors | The max amount of Janitors in one game | Number | 1 |
 
 -----------------------
 ## Morphling
@@ -649,6 +533,7 @@ To balance the role, they can't vent.
 | Name | Description | Type | Default |
 |----------|:-------------:|:------:|:------:|
 | Morphling | The percentage probability of the Morphling appearing | Percentage | 0% |
+| Max Morphlings | The max amount of Morphlings in one game | Number | 1 |
 | Morph Cooldown | The cooldown of the Morphling's Morph button | Time | 25s |
 | Morph Duration | How long the Morph lasts for | Time | 10s |
 
@@ -663,6 +548,7 @@ Everyone then goes grey for a certain period of time, along with their names dis
 | Name | Description | Type | Default |
 |----------|:-------------:|:------:|:------:|
 | Camouflager | The percentage probability of the Camouflager appearing | Percentage | 0% |
+| Max Camouflager | The max amount of Camouflagers in one game | Number | 1 |
 | Camouflage Cooldown | The cooldown of the Camouflager's Camouflage button | Time | 25s |
 | Camouflage Duration | How long the Camouflage lasts for | Time | 10s |
 
@@ -677,6 +563,7 @@ These vents only connect to each other, forming a new passway.
 | Name | Description | Type | Default |
 |----------|:-------------:|:------:|:------:|
 | Miner | The percentage probability of the Miner appearing | Percentage | 0% |
+| Max Miners | The max amount of Miners in one game | Number | 1 |
 | Mine Cooldown | The cooldown of the Miner's Mine button | Time | 25s |
 
 -----------------------
@@ -690,6 +577,7 @@ To balance the role, they can't vent.
 | Name | Description | Type | Default |
 |----------|:-------------:|:------:|:------:|
 | Swooper | The percentage probability of the Swooper appearing | Percentage | 0% |
+| Max Swoopers | The max amount of Swoopers in one game | Number | 1 |
 | Swooper Cooldown | The cooldown of the Swooper's Swoop button | Time | 25s |
 | Swooper Duration | How long the Swooping lasts for | Time | 10s |
 
@@ -704,6 +592,7 @@ If they guessed wrong, they die instead.
 | Name | Description | Type | Default |
 |----------|:-------------:|:------:|:------:|
 | Assassin | The percentage probability of the Assassin appearing | Percentage | 0% |
+| Max Assassins | The max amount of Assassins in one game | Number | 1 |
 | Assassin Kill | The number of kill the Assassin can do with his ability | Number | 1 |
 | Assassin Guess Crewmate | Whether the Assassin can Guess "Crewmate" | Toggle | False |
 | Assassin Guess Neutral  | Whether the Assassin can Guess Neutral roles | Toggle | False |
@@ -719,6 +608,7 @@ The Undertaker is an Impostor that can drag and drop bodies.
 | Name | Description | Type | Default |
 |----------|:-------------:|:------:|:------:|
 | Undertaker | The percentage probability of the Undertaker appearing | Percentage | 0% |
+| Max Undertakers | The max amount of Undertakers in one game | Number | 1 |
 | Undertaker Drag Cooldown | The cooldown of the Undertaker Drag ability | Time | 25s |
 
 -----------------------
@@ -732,6 +622,7 @@ When they are the only remaining Impostor, they will have their kill cooldown sh
 | Name | Description | Type | Default |
 |----------|:-------------:|:------:|:------:|
 | Underdog | The percentage probability of the Underdog appearing | Percentage | 0% |
+| Max Underdogs | The max amount of Underdogs in one game | Number | 1 |
 
 -----------------------
 
@@ -803,6 +694,21 @@ They have the same amount of meetings as a regular player.
 | Button Barry | The percentage probability of Button Barry appearing | Percentage | 0% |
 
 -----------------------
+## Lovers
+### **Team: Crewmates or Impostors**
+The Lovers are two players who are linked together.\
+These two players get picked randomly between Crewmates and Impostors.\
+They gain the primary objective to stay alive together.\
+If they are both among the last 3 players, they win.\
+In order to so, they gain access to a private chat, only visible by them in between meetings.\
+However, they can also win with their respective team, hence why the Lovers do not know the role of the other lover.
+
+### Game Options
+| Name | Description | Type | Default |
+|----------|:-------------:|:------:|:------:|
+| Lovers | The percentage probability of the Lovers appearing | Percentage | 0% |
+| Both Lovers Die | Whether the other Lover automatically dies if the other does | Toggle | True |
+-----------------------
 # Custom Game Options
 | Name | Description | Type | Default |
 |----------|:-------------:|:------:|:------:|
@@ -815,6 +721,7 @@ They have the same amount of meetings as a regular player.
 | Role Appears Under Name | Whether your own role appears under your name | Toggle | True |
 | Probability of a completely vanilla game | The percentage probability of a vanilla Among Us game happening | Percentage | 0% |
 
+[^1]: Setting is ignored if Role Progression is turned on
 -----------------------
 # Extras
 ## New Colors!

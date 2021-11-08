@@ -53,8 +53,22 @@ namespace TownOfUs.NeutralRoles.ShifterMod
                 writer1.Write(medic);
                 writer1.Write(role.ClosestPlayer.PlayerId);
                 AmongUsClient.Instance.FinishRpcImmediately(writer1);
-                if (CustomGameOptions.ShieldBreaks) role.LastShifted = DateTime.UtcNow;
-                StopKill.BreakShield(medic, role.ClosestPlayer.PlayerId, CustomGameOptions.ShieldBreaks);
+
+                if (CustomGameOptions.RoleProgressionOn)
+                {
+                    var medicPlayer = Utils.PlayerById(medic);
+                    if (medicPlayer.Is(RoleEnum.Medic))
+                    {
+                        var medicRole = Role.GetRole<Medic>(medicPlayer);
+                        if (!medicRole.GetTier3) role.LastShifted = DateTime.UtcNow;
+                        StopKill.BreakShield(medic, role.ClosestPlayer.PlayerId, !medicRole.GetTier3);
+                    }
+                }
+                else
+                {
+                    if (CustomGameOptions.ShieldBreaks) role.LastShifted = DateTime.UtcNow;
+                    StopKill.BreakShield(medic, role.ClosestPlayer.PlayerId, CustomGameOptions.ShieldBreaks);
+                }
 
                 return false;
             }
@@ -114,7 +128,6 @@ namespace TownOfUs.NeutralRoles.ShifterMod
                 case RoleEnum.Sheriff:
                 case RoleEnum.Jester:
                 case RoleEnum.Engineer:
-                case RoleEnum.Lover:
                 case RoleEnum.Mayor:
                 case RoleEnum.Swapper:
                 case RoleEnum.Investigator:
@@ -138,6 +151,9 @@ namespace TownOfUs.NeutralRoles.ShifterMod
 
                     var modifier = Modifier.GetModifier(other);
                     var modifier2 = Modifier.GetModifier(shifter);
+
+                    if (modifier.ModifierType == ModifierEnum.Lover) lovers = true;
+
                     if (modifier != null && modifier2 != null)
                     {
                         modifier.Player = shifter;
@@ -165,7 +181,6 @@ namespace TownOfUs.NeutralRoles.ShifterMod
                     Role.RoleDictionary.Remove(other.PlayerId);
 
                     Role.RoleDictionary.Add(shifter.PlayerId, newRole);
-                    lovers = role == RoleEnum.Lover;
                     snitch = role == RoleEnum.Snitch;
 
                     foreach (var exeRole in Role.AllRoles.Where(x => x.RoleType == RoleEnum.Executioner))
@@ -205,7 +220,6 @@ namespace TownOfUs.NeutralRoles.ShifterMod
                 case RoleEnum.Morphling:
                 case RoleEnum.Camouflager:
                 case RoleEnum.Janitor:
-                case RoleEnum.LoverImpostor:
                 case RoleEnum.Impostor:
                 case RoleEnum.Glitch:
                 case RoleEnum.Shifter:
@@ -232,9 +246,9 @@ namespace TownOfUs.NeutralRoles.ShifterMod
 
                 if (lovers)
                 {
-                    var lover = Role.GetRole<Lover>(shifter);
+                    var lover = Modifier.GetModifier<Lover>(shifter);
                     var otherLover = lover.OtherLover;
-                    otherLover.RegenTask();
+                    Role.GetRole(otherLover.Player).RegenTask();
                 }
 
                 if (snitch)

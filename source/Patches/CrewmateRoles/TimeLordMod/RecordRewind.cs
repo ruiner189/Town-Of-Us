@@ -18,7 +18,10 @@ namespace TownOfUs.CrewmateRoles.TimeLordMod
         public static List<PointInTime> points = new List<PointInTime>();
         private static float deadTime;
         private static bool isDead;
-        private static float recordTime => CustomGameOptions.RewindDuration;
+        private static float recordTime =>
+            whoIsRewinding != null && CustomGameOptions.RoleProgressionOn ?
+            whoIsRewinding.GetRewindDuration() :
+            CustomGameOptions.RewindDuration;
 
         public static void Record()
         {
@@ -61,7 +64,7 @@ namespace TownOfUs.CrewmateRoles.TimeLordMod
             }
         }
 
-        public static void Rewind()
+        public static void Rewind(TimeLord timeLord)
         {
             if (Minigame.Instance)
                 try
@@ -106,8 +109,10 @@ namespace TownOfUs.CrewmateRoles.TimeLordMod
                     PlayerControl.LocalPlayer.gameObject.GetComponent<Rigidbody2D>().velocity =
                         currentPoint.velocity * 3;
 
+                    bool reviveFlag = CustomGameOptions.RewindRevive || (CustomGameOptions.RoleProgressionOn && timeLord.GetTier2);
+
                     if (isDead && currentPoint.unix < deadTime && PlayerControl.LocalPlayer.Data.IsDead &&
-                        CustomGameOptions.RewindRevive)
+                        reviveFlag)
                     {
                         var player = PlayerControl.LocalPlayer;
 
@@ -148,14 +153,14 @@ namespace TownOfUs.CrewmateRoles.TimeLordMod
         public static void Postfix()
         {
             if (rewinding)
-                Rewind();
+                Rewind(whoIsRewinding);
             else Record();
 
             foreach (var role in Role.GetRoles(RoleEnum.TimeLord))
             {
                 var TimeLord = (TimeLord) role;
                 if ((DateTime.UtcNow - TimeLord.StartRewind).TotalMilliseconds >
-                    CustomGameOptions.RewindDuration * 1000f && TimeLord.FinishRewind < TimeLord.StartRewind)
+                    TimeLord.GetRewindDuration() * 1000f && TimeLord.FinishRewind < TimeLord.StartRewind)
                     StartStop.StopRewind(TimeLord);
             }
         }

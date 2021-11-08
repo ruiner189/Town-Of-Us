@@ -7,6 +7,7 @@ using Reactor.Extensions;
 using TownOfUs.CrewmateRoles.MedicMod;
 using TownOfUs.Extensions;
 using TownOfUs.Roles;
+using TownOfUs.Roles.Modifiers;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -69,7 +70,7 @@ namespace TownOfUs.CrewmateRoles.AltruistMod
 
             if (player.isLover() && CustomGameOptions.BothLoversDie)
             {
-                var lover = Role.GetRole<Lover>(player).OtherLover.Player;
+                var lover = Modifier.GetModifier<Lover>(player).OtherLover.Player;
 
                 lover.Revive();
                 Murder.KilledPlayers.Remove(

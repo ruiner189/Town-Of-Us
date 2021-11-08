@@ -21,7 +21,7 @@ namespace TownOfUs.Roles
             Name = "Arsonist";
             ImpostorText = () => "Douse players and ignite the light";
             TaskText = () => "Douse players and ignite to kill everyone\nFake Tasks:";
-            Color = new Color(1f, 0.3f, 0f);
+            Color = Patches.Colors.Arsonist;
             RoleType = RoleEnum.Arsonist;
             Faction = Faction.Neutral;
         }
@@ -85,13 +85,6 @@ namespace TownOfUs.Roles
             }
 
             return true;
-        }
-
-        protected override void IntroPrefix(IntroCutscene._CoBegin_d__14 __instance)
-        {
-            var arsonistTeam = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
-            arsonistTeam.Add(PlayerControl.LocalPlayer);
-            __instance.yourTeam = arsonistTeam;
         }
 
         public float DouseTimer()

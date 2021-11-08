@@ -17,17 +17,10 @@ namespace TownOfUs.Roles
                 target == null
                     ? "You don't have a target for some reason... weird..."
                     : $"Vote {target.name} out\nFake Tasks:";
-            Color = new Color(0.55f, 0.25f, 0.02f, 1f);
+            Color = Patches.Colors.Executioner;
             RoleType = RoleEnum.Executioner;
             Faction = Faction.Neutral;
             Scale = 1.4f;
-        }
-
-        protected override void IntroPrefix(IntroCutscene._CoBegin_d__14 __instance)
-        {
-            var executionerteam = new List<PlayerControl>();
-            executionerteam.Add(PlayerControl.LocalPlayer);
-            __instance.yourTeam = executionerteam;
         }
 
         internal override bool EABBNOODFGL(ShipStatus __instance)
