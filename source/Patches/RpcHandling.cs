@@ -212,7 +212,7 @@ namespace TownOfUs
                 var vanilla = PlayerControl.AllPlayerControls.ToArray().Where(x => x.Is(RoleEnum.Crewmate)).ToList();
                 var toChooseFrom = crewmates.Count > 0
                     ? crewmates
-                    : PlayerControl.AllPlayerControls.ToArray().Where(x => x.Is(Faction.Crewmates) && !x.isLover())
+                    : PlayerControl.AllPlayerControls.ToArray().Where(x => x.Is(Faction.Crewmates) && !x.IsLover())
                         .ToList();
                 var rand = Random.RandomRangeInt(0, toChooseFrom.Count);
                 var pc = toChooseFrom[rand];

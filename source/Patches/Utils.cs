@@ -145,7 +145,7 @@ namespace TownOfUs
             if (!self.Contains(item)) self.Add(item);
         }
 
-        public static bool isLover(this PlayerControl player)
+        public static bool IsLover(this PlayerControl player)
         {
             return player.Is(ModifierEnum.Lover) || player.Is(ModifierEnum.Lover);
         }
@@ -202,7 +202,7 @@ namespace TownOfUs
             return null;
         }
 
-        public static bool isShielded(this PlayerControl player)
+        public static bool IsShielded(this PlayerControl player)
         {
             return Role.GetRoles(RoleEnum.Medic).Any(role =>
             {
@@ -211,7 +211,7 @@ namespace TownOfUs
             });
         }
 
-        public static Medic getMedic(this PlayerControl player)
+        public static Medic GetMedic(this PlayerControl player)
         {
             return Role.GetRoles(RoleEnum.Medic).FirstOrDefault(role =>
             {
@@ -220,7 +220,7 @@ namespace TownOfUs
             }) as Medic;
         }
 
-        public static PlayerControl getClosestPlayer(PlayerControl refPlayer, List<PlayerControl> AllPlayers)
+        public static PlayerControl GetClosestPlayer(PlayerControl refPlayer, List<PlayerControl> AllPlayers)
         {
             var num = double.MaxValue;
             var refPosition = refPlayer.GetTruePosition();
@@ -243,9 +243,9 @@ namespace TownOfUs
             return result;
         }
 
-        public static PlayerControl getClosestPlayer(PlayerControl refplayer)
+        public static PlayerControl GetClosestPlayer(PlayerControl refplayer)
         {
-            return getClosestPlayer(refplayer, PlayerControl.AllPlayerControls.ToArray().ToList());
+            return GetClosestPlayer(refplayer, PlayerControl.AllPlayerControls.ToArray().ToList());
         }
         public static void SetTarget(
             ref PlayerControl closestPlayer,
@@ -269,17 +269,17 @@ namespace TownOfUs
         {
             if (float.IsNaN(maxDistance))
                 maxDistance = GameOptionsData.KillDistances[PlayerControl.GameOptions.KillDistance];
-            var player = getClosestPlayer(
+            var player = GetClosestPlayer(
                 PlayerControl.LocalPlayer,
                 targets ?? PlayerControl.AllPlayerControls.ToArray().ToList()
             );
             var closeEnough = player == null || (
-                getDistBetweenPlayers(PlayerControl.LocalPlayer, player) < maxDistance
+                GetDistBetweenPlayers(PlayerControl.LocalPlayer, player) < maxDistance
             );
             return closestPlayer = closeEnough ? player : null;
         }
 
-        public static double getDistBetweenPlayers(PlayerControl player, PlayerControl refplayer)
+        public static double GetDistBetweenPlayers(PlayerControl player, PlayerControl refplayer)
         {
             var truePosition = refplayer.GetTruePosition();
             var truePosition2 = player.GetTruePosition();

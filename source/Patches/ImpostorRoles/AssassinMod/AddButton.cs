@@ -129,7 +129,7 @@ namespace TownOfUs.ImpostorRoles.AssassinMod
                 AssassinKill.RpcMurderPlayer(toDie);
                 role.RemainingKills--;
                 ShowHideButtons.HideSingle(role, targetId, toDie == role.Player);
-                if (toDie.isLover() && CustomGameOptions.BothLoversDie)
+                if (toDie.IsLover() && CustomGameOptions.BothLoversDie)
                 {
                     var lover = ((Lover)playerModifier).OtherLover.Player;
                     ShowHideButtons.HideSingle(role, lover.PlayerId, false);

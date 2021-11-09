@@ -28,9 +28,11 @@ namespace TownOfUs.Roles
 
         public override List<PlayerControl> GetTeammates()
         {
-            var loverTeam = new List<PlayerControl>();
-            loverTeam.Add(PlayerControl.LocalPlayer);
-            loverTeam.Add(OtherLover.Player);
+            var loverTeam = new List<PlayerControl>
+            {
+                PlayerControl.LocalPlayer,
+                OtherLover.Player
+            };
             return loverTeam;
         }
 
