@@ -125,10 +125,6 @@ namespace TownOfUs
                 PhantomOn = false;
             }
 
-            PluginSingleton<TownOfUs>.Instance.Log.LogMessage($"Lovers? {LoversOn}");
-            if (LoversOn)
-                Lover.Gen(crewmates, impostors);
-
             List<PlayerControl> executionerList = new List<PlayerControl>();
 
             foreach (var (type, rpc, _) in crewAndNeutralRoles)
@@ -190,12 +186,22 @@ namespace TownOfUs
             canHaveModifier.Shuffle();
 
             foreach (var (type, rpc, _) in GlobalModifiers)
-                Role.Gen<Modifier>(type, canHaveModifier, rpc);
+            {
+                if (canHaveModifier.Count == 0) break;
+                if(rpc == CustomRPC.SetCouple)
+                {
+                    if (canHaveModifier.Count == 1) continue;
+                        Lover.Gen(canHaveModifier);
+                } else
+                {
+                    Role.Gen<Modifier>(type, canHaveModifier, rpc);
+                }
+            }
 
-            canHaveModifier.RemoveAll(player => !player.Data.IsImpostor);
+            canHaveModifier.RemoveAll(player => player.Data.IsImpostor);
             canHaveModifier.Shuffle();
 
-            while (canHaveModifier.Count > 0)
+            while (canHaveModifier.Count > 0 && CrewmateModifiers.Count > 0)
             {
                 var (type, rpc, _) = CrewmateModifiers.TakeFirst();
                 Role.Gen<Modifier>(type, canHaveModifier.TakeFirst(), rpc);
@@ -206,7 +212,7 @@ namespace TownOfUs
                 var vanilla = PlayerControl.AllPlayerControls.ToArray().Where(x => x.Is(RoleEnum.Crewmate)).ToList();
                 var toChooseFrom = crewmates.Count > 0
                     ? crewmates
-                    : PlayerControl.AllPlayerControls.ToArray().Where(x => x.Is(Faction.Crewmates) && !x.isLover())
+                    : PlayerControl.AllPlayerControls.ToArray().Where(x => x.Is(Faction.Crewmates) && !x.IsLover())
                         .ToList();
                 var rand = Random.RandomRangeInt(0, toChooseFrom.Count);
                 var pc = toChooseFrom[rand];
@@ -873,6 +879,8 @@ namespace TownOfUs
                 if (Check(CustomGameOptions.ButtonBarryOn))
                     GlobalModifiers.Add(
                         (typeof(ButtonBarry), CustomRPC.SetButtonBarry, CustomGameOptions.ButtonBarryOn));
+                if (Check(CustomGameOptions.LoversOn))
+                    GlobalModifiers.Add((typeof(Lover), CustomRPC.SetCouple, CustomGameOptions.LoversOn));
                 #endregion
                 GenEachRole(infected.ToList());
             }

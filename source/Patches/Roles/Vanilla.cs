@@ -24,5 +24,10 @@ namespace TownOfUs.Roles
             RoleType = RoleEnum.Crewmate;
             Color = Patches.Colors.Crewmate;
         }
+
+        protected override void OnTierUp()
+        {
+            return;
+        }
     }
 }

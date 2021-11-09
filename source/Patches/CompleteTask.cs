@@ -18,8 +18,6 @@ namespace TownOfUs.Patches
             var tasksLeft = taskinfos.Count(x => !x.Complete);
             var totalTasks = taskinfos.Count();
 
-            role.TasksLeft = tasksLeft;
-
             if (!CustomGameOptions.RoleProgressionOn) return;
             if (__instance.Data.IsDead) return;
 

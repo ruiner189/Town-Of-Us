@@ -19,9 +19,6 @@ namespace TownOfUs.Patches
             var taskinfos = __instance.Data.Tasks.ToArray();
             var tasksLeft = taskinfos.Count(x => !x.Complete);
             var totalTasks = taskinfos.Count();
-
-            role.TasksLeft = tasksLeft;
-            role.TotalTasks = totalTasks;
         }
     }
 }

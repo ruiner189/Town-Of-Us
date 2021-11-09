@@ -89,7 +89,7 @@ namespace TownOfUs.ImpostorRoles.AssassinMod
                 }
             }
             player.Die(DeathReason.Kill);
-            if (checkLover && player.isLover() && CustomGameOptions.BothLoversDie)
+            if (checkLover && player.IsLover() && CustomGameOptions.BothLoversDie)
                 MurderPlayer(Modifier.GetModifier<Lover>(player).OtherLover.Player, false);
 
             var meetingHud = MeetingHud.Instance;
