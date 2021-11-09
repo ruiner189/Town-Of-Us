@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Hazel;
 using Reactor;
@@ -11,10 +11,10 @@ namespace TownOfUs.Roles
 {
     public class Lover : Modifier
     {
-
         public Lover(PlayerControl player) : base(player)
         {
             Name = "Lover";
+            SymbolName = "♥";
             TaskText = () =>
                 "You are in Love with " + OtherLover.Player.name;
             Color = Colors.Lovers;
@@ -26,7 +26,6 @@ namespace TownOfUs.Roles
         public int Num { get; set; }
         public bool LoverImpostor { get; set; }
 
-        
         public override List<PlayerControl> GetTeammates()
         {
             var loverTeam = new List<PlayerControl>();
@@ -34,20 +33,26 @@ namespace TownOfUs.Roles
             loverTeam.Add(OtherLover.Player);
             return loverTeam;
         }
-        
 
-        public static void Gen(List<PlayerControl> crewmates, List<PlayerControl> impostors)
+        public static void Gen(List<PlayerControl> canHaveModifiers)
         {
+            List<PlayerControl> crewmates = new List<PlayerControl>();
+            List<PlayerControl> impostors = new List<PlayerControl>();
+
+            foreach(var player in canHaveModifiers)
+            {
+                if (player.Data.IsImpostor)
+                    impostors.Add(player);
+                else crewmates.Add(player);
+            }
+
             // Check to make sure there is enough players for lovers
             if (crewmates.Count <= 1 && impostors.Count < 1) return;
 
             // Chooses a completely random player as the first lover.
-            var allPlayers = new List<PlayerControl>();
-            allPlayers.AddRange(crewmates);
-            allPlayers.AddRange(impostors);
-            var num = Random.RandomRangeInt(0, allPlayers.Count);
-            var firstLover = allPlayers[num];
-            allPlayers.Remove(firstLover);
+            var num = Random.RandomRangeInt(0, canHaveModifiers.Count);
+            var firstLover = canHaveModifiers[num];
+            canHaveModifiers.Remove(firstLover);
 
             var isImpostor = impostors.Contains(firstLover);
 
@@ -57,9 +62,10 @@ namespace TownOfUs.Roles
                 num = Random.RandomRangeInt(0, crewmates.Count);
                 secondLover = crewmates[num];
             } else {
-                num = Random.RandomRangeInt(0, allPlayers.Count);
-                secondLover = allPlayers[num];
+                num = Random.RandomRangeInt(0, canHaveModifiers.Count);
+                secondLover = canHaveModifiers[num];
             }
+            canHaveModifiers.Remove(secondLover);
 
             var writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId,
                 (byte) CustomRPC.SetCouple, SendOption.Reliable, -1);
@@ -72,7 +78,6 @@ namespace TownOfUs.Roles
             lover2.OtherLover = lover1;
 
             AmongUsClient.Instance.FinishRpcImmediately(writer);
-            PluginSingleton<TownOfUs>.Instance.Log.LogMessage($"Lovers 5 {writer}");
         }
 
         internal override bool EABBNOODFGL(ShipStatus __instance)
@@ -93,7 +98,6 @@ namespace TownOfUs.Roles
 
             return true;
         }
-
 
         private bool FourPeopleLeft()
         {

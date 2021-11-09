@@ -184,6 +184,7 @@ namespace TownOfUs.Roles
         {
             if (PlayerControl.LocalPlayer.Is(ModifierEnum.Lover))
             {
+                if (Local) return true;
                 var lover = Modifier.GetModifier<Lover>(PlayerControl.LocalPlayer);
                 return lover.OtherLover.Player == Player;
             }
@@ -272,8 +273,14 @@ namespace TownOfUs.Roles
 
             String PlayerName = Player.name;
 
-            if ((revealModifier || revealLover) && Player.isLover())
-                PlayerName += $" ♥";
+            var modifier = Modifier.GetModifier(Player);
+            if (modifier != null && modifier.GetColoredSymbol() != null)
+            {
+                if (modifier.ModifierType == ModifierEnum.Lover && (revealModifier || revealLover))
+                    PlayerName += $" {modifier.GetColoredSymbol()}";
+                else if (modifier.ModifierType != ModifierEnum.Lover && revealModifier)
+                    PlayerName += $" {modifier.GetColoredSymbol()}";
+            }
 
             if(revealTasks && Faction == Faction.Crewmates)
                 PlayerName += $" ({TotalTasks - TasksLeft}/{TotalTasks})";

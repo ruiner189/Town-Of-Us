@@ -23,6 +23,16 @@ namespace TownOfUs.Roles.Modifiers
 
         public static IEnumerable<Modifier> AllModifiers => ModifierDictionary.Values.ToList();
         protected internal string Name { get; set; }
+        protected internal string SymbolName { get; set; }
+
+        protected internal string GetColoredSymbol()
+        {
+            if (SymbolName == null) return null;
+            if (Color == null) return SymbolName;
+
+            return $"{ColorString}{SymbolName}</color>";
+        }
+
         public string PlayerName { get; set; }
         private PlayerControl _player { get; set; }
         public PlayerControl Player

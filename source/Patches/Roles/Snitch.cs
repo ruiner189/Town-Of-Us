@@ -80,7 +80,9 @@ namespace TownOfUs.Roles
                 Player.Data.HatId == 0U ? 1.5f : 2.0f,
                 -0.5f
             );
-            return PlayerName + "\n" + "Crewmate";
+            if(Local)
+                return PlayerName + "\n" + "Crewmate";
+            return PlayerName;
         }
     }
 }
