@@ -631,7 +631,7 @@ namespace TownOfUs.CustomOption
 
             // Underdog Settings
             Underdog =
-                new CustomHeaderOption(num++, "<color=#FF0000FF>Swooper</color>");
+                new CustomHeaderOption(num++, "<color=#FF0000FF>Underdog</color>");
             UnderdogMax =
                 new CustomNumberOption(num++, "Max Underdogs", 1, 1, 3, 1);
 
