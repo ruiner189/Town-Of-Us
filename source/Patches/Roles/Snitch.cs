@@ -36,6 +36,31 @@ namespace TownOfUs.Roles
                    base.Criteria();
         }
 
+        internal override bool SelfCriteria()
+        {
+            if (Local)
+            {
+                if (CustomGameOptions.SnitchOnLaunch) return base.SelfCriteria();
+                return OneTaskLeft;
+            }
+            return base.SelfCriteria();
+        }
+
+        internal override bool RoleCriteria()
+        {
+            var localPlayer = PlayerControl.LocalPlayer;
+            if (localPlayer.Data.IsImpostor)
+            {
+                return OneTaskLeft;
+            }
+            else if (Role.GetRole(localPlayer).Faction == Faction.Neutral)
+            {
+                return OneTaskLeft && CustomGameOptions.SnitchSeesNeutrals;
+            }
+            return false;
+        }
+
+        
         protected override string NameText(bool revealTasks, bool revealRole, bool revealModifier, bool revealLover, PlayerVoteArea player = null)
         {
             if (CamouflageUnCamouflage.IsCamoed && player == null) return "";
