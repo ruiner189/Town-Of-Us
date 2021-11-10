@@ -42,11 +42,12 @@ namespace TownOfUs.Extensions
             return result;
         }
 
+        /**
         public static VisualAppearance GetDefaultAppearance(this PlayerControl player)
         {
             return new VisualAppearance()
             {
-                ColorId = player.Data.ColorId,
+                ColorId = player.Data.DefaultOutfit.ColorId
                 HatId = player.Data.HatId,
                 SkinId = player.Data.SkinId,
                 PetId = player.Data.PetId
@@ -71,5 +72,7 @@ namespace TownOfUs.Extensions
             else
                 return player.GetDefaultAppearance();
         }
+        */
     }
+
 }

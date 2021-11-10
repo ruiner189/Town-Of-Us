@@ -20,7 +20,7 @@ namespace TownOfUs.NeutralRoles.PhantomMod
                 }
                 else if (phantom.Faded)
                 {
-                    Utils.Unmorph(phantom.Player);
+                    //Utils.Unmorph(phantom.Player);
                     phantom.Player.myRend.color = Color.white;
                     phantom.Player.gameObject.layer = LayerMask.NameToLayer("Ghost");
                     phantom.Faded = false;

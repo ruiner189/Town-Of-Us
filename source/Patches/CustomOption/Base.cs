@@ -1,19 +1,22 @@
 using System;
 using System.Collections.Generic;
+using TownOfUs.Patches.CustomOption;
+using Object = UnityEngine.Object;
 
 namespace TownOfUs.CustomOption
 {
     public class CustomOption
     {
         public static List<CustomOption> AllOptions = new List<CustomOption>();
+
         public readonly int ID;
 
         public Func<object, string> Format;
         public string Name;
-
-
+        public string MenuName;
         protected internal CustomOption(int id, string name, CustomOptionType type, object defaultValue,
-            Func<object, string> format = null)
+            Func<object, string> format = null,
+            String menuName = null)
         {
             ID = id;
             Name = name;
@@ -23,6 +26,8 @@ namespace TownOfUs.CustomOption
 
             if (Type == CustomOptionType.Button) return;
             AllOptions.Add(this);
+            if (menuName == null) MenuName = MenuLoader.VanillaGameName;
+            else MenuName = menuName;
             Set(Value);
         }
 
@@ -35,6 +40,30 @@ namespace TownOfUs.CustomOption
 
         protected internal bool Indent { get; set; }
 
+        private static ToggleOption _togglePrefab;
+        private static NumberOption _numberPrefab;
+        private static StringOption _stringPrefab;
+        public static ToggleOption GetTogglePrefab()
+        {
+            if (_togglePrefab != null) return _togglePrefab;
+            _togglePrefab = Object.FindObjectOfType<ToggleOption>();
+            return _togglePrefab;
+        }
+
+        public static NumberOption GetNumberPrefab()
+        {
+            if (_numberPrefab != null) return _numberPrefab;
+            _numberPrefab = Object.FindObjectOfType<NumberOption>();
+            return _numberPrefab;
+        }
+
+        public static StringOption GetStringPrefab()
+        {
+            if (_stringPrefab != null) return _stringPrefab;
+            _stringPrefab = Object.FindObjectOfType<StringOption>();
+            return _stringPrefab;
+        }
+
         public override string ToString()
         {
             return Format(Value);
@@ -42,10 +71,8 @@ namespace TownOfUs.CustomOption
 
         public virtual void OptionCreated()
         {
-            Setting.name = Setting.gameObject.name = Name;
+            Setting.name = Setting.gameObject.name = Setting.transform.name = Name;
         }
-
-
         protected internal void Set(object value, bool SendRpc = true)
         {
             System.Console.WriteLine($"{Name} set to {value}");

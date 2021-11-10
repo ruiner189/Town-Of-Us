@@ -1,10 +1,11 @@
+using TownOfUs.Patches.CustomOption;
+
 namespace TownOfUs.CustomOption
 {
     public class CustomToggleOption : CustomOption
     {
-        protected internal CustomToggleOption(int id, string name, bool value = true) : base(id, name,
-            CustomOptionType.Toggle,
-            value)
+        protected internal CustomToggleOption(int id, string name, bool value = true, string menuName = null) 
+            : base(id, name, CustomOptionType.Toggle, value, null, menuName)
         {
             Format = val => (bool) val ? "On" : "Off";
         }

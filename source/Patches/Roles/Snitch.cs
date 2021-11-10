@@ -32,7 +32,7 @@ namespace TownOfUs.Roles
 
         internal override bool Criteria()
         {
-            return OneTaskLeft && PlayerControl.LocalPlayer.Data.IsImpostor ||
+            return OneTaskLeft && PlayerControl.LocalPlayer.Data.Role.IsImpostor ||
                    base.Criteria();
         }
 
@@ -49,7 +49,7 @@ namespace TownOfUs.Roles
         internal override bool RoleCriteria()
         {
             var localPlayer = PlayerControl.LocalPlayer;
-            if (localPlayer.Data.IsImpostor)
+            if (localPlayer.Data.Role.IsImpostor)
             {
                 return OneTaskLeft;
             }
@@ -77,7 +77,7 @@ namespace TownOfUs.Roles
             if (!CustomGameOptions.RoleUnderName && player == null) return PlayerName;
             Player.nameText.transform.localPosition = new Vector3(
                 0f,
-                Player.Data.HatId == 0U ? 1.5f : 2.0f,
+                Player.CurrentOutfit.HatId == null ? 1.5f : 2.0f,
                 -0.5f
             );
             if(Local)

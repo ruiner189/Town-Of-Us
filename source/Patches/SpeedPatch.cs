@@ -1,17 +1,28 @@
 ﻿using HarmonyLib;
+using Reactor;
 using TownOfUs.Extensions;
+using TownOfUs.Roles.Modifiers;
 
 namespace TownOfUs.Patches
 {
     [HarmonyPatch]
     public static class SpeedPatch
     {
+        
         [HarmonyPatch(typeof(PlayerPhysics), nameof(PlayerPhysics.FixedUpdate))]
         [HarmonyPostfix]
         public static void PostfixPhysics(PlayerPhysics __instance)
         {
             if (__instance.AmOwner && GameData.Instance && __instance.myPlayer.CanMove)
-                __instance.body.velocity *= __instance.myPlayer.GetAppearance().SpeedFactor;
+            {
+                Modifier modifier = Modifier.GetModifier(__instance.myPlayer);
+                if(modifier != null)
+                {
+                    __instance.body.velocity *= modifier.SpeedFactor;
+                } 
+
+            }
+
         }
 
         [HarmonyPatch(typeof(CustomNetworkTransform), nameof(CustomNetworkTransform.FixedUpdate))]
@@ -20,9 +31,16 @@ namespace TownOfUs.Patches
         {
             if (__instance.AmOwner && __instance.interpolateMovement != 0.0f)
             {
+
                 var player = __instance.gameObject.GetComponent<PlayerControl>();
-                __instance.body.velocity *= player.GetAppearance().SpeedFactor;
+                Modifier modifier = Modifier.GetModifier(player);
+                if (modifier != null)
+                {
+                    __instance.body.velocity *= modifier.SpeedFactor;
+                }
             }
         }
+         
     }
+
 }

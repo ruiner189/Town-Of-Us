@@ -39,7 +39,7 @@ namespace TownOfUs.Roles
 
         public void Loses()
         {
-            Player.Data.IsImpostor = true;
+           // Player.Data.IsImpostor = true;
         }
     }
 }

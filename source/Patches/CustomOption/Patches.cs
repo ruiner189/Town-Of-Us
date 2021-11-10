@@ -1,8 +1,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using HarmonyLib;
+using Reactor;
 using Reactor.Extensions;
 using TownOfUs.Extensions;
+using TownOfUs.Patches.CustomOption;
 using UnhollowerBaseLib;
 using UnityEngine;
 
@@ -16,92 +18,108 @@ namespace TownOfUs.CustomOption
         public static float LobbyTextRowHeight { get; set; } = 0.081F;
 
 
-        private static List<OptionBehaviour> CreateOptions(GameOptionsMenu __instance)
+        private static void CreateOptions(GameOptionsMenu __instance)
         {
-            var options = new List<OptionBehaviour>();
+            var togglePrefab = CustomOption.GetTogglePrefab();
+            var numberPrefab = CustomOption.GetNumberPrefab();
+            var stringPrefab = CustomOption.GetStringPrefab();
 
-            var togglePrefab = Object.FindObjectOfType<ToggleOption>();
-            var numberPrefab = Object.FindObjectOfType<NumberOption>();
-            var stringPrefab = Object.FindObjectOfType<StringOption>();
-
+            string[] MenuNames =
+            {
+                MenuLoader.VanillaGameName,
+                MenuLoader.VanillaRoleName,
+                MenuLoader.ReduxMenuName,
+                "Custom"
+            };
+            foreach (var name in MenuNames)
+            {
+                if (CustomMenu.MenuChildren.ContainsKey(name))
+                    CustomMenu.MenuChildren.Remove(name);
+                CustomMenu.MenuChildren.Add(name, new List<OptionBehaviour>());
+            }
 
             if (ExportButton.Setting != null)
             {
                 ExportButton.Setting.gameObject.SetActive(true);
-                options.Add(ExportButton.Setting);
+                CustomMenu.MenuChildren.GetValueOrDefault(MenuLoader.VanillaGameName).Add(ExportButton.Setting);
             }
             else
             {
-                var toggle = Object.Instantiate(togglePrefab, togglePrefab.transform.parent).DontDestroy();
+                var toggle = Object.Instantiate(togglePrefab, togglePrefab.transform.parent);
                 toggle.transform.GetChild(2).gameObject.SetActive(false);
                 toggle.transform.GetChild(0).localPosition += new Vector3(1f, 0f, 0f);
 
                 ExportButton.Setting = toggle;
                 ExportButton.OptionCreated();
-                options.Add(toggle);
+                CustomMenu.MenuChildren.GetValueOrDefault(MenuLoader.VanillaGameName).Add(toggle);
             }
 
             if (ImportButton.Setting != null)
             {
                 ImportButton.Setting.gameObject.SetActive(true);
-                options.Add(ImportButton.Setting);
+                CustomMenu.MenuChildren.GetValueOrDefault(MenuLoader.VanillaGameName).Add(ImportButton.Setting);
             }
             else
             {
-                var toggle = Object.Instantiate(togglePrefab, togglePrefab.transform.parent).DontDestroy();
+                var toggle = Object.Instantiate(togglePrefab, togglePrefab.transform.parent);
                 toggle.transform.GetChild(2).gameObject.SetActive(false);
                 toggle.transform.GetChild(0).localPosition += new Vector3(1f, 0f, 0f);
 
                 ImportButton.Setting = toggle;
                 ImportButton.OptionCreated();
-                options.Add(toggle);
+                CustomMenu.MenuChildren.GetValueOrDefault(MenuLoader.VanillaGameName).Add(toggle);
             }
 
             DefaultOptions = __instance.Children.ToList();
-            foreach (var defaultOption in __instance.Children) options.Add(defaultOption);
+            foreach (var defaultOption in __instance.Children)
+                CustomMenu.MenuChildren.GetValueOrDefault(MenuLoader.VanillaGameName).Add(defaultOption);
 
             foreach (var option in CustomOption.AllOptions)
             {
                 if (option.Setting != null)
                 {
-                    option.Setting.gameObject.SetActive(true);
-                    options.Add(option.Setting);
+                    CustomMenu.MenuChildren.GetValueOrDefault(option.MenuName).Add(option.Setting);
                     continue;
                 }
 
                 switch (option.Type)
                 {
                     case CustomOptionType.Header:
-                        var toggle = Object.Instantiate(togglePrefab, togglePrefab.transform.parent).DontDestroy();
+                        var toggle = Object.Instantiate(togglePrefab, togglePrefab.transform.parent);
                         toggle.transform.GetChild(1).gameObject.SetActive(false);
                         toggle.transform.GetChild(2).gameObject.SetActive(false);
                         option.Setting = toggle;
-                        options.Add(toggle);
+                        CustomMenu.MenuChildren.GetValueOrDefault(option.MenuName).Add(toggle);
                         break;
                     case CustomOptionType.Toggle:
-                        var toggle2 = Object.Instantiate(togglePrefab, togglePrefab.transform.parent).DontDestroy();
+                        var toggle2 = Object.Instantiate(togglePrefab, togglePrefab.transform.parent);
                         option.Setting = toggle2;
-                        options.Add(toggle2);
+                        CustomMenu.MenuChildren.GetValueOrDefault(option.MenuName).Add(toggle2);
+                        break;
+                    case CustomOptionType.Tab:
+                        var tab = Object.Instantiate(togglePrefab, togglePrefab.transform.parent);
+                        tab.transform.GetChild(2).gameObject.SetActive(false);
+                        tab.transform.GetChild(0).localPosition += new Vector3(1f, 0f, 0f);
+                        option.Setting = tab;
+                        CustomMenu.MenuChildren.GetValueOrDefault(option.MenuName).Add(tab);
                         break;
                     case CustomOptionType.Number:
-                        var number = Object.Instantiate(numberPrefab, numberPrefab.transform.parent).DontDestroy();
+                        var number = Object.Instantiate(numberPrefab, numberPrefab.transform.parent);
                         option.Setting = number;
-                        options.Add(number);
+                        CustomMenu.MenuChildren.GetValueOrDefault(option.MenuName).Add(number);
                         break;
                     case CustomOptionType.String:
-                        var str = Object.Instantiate(stringPrefab, stringPrefab.transform.parent).DontDestroy();
+                        var str = Object.Instantiate(stringPrefab, stringPrefab.transform.parent);
                         option.Setting = str;
-                        options.Add(str);
+                        CustomMenu.MenuChildren.GetValueOrDefault(option.MenuName).Add(str);
                         break;
                 }
+                if(option.MenuName == MenuLoader.VanillaGameName) option.Setting.gameObject.SetActive(true);
+                else option.Setting.gameObject.SetActive(false);
 
                 option.OptionCreated();
             }
-
-            return options;
         }
-
-
         private static bool OnEnable(OptionBehaviour opt)
         {
             if (opt == ExportButton.Setting)
@@ -140,9 +158,18 @@ namespace TownOfUs.CustomOption
         [HarmonyPatch(typeof(GameOptionsMenu), nameof(GameOptionsMenu.Start))]
         private class GameOptionsMenu_Start
         {
+            private static GameOptionsMenu _lastInstance;
             public static void Postfix(GameOptionsMenu __instance)
             {
-                var customOptions = CreateOptions(__instance);
+                PluginSingleton<TownOfUs>.Instance.Log.LogMessage($"GameOptionsMenu_Start");
+                if (__instance == _lastInstance) return;
+                if (_lastInstance != null && _lastInstance.isActiveAndEnabled) return; 
+                _lastInstance = __instance;
+                CreateOptions(__instance);
+                PluginSingleton<TownOfUs>.Instance.Log.LogMessage($"GameOptionsMenu_Start C");
+                var customOptions = CustomMenu.MenuChildren.GetValueOrDefault(MenuLoader.VanillaGameName);
+                PluginSingleton<TownOfUs>.Instance.Log.LogMessage($"GameOptionsMenu_Start");
+                PluginSingleton<TownOfUs>.Instance.Log.LogMessage($"Values: {customOptions} {customOptions.Count}");
                 var y = __instance.GetComponentsInChildren<OptionBehaviour>()
                     .Max(option => option.transform.localPosition.y);
                 var x = __instance.Children[1].transform.localPosition.x;
@@ -161,6 +188,8 @@ namespace TownOfUs.CustomOption
         {
             public static void Postfix(GameOptionsMenu __instance)
             {
+                if (__instance.Children.Length == 0) return;
+                if (__instance.GetComponentsInChildren<OptionBehaviour>().Length == 0) return;
                 var y = __instance.GetComponentsInChildren<OptionBehaviour>()
                     .Max(option => option.transform.localPosition.y);
                 float x, z;
@@ -223,6 +252,12 @@ namespace TownOfUs.CustomOption
                     return false;
                 }
 
+                if(option is CustomTabOption tab)
+                {
+                    tab.Action();
+                    return false;
+                }
+
                 if (__instance == ExportButton.Setting)
                 {
                     if (!AmongUsClient.Instance.AmHost) return false;
@@ -255,6 +290,13 @@ namespace TownOfUs.CustomOption
                     button2.Do();
                     return false;
                 }
+                var backButton = CustomTabOption.AllBackButtons.FirstOrDefault(option => option.Setting == __instance);
+                if(backButton != null)
+                {
+                    backButton.Do();
+                    return false;
+                }
+                
 
                 return true;
             }

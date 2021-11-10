@@ -19,24 +19,23 @@ namespace TownOfUs.Patches.CustomHats
         private static ManualLogSource Log => PluginSingleton<TownOfUs>.Instance.Log;
         private static Assembly Assembly => typeof(TownOfUs).Assembly;
 
-        internal static void LoadHats()
+        internal static void LoadHats(HatManager __instance)
         {
             Log.LogMessage($"Generating Hats from namespace {HAT_RESOURCE_NAMESPACE}");
             try
-            {
+            { 
                 var hatJson = LoadJson();
-                
                 var hatBehaviours = DiscoverHatBehaviours(hatJson);
-
+                PluginSingleton<TownOfUs>.Instance.Log.LogMessage($"Found {__instance.GetUnlockedHats().Count} / {__instance.AllHats.Count} Unlocked hats. " +
+                      $"Adding {hatBehaviours.Count} Modded hats");
                 DestroyableSingleton<HatManager>.Instance.AllHats.ForEach(
-                    (Action<HatBehaviour>)(x => x.StoreName = "Vanilla")
+                      (Action<HatBehaviour>)(x => x.StoreName = "Vanilla")
                 );
-                for (var i = 0; i < hatBehaviours.Count; i++)
+                for(int i = 0; i < hatBehaviours.Count; i++)
                 {
                     hatBehaviours[i].Order = HAT_ORDER_BASELINE + i;
                     HatManager.Instance.AllHats.Add(hatBehaviours[i]);
                 }
-            
             }
             catch (Exception e)
             {
@@ -62,9 +61,11 @@ namespace TownOfUs.Patches.CustomHats
                     if (stream != null)
                     {
                         var hatBehaviour = GenerateHatBehaviour(stream.ReadFully());
-                        hatBehaviour.StoreName = hatCredit.Artist;
-                        hatBehaviour.ProductId = hatCredit.Name;
-                        hatBehaviours.Add(hatBehaviour);
+                       hatBehaviour.Free = true;
+                       hatBehaviour.StoreName = hatCredit.Artist;
+                       hatBehaviour.ProductId = hatCredit.Name;
+                        hatBehaviour.name = $"{hatCredit.Name}\nBy {hatCredit.Artist}";
+                       hatBehaviours.Add(hatBehaviour);
                     }
                 }
                 catch (Exception e)
@@ -93,7 +94,6 @@ namespace TownOfUs.Patches.CustomHats
 
             hat.InFront = true;
             hat.NoBounce = true;
-
             return hat;
         }
     }

@@ -32,8 +32,6 @@ namespace TownOfUs.ImpostorRoles.UndertakerMod
 
                     role.CurrentlyDragging = null;
                     body.bodyRenderer.material.SetFloat("_Outline", 0f);
-                    role.LastDragged = DateTime.UtcNow;
-
                 }
                 return;
             }

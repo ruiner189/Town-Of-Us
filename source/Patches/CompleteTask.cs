@@ -9,8 +9,23 @@ namespace TownOfUs.Patches
     [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.CompleteTask))]
     public class CompleteTask
     {
-        public static void Postfix(PlayerControl __instance)
+        public static void Postfix(PlayerControl __instance, uint idx)
         {
+
+            var taskInfo = __instance.Data.FindTaskById(idx);
+            if(taskInfo != null)
+            {
+                var normalTask = ShipStatus.Instance.GetTaskById(taskInfo.TypeId);
+                if (normalTask != null)
+                {
+                    PluginSingleton<TownOfUs>.Instance.Log.LogMessage($"Normal Task Info:\n" +
+                    $"Name: {normalTask.name}\n" +
+                    $"Task Type: {normalTask.TaskType}\n" +
+                    $"idx: {idx}\n" +
+                    $"TaskID: {normalTask.Id}");
+                }
+            }
+
             var role = Role.GetRole(__instance);
             if (role.Faction != Faction.Crewmates && role.RoleType != RoleEnum.Phantom) return;
 

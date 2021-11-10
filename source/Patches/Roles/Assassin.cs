@@ -58,6 +58,7 @@ namespace TownOfUs.Roles
 
             // Sorts the list alphabetically. 
             SortedColorMapping = ColorMapping.OrderBy(x => x.Key).ToDictionary(x => x.Key, x => x.Value);
+            GenerateKillButton();
         }
 
         public bool GuessedThisMeeting { get; set; } = false;

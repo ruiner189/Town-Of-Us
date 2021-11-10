@@ -10,6 +10,8 @@ namespace TownOfUs.Roles.Modifiers
             TaskText = () => "Super slow!";
             Color = new Color(1f, 0.5f, 0.5f, 1f);
             ModifierType = ModifierEnum.BigBoi;
+            SpeedFactor = 0.75f;
+            SizeFactor = DefaultSize * 2;
         }
     }
 }

@@ -1,20 +1,20 @@
+using Hazel;
 using System;
 using TownOfUs.Extensions;
+using TownOfUs.Patches.Buttons;
 using TownOfUs.Roles.Modifiers;
+using TownOfUs.Utility;
 using UnityEngine;
 
 namespace TownOfUs.Roles
 {
-    public class Morphling : Role, IVisualAlteration
+    public class Morphling : Role
 
     {
-        public KillButtonManager _morphButton;
-        public PlayerControl ClosestPlayer;
-        public DateTime LastMorphed;
-        public PlayerControl MorphedPlayer;
-
         public PlayerControl SampledPlayer;
-        public float TimeRemaining;
+        public ModdedButton SampleButton;
+        public ModdedButton MorphButton;
+        public ModdedButton VentButton;
 
         public Morphling(PlayerControl player) : base(player)
         {
@@ -24,57 +24,73 @@ namespace TownOfUs.Roles
             Color = Patches.Colors.Impostor;
             RoleType = RoleEnum.Morphling;
             Faction = Faction.Impostors;
-        }
 
-        public KillButtonManager MorphButton
-        {
-            get => _morphButton;
-            set
+            SampleButton = new ModdedButton(player);
+            SampleButton.ButtonType = ButtonType.AbilityButton;
+            SampleButton.ButtonTarget = ButtonTarget.Player;
+            SampleButton.Sprite = TownOfUs.SampleSprite;
+            SampleButton.UseDefault = false;
+            SampleButton.SetPosition(HudAlignment.BottomLeft, 0);
+            SampleButton.SetCooldown(button => CustomGameOptions.MorphlingCd);
+            SampleButton.SetAction(button =>
             {
-                _morphButton = value;
-                ExtraButtons.Clear();
-                ExtraButtons.Add(value);
-            }
+                SampledPlayer = button.ClosestPlayer;
+                return false;
+            });
+            SampleButton.RegisterButton();
+
+            MorphButton = new ModdedButton(player);
+            MorphButton.ButtonType = ButtonType.AbilityButton;
+            MorphButton.ButtonTarget = ButtonTarget.None;
+            MorphButton.Sprite = TownOfUs.MorphSprite;
+            MorphButton.UseDefault = false;
+            MorphButton.SetPosition(HudAlignment.BottomLeft, 1);
+            MorphButton.SetCooldown(button => CustomGameOptions.MorphlingCd);
+            MorphButton.SetDuration(button => CustomGameOptions.MorphlingDuration);
+            MorphButton.SetAction(MorphAction);
+            MorphButton.SetActionEnd(MorphActionEnd);
+            MorphButton.SetEnabled(MorphActionEnable);
+            MorphButton.RegisterButton();
+
+            GenerateKillButton();
+
+            VentButton = new ModdedButton(player);
+            VentButton.ButtonType = ButtonType.VentButton;
+            VentButton.UseDefault = true;
+            VentButton.SetShow(button => false);
+            VentButton.RegisterButton();
+
         }
 
-        public bool Morphed => TimeRemaining > 0f;
-
-        public void Morph()
+        public bool MorphAction(ModdedButton button)
         {
-            TimeRemaining -= Time.deltaTime;
-            Utils.Morph(Player, MorphedPlayer);
-        }
-
-        public void Unmorph()
-        {
-            MorphedPlayer = null;
-            Utils.Unmorph(Player);
-            LastMorphed = DateTime.UtcNow;
-        }
-
-        public float MorphTimer()
-        {
-            var utcNow = DateTime.UtcNow;
-            var timeSpan = utcNow - LastMorphed;
-            var num = CustomGameOptions.MorphlingCd * 1000f;
-            var flag2 = num - (float)timeSpan.TotalMilliseconds < 0f;
-            if (flag2) return 0;
-            return (num - (float)timeSpan.TotalMilliseconds) / 1000f;
-        }
-
-        public bool TryGetModifiedAppearance(out VisualAppearance appearance)
-        {
-            if (Morphed)
-            {
-                appearance = MorphedPlayer.GetDefaultAppearance();
-                var modifier = Modifier.GetModifier(MorphedPlayer);
-                if (modifier is IVisualAlteration alteration)
-                    alteration.TryGetModifiedAppearance(out appearance);
-                return true;
-            }
-
-            appearance = Player.GetDefaultAppearance();
+            RpcSetMorph(SampledPlayer);
+            Utils.Morph(Player, SampledPlayer.Data.DefaultOutfit);
             return false;
+        }
+
+        public void MorphActionEnd(ModdedButton button)
+        {
+            RpcSetMorph(Player);
+            Utils.Morph(Player, Player.Data.DefaultOutfit);
+        }
+
+        public bool MorphActionEnable(ModdedButton button)
+        {
+            if (!ModdedButton.DefaultEnabled(button)) return false;
+            if (SampledPlayer == null) return false;
+            return true;
+        }
+
+        public void RpcSetMorph(PlayerControl target)
+        {
+            var writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId,
+            (byte)CustomRPC.Morph,
+            SendOption.Reliable, -1);
+            writer.Write(Player.PlayerId);
+            writer.Write(target.PlayerId);
+            AmongUsClient.Instance.FinishRpcImmediately(writer);
+            Utils.Morph(Player, target.Data.DefaultOutfit);
         }
     }
 }

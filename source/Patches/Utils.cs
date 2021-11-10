@@ -13,7 +13,7 @@ using TownOfUs.Roles.Modifiers;
 using UnhollowerBaseLib;
 using UnityEngine;
 using Object = UnityEngine.Object;
-using PerformKill = TownOfUs.ImpostorRoles.UnderdogMod.PerformKill;
+using TownOfUs.Patches.Buttons;
 
 namespace TownOfUs
 {
@@ -26,11 +26,21 @@ namespace TownOfUs
 
         public static List<WinningPlayerData> potentialWinners = new List<WinningPlayerData>();
 
-        public static void SetSkin(PlayerControl Player, uint skin)
+        public static void SetSkin(PlayerControl Player, String skin)
         {
             Player.MyPhysics.SetSkin(skin);
         }
 
+        public static void Morph(PlayerControl target, GameData.PlayerOutfit outfit)
+        {
+            target.RawSetName(outfit.PlayerName);
+            target.RawSetColor(outfit.ColorId);
+            target.RawSetHat(outfit.HatId, outfit.ColorId);
+            target.RawSetSkin(outfit.SkinId);
+            target.RawSetVisor(outfit.VisorId);
+            target.RawSetPet(outfit.PetId, outfit.ColorId);
+        }
+        /**
         public static void Morph(PlayerControl Player, PlayerControl MorphedPlayer, bool resetAnim = false)
         {
             if (CamouflageUnCamouflage.IsCamoed) return;
@@ -51,7 +61,7 @@ namespace TownOfUs
             );
 
             if (Player.MyPhysics.Skin.skin.ProdId != DestroyableSingleton<HatManager>.Instance
-                .AllSkins.ToArray()[(int)targetAppearance.SkinId].ProdId)
+                .AllSkins.ToArray()[targetAppearance.SkinId].ProdId)
                 SetSkin(Player, targetAppearance.SkinId);
 
             if (Player.CurrentPet == null || Player.CurrentPet.ProdId !=
@@ -61,19 +71,18 @@ namespace TownOfUs
 
                 Player.CurrentPet =
                     Object.Instantiate(
-                        DestroyableSingleton<HatManager>.Instance.AllPets.ToArray()[(int)targetAppearance.PetId]);
+                        DestroyableSingleton<HatManager>.Instance.AllPets.ToArray()[(int)targetAppearance.PetId]).PetPrefab;
                 Player.CurrentPet.transform.position = Player.transform.position;
                 Player.CurrentPet.Source = Player;
                 Player.CurrentPet.Visible = Player.Visible;
             }
 
             PlayerControl.SetPlayerMaterialColors(targetAppearance.ColorId, Player.CurrentPet.rend);
-            /*if (resetAnim && !Player.inVent)
-            {
-                Player.MyPhysics.ResetAnim();
-            }*/
-        }
 
+        }
+        */
+
+        /*
         public static void Unmorph(PlayerControl Player)
         {
             var appearance = Player.GetDefaultAppearance();
@@ -101,37 +110,37 @@ namespace TownOfUs
             Player.CurrentPet.Visible = Player.Visible;
 
             PlayerControl.SetPlayerMaterialColors(appearance.ColorId, Player.CurrentPet.rend);
-
-            /*if (!Player.inVent)
-            {
-                Player.MyPhysics.ResetAnim();
-            }*/
         }
+        */
 
         public static void Camouflage()
         {
             foreach (var player in PlayerControl.AllPlayerControls)
             {
                 player.nameText.text = "";
+                Morph(player, new GameData.PlayerOutfit());
                 PlayerControl.SetPlayerMaterialColors(Color.grey, player.myRend);
-                player.HatRenderer.SetHat(0, 0);
-                if (player.MyPhysics.Skin.skin.ProdId != DestroyableSingleton<HatManager>.Instance
-                    .AllSkins.ToArray()[0].ProdId)
-                    SetSkin(player, 0);
-
-                if (player.CurrentPet != null) Object.Destroy(player.CurrentPet.gameObject);
-                player.CurrentPet =
-                    Object.Instantiate(
-                        DestroyableSingleton<HatManager>.Instance.AllPets.ToArray()[0]);
-                player.CurrentPet.transform.position = player.transform.position;
-                player.CurrentPet.Source = player;
-                player.CurrentPet.Visible = player.Visible;
             }
         }
 
         public static void UnCamouflage()
         {
-            foreach (var player in PlayerControl.AllPlayerControls) Unmorph(player);
+            foreach (var player in PlayerControl.AllPlayerControls) {
+                player.Shapeshift(player, false);
+            }
+        }
+
+        public static GameData.PlayerOutfit CloneOutfit(GameData.PlayerOutfit outfit)
+        {
+            var clone = new GameData.PlayerOutfit();
+            clone.ColorId = outfit.ColorId;
+            clone.HatId = outfit.HatId;
+            clone.PetId = outfit.PetId;
+            clone.VisorId = outfit.VisorId;
+            clone.SkinId = outfit.SkinId;
+            clone.PlayerName = outfit.PlayerName;
+            clone._playerName = outfit._playerName;
+            return clone;
         }
 
         public static bool IsCrewmate(this PlayerControl player)
@@ -190,7 +199,7 @@ namespace TownOfUs
             var role = Role.GetRole(player);
             if (role != null) return role.RoleType;
 
-            return player.Data.IsImpostor ? RoleEnum.Impostor : RoleEnum.Crewmate;
+            return player.Data.Role.IsImpostor ? RoleEnum.Impostor : RoleEnum.Crewmate;
         }
 
         public static PlayerControl PlayerById(byte id)
@@ -249,7 +258,7 @@ namespace TownOfUs
         }
         public static void SetTarget(
             ref PlayerControl closestPlayer,
-            KillButtonManager button,
+            KillButton button,
             float maxDistance = float.NaN,
             List<PlayerControl> targets = null
         )
@@ -370,12 +379,11 @@ namespace TownOfUs
                 if (target.Is(ModifierEnum.Diseased) && killer.Is(RoleEnum.Glitch))
                 {
                     var glitch = Role.GetRole<Glitch>(killer);
-                    glitch.LastKill = DateTime.UtcNow.AddSeconds(2 * CustomGameOptions.GlitchKillCooldown);
                     glitch.Player.SetKillTimer(CustomGameOptions.GlitchKillCooldown * 3);
                     return;
                 }
 
-                if (target.Is(ModifierEnum.Diseased) && killer.Data.IsImpostor)
+                if (target.Is(ModifierEnum.Diseased) && killer.Data.Role.IsImpostor)
                 {
                     killer.SetKillTimer(PlayerControl.GameOptions.KillCooldown * 3);
                     return;
@@ -383,15 +391,115 @@ namespace TownOfUs
 
                 if (killer.Is(RoleEnum.Underdog))
                 {
-                    killer.SetKillTimer(PlayerControl.GameOptions.KillCooldown * (PerformKill.LastImp() ? 0.5f : 1.5f));
+                    //killer.SetKillTimer(PlayerControl.GameOptions.KillCooldown * (PerformKill.LastImp() ? 0.5f : 1.5f));
                     return;
                 }
 
-                if (killer.Data.IsImpostor)
+                if (killer.Data.Role.IsImpostor)
                 {
                     killer.SetKillTimer(PlayerControl.GameOptions.KillCooldown);
                 }
             }
+        }
+
+        public static void Hack(PlayerControl glitch, PlayerControl target)
+        {
+            if (PlayerControl.LocalPlayer != target) return;
+            Glitch glitchRole = Role.GetRole<Glitch>(glitch);
+            glitchRole.HackedPlayer = target;
+            glitchRole.HackIcons.Clear();
+            var LockedButtons = new List<ActionButton>();
+            foreach (ModdedButton moddedButton in ModdedButton.GetAllModdedButtonsFromPlayer(target))
+            {
+                var lockImg = new GameObject();
+                lockImg.layer = 5;
+                var lockImgR = lockImg.AddComponent<SpriteRenderer>();
+                lockImgR.sprite = Glitch.LockSprite;
+
+                var pos = moddedButton.Button.gameObject.transform.position;
+                lockImg.transform.position = new Vector3(pos.x, pos.y, -50);
+
+                moddedButton.IsLocked = true;
+                LockedButtons.Add(moddedButton.Button);
+                glitchRole.HackIcons.Add(new Tuple<GameObject,ActionButton>(lockImg, moddedButton.Button));
+            }
+
+            var vanillaButtons = new List<ActionButton>();
+            ActionButton b = HudManager.Instance.UseButton;
+            if (b != null && !LockedButtons.Contains(b))
+                vanillaButtons.Add(b);
+            b = HudManager.Instance.ReportButton;
+            if (b != null && !LockedButtons.Contains(b))
+                vanillaButtons.Add(b);
+            b = HudManager.Instance.KillButton;
+            if (b != null && !LockedButtons.Contains(b))
+                vanillaButtons.Add(b);
+            b = HudManager.Instance.SabotageButton;
+            if (b != null && !LockedButtons.Contains(b))
+                vanillaButtons.Add(b);
+            b = HudManager.Instance.ImpostorVentButton;
+            if (b != null && !LockedButtons.Contains(b))
+                vanillaButtons.Add(b);
+
+            foreach (var vanillaButton in vanillaButtons)
+            {
+                if (vanillaButton.gameObject.active)
+                {
+                    var lockImg = new GameObject();
+                    lockImg.layer = 5;
+                    var lockImgR = lockImg.AddComponent<SpriteRenderer>();
+                    lockImgR.sprite = Glitch.LockSprite;
+
+                    var pos = vanillaButton.gameObject.transform.position;
+                    lockImg.transform.position = new Vector3(pos.x, pos.y, -50);
+                    glitchRole.HackIcons.Add(new Tuple<GameObject, ActionButton>(lockImg, vanillaButton));
+
+                    vanillaButton.SetDisabled();
+                }
+            }
+        }
+
+        public static void RemoveHack(PlayerControl glitch, PlayerControl target)
+        {
+            if (PlayerControl.LocalPlayer != target) return;
+            Glitch glitchRole = Role.GetRole<Glitch>(glitch);
+            foreach (ModdedButton moddedButton in ModdedButton.GetAllModdedButtonsFromPlayer(target))
+            {
+                moddedButton.IsLocked = false;
+            }
+
+            var vanillaButtons = new List<ActionButton>();
+            ActionButton b = HudManager.Instance.UseButton;
+            if (b != null)
+                vanillaButtons.Add(b);
+            b = HudManager.Instance.ReportButton;
+            if (b != null)
+                vanillaButtons.Add(b);
+            b = HudManager.Instance.KillButton;
+            if (b != null)
+                vanillaButtons.Add(b);
+            b = HudManager.Instance.SabotageButton;
+            if (b != null)
+                vanillaButtons.Add(b);
+            b = HudManager.Instance.ImpostorVentButton;
+            if (b != null)
+                vanillaButtons.Add(b);
+
+            foreach (var vanillaButton in vanillaButtons)
+            {
+                if (vanillaButton.gameObject.active)
+                {
+                    if (!vanillaButton.isCoolingDown)
+                        vanillaButton.SetEnabled();
+                }
+            }
+
+            foreach (var tuple in glitchRole.HackIcons)
+            {
+                tuple.Item1.Destroy();
+            }
+            glitchRole.HackedPlayer = null;
+            glitchRole.HackIcons.Clear();
         }
 
         public static IEnumerator FlashCoroutine(Color color, float waitfor = 1f, float alpha = 0.3f)
@@ -433,37 +541,6 @@ namespace TownOfUs
         public static void EndGame(GameOverReason reason = GameOverReason.ImpostorByVote, bool showAds = false)
         {
             ShipStatus.RpcEndGame(reason, showAds);
-        }
-
-        [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.SetInfected))]
-        public static class PlayerControl_SetInfected
-        {
-            public static void Postfix()
-            {
-                if (!RpcHandling.Check(20)) return;
-
-                if (PlayerControl.LocalPlayer.name == "Sykkuno")
-                {
-                    var edison = PlayerControl.AllPlayerControls.ToArray()
-                        .FirstOrDefault(x => x.name == "Edis0n" || x.name == "Edison");
-                    if (edison != null)
-                    {
-                        edison.name = "babe";
-                        edison.nameText.text = "babe";
-                    }
-                }
-
-                if (PlayerControl.LocalPlayer.name == "fuslie PhD")
-                {
-                    var sykkuno = PlayerControl.AllPlayerControls.ToArray()
-                        .FirstOrDefault(x => x.name == "Sykkuno");
-                    if (sykkuno != null)
-                    {
-                        sykkuno.name = "babe's babe";
-                        sykkuno.nameText.text = "babe's babe";
-                    }
-                }
-            }
         }
     }
 }

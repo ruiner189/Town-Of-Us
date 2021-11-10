@@ -35,17 +35,20 @@ namespace TownOfUs
                 || (player.Is(RoleEnum.Undertaker) && Role.GetRole<Undertaker>(player).CurrentlyDragging != null))
                 return false;
 
-
+            /**
             if (player.Is(RoleEnum.Engineer))
                 playerInfo.IsImpostor = true;
+            */
             
             return true;
         }
 
         public static void Postfix(Vent __instance, [HarmonyArgument(0)] GameData.PlayerInfo playerInfo)
         {
+            /**
             if (playerInfo.Object.Is(RoleEnum.Engineer))
                 playerInfo.IsImpostor = false;
+            */
         }
     }
 }

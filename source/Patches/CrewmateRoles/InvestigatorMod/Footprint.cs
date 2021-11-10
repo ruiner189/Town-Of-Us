@@ -64,8 +64,10 @@ namespace TownOfUs.CrewmateRoles.InvestigatorMod
             Role.AllPrints.Remove(this);
         }
 
+
         public bool Update()
         {
+            
             var currentTime = Time.time;
             var Duration = GetDuration;
 
@@ -82,21 +84,21 @@ namespace TownOfUs.CrewmateRoles.InvestigatorMod
                 alpha = 0;
             if (CustomGameOptions.RoleProgressionOn) {
                 if (Role.GetTier4) {
-                    if (RainbowUtils.IsRainbow(Player.Data.ColorId))
+                    if (RainbowUtils.IsRainbow(Player.CurrentOutfit.ColorId))
                         Color = RainbowUtils.Rainbow;
                     else 
-                        Color = Palette.PlayerColors[Player.Data.ColorId];
+                        Color = Palette.PlayerColors[Player.CurrentOutfit.ColorId];
                 } else {
                     // Grey Coloring
                     Color = new Color(0.2f, 0.2f, 0.2f, 1f);
                 }
             } else {
-                if (RainbowUtils.IsRainbow(Player.Data.ColorId) & !Grey)
+                if (RainbowUtils.IsRainbow(Player.CurrentOutfit.ColorId) & !Grey)
                     Color = RainbowUtils.Rainbow;
                 else if (Grey)
                     Color = new Color(0.2f, 0.2f, 0.2f, 1f);
                 else
-                    Color = Palette.PlayerColors[Player.Data.ColorId];
+                    Color = Palette.PlayerColors[Player.CurrentOutfit.ColorId];
             }
 
             Color = new Color(Color.r, Color.g, Color.b, alpha);
@@ -107,8 +109,10 @@ namespace TownOfUs.CrewmateRoles.InvestigatorMod
                 Destroy();
                 return true;
             }
-
+                        
             return false;
         }
+
     }
+
 }

@@ -6,10 +6,12 @@ using HarmonyLib;
 using Reactor.Extensions;
 using TownOfUs.CustomOption;
 using TownOfUs.Extensions;
+using TownOfUs.Utility;
 using UnityEngine;
 
 namespace TownOfUs
 {
+
     [HarmonyPatch]
     public static class GameSettings
     {
@@ -73,13 +75,15 @@ namespace TownOfUs
 
             private static void Postfix(ref string __result)
             {
+
                 var builder = new StringBuilder(AllOptions ? __result : "");
 
                 foreach (var option in CustomOption.CustomOption.AllOptions)
                 {
                     if (option.Name == "Custom Game Settings" && !AllOptions) break;
                     if (option.Type == CustomOptionType.Button) continue;
-                    if (option.Type == CustomOptionType.Header) builder.AppendLine($"\n{option.Name}");
+                    if (option.ID == -1) continue;
+                    if (option.Type == CustomOptionType.Header || option.Type == CustomOptionType.Tab) builder.AppendLine($"\n{option.Name}");
                     else if (option.Indent) builder.AppendLine($"     {option.Name}: {option}");
                     else builder.AppendLine($"{option.Name}: {option}");
                 }
@@ -103,8 +107,6 @@ namespace TownOfUs
             private static void Postfix()
             {
                 if (Input.GetKeyInt(KeyCode.Tab)) AllOptions = !AllOptions;
-
-                //                HudManager.Instance.GameSettings.scale = 0.5f;
             }
         }
 
@@ -113,7 +115,8 @@ namespace TownOfUs
         {
             public static void Postfix(ref GameOptionsMenu __instance)
             {
-                __instance.GetComponentInParent<Scroller>().YBounds.max = 90f;
+                var size = __instance.Children.Count;
+                __instance.GetComponentInParent<Scroller>().YBounds.max = Mathf.Max((size * 0.5f) - 4f, 0.5f);
             }
         }
     }

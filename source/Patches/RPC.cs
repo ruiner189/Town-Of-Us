@@ -24,14 +24,32 @@ namespace TownOfUs
         EnterVent, //19
         ExitVent, //20
         SnapTo, //21
-        Close, //22
-        BBFDNCCEJHI, //23
+        CloseMeeting, //22
+        VotingComplete, //23
         CastVote, //24
         ClearVote, //25
         AddVote, //26
         CloseDoorsOfType, //27
         RepairSystem, //28
         SetTasks, //29
-        UpdateGameData //30
+        UpdateGameData, //30
+        ClimbLadder, //31
+        UsePlatform, //32
+        SendQuickChat, //33
+        BootFromVent, //34
+        UpdateSystem, //35
+        SetVisor, //36
+        SetNamePlate, //37
+        SetLevel, //38
+        SetHatStr, //39
+        SetSkinStr, //40
+        SetPetStr, //41
+        SetVisorStr, //42
+        SetNamePlateStr, //43
+        SetRole, //44
+        ProtectPlayer, //45
+        Shapeshift, //46
+        CheckMurder, //47
+        CheckProtect //48
     }
 }

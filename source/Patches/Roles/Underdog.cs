@@ -1,4 +1,5 @@
-﻿using TownOfUs.ImpostorRoles.UnderdogMod;
+﻿using System.Linq;
+using TownOfUs.Patches.Buttons;
 
 namespace TownOfUs.Roles
 {
@@ -12,15 +13,21 @@ namespace TownOfUs.Roles
             Color = Patches.Colors.Impostor;
             RoleType = RoleEnum.Underdog;
             Faction = Faction.Impostors;
+
+            GenerateKillButton();
+            KillButton.SetCooldown(MaxTimer);
         }
 
-        public float MaxTimer() => PlayerControl.GameOptions.KillCooldown * (
-            PerformKill.LastImp() ? 0.5f : 1.5f
+        public float MaxTimer(ModdedButton button) => PlayerControl.GameOptions.KillCooldown * (
+            LastImp() ? 0.5f : 1.5f
         );
 
-        public void SetKillTimer()
+        private bool LastImp()
         {
-            Player.SetKillTimer(MaxTimer());
+            return PlayerControl.AllPlayerControls.ToArray()
+                .Count(x => x.Data.Role.IsImpostor && !x.Data.IsDead) == 1;
         }
+
+
     }
 }

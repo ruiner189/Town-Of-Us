@@ -1,4 +1,5 @@
 using System;
+using TMPro;
 
 namespace TownOfUs.CustomOption
 {
@@ -6,8 +7,8 @@ namespace TownOfUs.CustomOption
     {
         protected internal Action Do;
 
-        protected internal CustomButtonOption(int id, string name, Action toDo = null) : base(id, name,
-            CustomOptionType.Button, 0)
+        protected internal CustomButtonOption(int id, string name, Action toDo = null,String menuName = null) 
+            : base(id, name,CustomOptionType.Button, 0,null, menuName)
         {
             Do = toDo ?? BaseToDo;
         }
@@ -21,6 +22,7 @@ namespace TownOfUs.CustomOption
         {
             base.OptionCreated();
             Setting.Cast<ToggleOption>().TitleText.text = Name;
+            Setting.transform.FindChild("Title_TMP")?.GetComponent<TextMeshPro>()?.SetText(Name, true);
         }
     }
 }

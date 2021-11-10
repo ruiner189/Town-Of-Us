@@ -10,8 +10,7 @@ namespace TownOfUs
     [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.OnGameEnd))]
     public class AmongUsClient_OnGameEnd
     {
-        public static void Postfix(AmongUsClient __instance, [HarmonyArgument(0)] GameOverReason reason,
-            [HarmonyArgument(0)] bool showAd)
+        public static void Postfix(AmongUsClient __instance, [HarmonyArgument(0)] EndGameResult endGameResult)
         {
             Utils.potentialWinners.Clear();
             foreach (var player in PlayerControl.AllPlayerControls)
@@ -37,7 +36,7 @@ namespace TownOfUs
                 {
                     var jester = (Jester)role;
                     if (jester.VotedOut) {
-                        var winners = Utils.potentialWinners.Where(x => x.Name == jester.PlayerName).ToList();
+                        var winners = Utils.potentialWinners.Where(x => x.PlayerName == jester.PlayerName).ToList();
                         TempData.winners = new List<WinningPlayerData>();
                         foreach (var win in winners)
                         {
@@ -53,7 +52,7 @@ namespace TownOfUs
                     var executioner = (Executioner) role;
                     if (executioner.TargetVotedOut)
                     {
-                        var winners = Utils.potentialWinners.Where(x => x.Name == executioner.PlayerName).ToList();
+                        var winners = Utils.potentialWinners.Where(x => x.PlayerName == executioner.PlayerName).ToList();
                         TempData.winners = new List<WinningPlayerData>();
                         foreach (var win in winners) TempData.winners.Add(win);
                         return;
@@ -64,7 +63,7 @@ namespace TownOfUs
                     var glitch = (Glitch) role;
                     if (glitch.GlitchWins)
                     {
-                        var winners = Utils.potentialWinners.Where(x => x.Name == glitch.PlayerName).ToList();
+                        var winners = Utils.potentialWinners.Where(x => x.PlayerName == glitch.PlayerName).ToList();
                         TempData.winners = new List<WinningPlayerData>();
                         foreach (var win in winners) TempData.winners.Add(win);
                         return;
@@ -75,7 +74,7 @@ namespace TownOfUs
                     var arsonist = (Arsonist)role;
                     if (arsonist.ArsonistWins)
                     {
-                        var winners = Utils.potentialWinners.Where(x => x.Name == arsonist.PlayerName).ToList();
+                        var winners = Utils.potentialWinners.Where(x => x.PlayerName == arsonist.PlayerName).ToList();
                         TempData.winners = new List<WinningPlayerData>();
                         foreach (var win in winners) TempData.winners.Add(win);
                         return;
@@ -85,7 +84,7 @@ namespace TownOfUs
                     var phantom = (Phantom)role;
                     if(phantom.CompletedTasks)
                     {
-                        var winners = Utils.potentialWinners.Where(x => x.Name == phantom.PlayerName).ToList();
+                        var winners = Utils.potentialWinners.Where(x => x.PlayerName == phantom.PlayerName).ToList();
                         TempData.winners = new List<WinningPlayerData>();
                         foreach (var win in winners) TempData.winners.Add(win);
                     }
@@ -105,8 +104,8 @@ namespace TownOfUs
                         var otherLover = lover.OtherLover;
                         List<WinningPlayerData> winners = new List<WinningPlayerData>();
                         foreach(var player in Utils.potentialWinners){
-                            if (player.Name == lover.PlayerName ||
-                               player.Name == otherLover.PlayerName) winners.Add(player);
+                            if (player.PlayerName == lover.PlayerName ||
+                               player.PlayerName == otherLover.PlayerName) winners.Add(player);
                         }
                         TempData.winners = new List<WinningPlayerData>();
                         foreach (var win in winners) TempData.winners.Add(win);

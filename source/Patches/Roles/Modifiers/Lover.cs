@@ -43,7 +43,7 @@ namespace TownOfUs.Roles
 
             foreach(var player in canHaveModifiers)
             {
-                if (player.Data.IsImpostor)
+                if (player.Data.Role.IsImpostor)
                     impostors.Add(player);
                 else crewmates.Add(player);
             }

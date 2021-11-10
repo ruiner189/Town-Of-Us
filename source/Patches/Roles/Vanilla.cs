@@ -11,6 +11,7 @@ namespace TownOfUs.Roles
             Faction = Faction.Impostors;
             RoleType = RoleEnum.Impostor;
             Color = Palette.ImpostorRed;
+            GenerateKillButton();
         }
     }
 

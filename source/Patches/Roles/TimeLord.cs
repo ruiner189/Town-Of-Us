@@ -1,11 +1,15 @@
+using Hazel;
 using System;
 using TownOfUs.CrewmateRoles.TimeLordMod;
+using TownOfUs.Patches.Buttons;
 using UnityEngine;
 
 namespace TownOfUs.Roles
 {
     public class TimeLord : Role
     {
+
+        public ModdedButton RewindButton;
         public TimeLord(PlayerControl player) : base(player)
         {
             Name = "Time Lord";
@@ -14,6 +18,34 @@ namespace TownOfUs.Roles
             Color = Patches.Colors.TimeLord;
             RoleType = RoleEnum.TimeLord;
             Scale = 1.4f;
+
+            RewindButton = new ModdedButton(player);
+            RewindButton.ButtonType = ButtonType.AbilityButton;
+            RewindButton.ButtonTarget = ButtonTarget.None;
+            RewindButton.SetCooldown((button => { return CustomGameOptions.RewindCooldown; }));
+            RewindButton.SetEnabled(RewindEnabled);
+            RewindButton.SetAction(RewindAction);
+            RewindButton.Sprite = TownOfUs.Rewind;
+            RewindButton.RegisterButton();
+        }
+
+        public bool RewindAction(ModdedButton button)
+        {
+            if (!button.Enabled()) return false;
+            StartStop.StartRewind(this);
+            var writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId,
+                (byte)CustomRPC.Rewind, SendOption.Reliable, -1);
+            writer.Write(PlayerControl.LocalPlayer.PlayerId);
+            AmongUsClient.Instance.FinishRpcImmediately(writer);
+            return false;
+        }
+
+
+        public bool RewindEnabled(ModdedButton button)
+        {
+            if (!ModdedButton.DefaultEnabled(button)) return false;
+            if (RecordRewind.rewinding) return false;
+            return true;
         }
 
         public float GetRewindDuration()

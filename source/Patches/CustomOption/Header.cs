@@ -1,8 +1,12 @@
+using System;
+using TownOfUs.Patches.CustomOption;
+
 namespace TownOfUs.CustomOption
 {
     public class CustomHeaderOption : CustomOption
     {
-        protected internal CustomHeaderOption(int id, string name) : base(id, name, CustomOptionType.Header, 0)
+        protected internal CustomHeaderOption(int id, string name,
+            String menuName = null) : base(id, name, CustomOptionType.Header, 0, null, menuName)
         {
         }
 

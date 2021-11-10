@@ -6,6 +6,7 @@ namespace TownOfUs.CustomOption
         Toggle,
         Number,
         String,
-        Button
+        Button,
+        Tab
     }
 }
