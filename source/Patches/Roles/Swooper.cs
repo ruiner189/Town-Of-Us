@@ -1,4 +1,6 @@
+using Hazel;
 using System;
+using TownOfUs.Patches.Buttons;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -6,11 +8,7 @@ namespace TownOfUs.Roles
 {
     public class Swooper : Role
     {
-        public KillButtonManager _swoopButton;
-        public bool Enabled;
-        public DateTime LastSwooped;
-        public float TimeRemaining;
-
+        public ModdedButton SwoopButton;
         public Swooper(PlayerControl player) : base(player)
         {
             Name = "Swooper";
@@ -19,63 +17,67 @@ namespace TownOfUs.Roles
             Color = Patches.Colors.Impostor;
             RoleType = RoleEnum.Swooper;
             Faction = Faction.Impostors;
+
+            SwoopButton = new ModdedButton(player);
+            SwoopButton.ButtonType = ButtonType.AbilityButton;
+            SwoopButton.ButtonTarget = ButtonTarget.None;
+            SwoopButton.Sprite = TownOfUs.SwoopSprite;
+            SwoopButton.SetAction(SwoopAction);
+            SwoopButton.SetActionEnd(SwoopActionEnd);
+            SwoopButton.SetCooldown(button => CustomGameOptions.SwoopCd);
+            SwoopButton.SetDuration(button => CustomGameOptions.SwoopDuration);
+            SwoopButton.RegisterButton();
+
+            GenerateKillButton();
         }
 
-        public bool IsSwooped => TimeRemaining > 0f;
-
-        public KillButtonManager SwoopButton
+        public bool SwoopAction(ModdedButton button)
         {
-            get => _swoopButton;
-            set
-            {
-                _swoopButton = value;
-                ExtraButtons.Clear();
-                ExtraButtons.Add(value);
-            }
+            RpcSwoop();
+            Swoop();
+            return false;
         }
 
-        public float SwoopTimer()
+        public void SwoopActionEnd(ModdedButton button)
         {
-            var utcNow = DateTime.UtcNow;
-            var timeSpan = utcNow - LastSwooped;
-            ;
-            var num = CustomGameOptions.SwoopCd * 1000f;
-            var flag2 = num - (float) timeSpan.TotalMilliseconds < 0f;
-            if (flag2) return 0;
-            return (num - (float) timeSpan.TotalMilliseconds) / 1000f;
+            RpcUnSwoop();
+            UnSwoop();
         }
 
         public void Swoop()
         {
-            Enabled = true;
-            TimeRemaining -= Time.deltaTime;
             var color = Color.clear;
-            if (PlayerControl.LocalPlayer.Data.IsImpostor || PlayerControl.LocalPlayer.Data.IsDead) color.a = 0.1f;
-
+            if (PlayerControl.LocalPlayer.Data.Role.IsImpostor || PlayerControl.LocalPlayer.Data.IsDead) color.a = 0.1f;
 
             Player.MyRend.color = color;
+            Utils.Morph(Player, new GameData.PlayerOutfit());
+        }
 
-            Player.HatRenderer.SetHat(0, 0);
-            Player.nameText.text = "";
-            if (Player.MyPhysics.Skin.skin.ProdId != DestroyableSingleton<HatManager>.Instance
-                .AllSkins.ToArray()[0].ProdId)
-                Player.MyPhysics.SetSkin(0);
-            if (Player.CurrentPet != null) Object.Destroy(Player.CurrentPet.gameObject);
-            Player.CurrentPet =
-                Object.Instantiate(
-                    DestroyableSingleton<HatManager>.Instance.AllPets.ToArray()[0]);
-            Player.CurrentPet.transform.position = Player.transform.position;
-            Player.CurrentPet.Source = Player;
-            Player.CurrentPet.Visible = Player.Visible;
+        public void RpcSwoop()
+        {
+            var writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId,
+            (byte)CustomRPC.Swoop, SendOption.Reliable, -1);
+            var position = PlayerControl.LocalPlayer.transform.position;
+            writer.Write(Player.PlayerId);
+            writer.Write(true);
+            AmongUsClient.Instance.FinishRpcImmediately(writer);
         }
 
 
         public void UnSwoop()
         {
-            Enabled = false;
-            LastSwooped = DateTime.UtcNow;
-            Utils.Unmorph(Player);
             Player.MyRend.color = Color.white;
+            Utils.Morph(Player, Player.Data.DefaultOutfit);
+        }
+
+        public void RpcUnSwoop()
+        {
+            var writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId,
+            (byte)CustomRPC.Swoop, SendOption.Reliable, -1);
+            var position = PlayerControl.LocalPlayer.transform.position;
+            writer.Write(Player.PlayerId);
+            writer.Write(false);
+            AmongUsClient.Instance.FinishRpcImmediately(writer);
         }
     }
 }

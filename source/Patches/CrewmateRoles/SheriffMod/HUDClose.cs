@@ -14,7 +14,6 @@ namespace TownOfUs.CrewmateRoles.SheriffMod
             foreach (var role in Role.GetRoles(RoleEnum.Sheriff))
             {
                 var sheriff = (Sheriff) role;
-                sheriff.LastKilled = DateTime.UtcNow;
                 sheriff.FirstRound = true;
             }
         }

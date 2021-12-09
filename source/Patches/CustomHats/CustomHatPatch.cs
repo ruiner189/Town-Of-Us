@@ -9,7 +9,7 @@ using Object = UnityEngine.Object;
 
 namespace TownOfUs.Patches.CustomHats
 {
-    [HarmonyPatch(typeof(HatsTab), nameof(HatsTab.OnEnable))]
+    //[HarmonyPatch(typeof(HatsTab), nameof(HatsTab.OnEnable))]
     public static class HatsTab_OnEnable
     {
         public static void Postfix(HatsTab __instance)
@@ -55,14 +55,14 @@ namespace TownOfUs.Patches.CustomHats
                 text.transform.localPosition = new Vector3(xLerp, yLerp, -1f);
                 
                 hatIdx += 4;
-                foreach (var hat in hats.OrderBy(HatManager.Instance.GetIdFromHat))
+                foreach (var hat in hats)
                 {
                     float num = __instance.XRange.Lerp(hatIdx % __instance.NumPerRow / (__instance.NumPerRow - 1f));
                     float num2 = __instance.YStart - hatIdx / __instance.NumPerRow * __instance.YOffset;
                     ColorChip colorChip = Object.Instantiate(__instance.ColorTabPrefab, __instance.scroller.Inner);
                     colorChip.transform.localPosition = new Vector3(num, num2, -1f);
                     colorChip.Button.OnClick.AddListener((Action)(() => __instance.SelectHat(hat)));
-                    colorChip.Inner.SetHat(hat, PlayerControl.LocalPlayer.Data.ColorId);
+                    colorChip.Inner.SetHat(hat, PlayerControl.LocalPlayer.CurrentOutfit.ColorId);
                     colorChip.Inner.transform.localPosition = hat.ChipOffset + new Vector2(0f, -0.3f);
                     colorChip.Tag = hat;
                     __instance.ColorChips.Add(colorChip);

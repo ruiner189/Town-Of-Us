@@ -1,6 +1,11 @@
+using Hazel;
+using Reactor.Extensions;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using TownOfUs.Patches.Buttons;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace TownOfUs.Roles
 {
@@ -8,9 +13,7 @@ namespace TownOfUs.Roles
     {
         public readonly List<Vent> Vents = new List<Vent>();
 
-        public KillButtonManager _mineButton;
-        public DateTime LastMined;
-
+        public ModdedButton MineButton;
 
         public Miner(PlayerControl player) : base(player)
         {
@@ -20,30 +23,82 @@ namespace TownOfUs.Roles
             Color = Patches.Colors.Impostor;
             RoleType = RoleEnum.Miner;
             Faction = Faction.Impostors;
+
+            MineButton = new ModdedButton(player);
+            MineButton.ButtonType = ButtonType.AbilityButton;
+            MineButton.ButtonTarget = ButtonTarget.None;
+            MineButton.Sprite = TownOfUs.MineSprite;
+            MineButton.SetAction(MineAction);
+            MineButton.SetCooldown(button => CustomGameOptions.MineCd);
+            MineButton.name = "mineButton";
+            MineButton.RegisterButton();
+
+            GenerateKillButton();
+        }
+
+        public bool MineAction(ModdedButton button)
+        {
+            var position = Player.transform.position;
+            var id = GetAvailableId();
+            SpawnVent(id, this, position, 0.01f);
+            RpcSpawnVent();
+            return false;
+        }
+
+        public static void SpawnVent(int ventId, Miner role, Vector2 position, float zAxis)
+        {
+            var ventPrefab = Object.FindObjectOfType<Vent>();
+            var vent = Object.Instantiate(ventPrefab, ventPrefab.transform.parent);
+            vent.Id = ventId;
+            vent.transform.position = new Vector3(position.x, position.y, zAxis);
+
+            if (role.Vents.Count > 0)
+            {
+                var leftVent = role.Vents[^1];
+                vent.Left = leftVent;
+                leftVent.Right = vent;
+            }
+            else
+            {
+                vent.Left = null;
+            }
+
+            vent.Right = null;
+            vent.Center = null;
+
+            var allVents = ShipStatus.Instance.AllVents.ToList();
+            allVents.Add(vent);
+            ShipStatus.Instance.AllVents = allVents.ToArray();
+
+            role.Vents.Add(vent);
+        }
+
+        public void RpcSpawnVent()
+        {
+            var writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId,
+            (byte)CustomRPC.Mine, SendOption.Reliable, -1);
+            var position = Player.transform.position;
+            var id = GetAvailableId();
+            writer.Write(id);
+            writer.Write(Player.PlayerId);
+            writer.Write(position);
+            writer.Write(0.01f);
+            AmongUsClient.Instance.FinishRpcImmediately(writer);
+        }
+
+        public static int GetAvailableId()
+        {
+            var id = 0;
+
+            while (true)
+            {
+                if (ShipStatus.Instance.AllVents.All(v => v.Id != id)) return id;
+                id++;
+            }
         }
 
         public bool CanPlace { get; set; }
         public Vector2 VentSize { get; set; }
 
-        public KillButtonManager MineButton
-        {
-            get => _mineButton;
-            set
-            {
-                _mineButton = value;
-                ExtraButtons.Clear();
-                ExtraButtons.Add(value);
-            }
-        }
-
-        public float MineTimer()
-        {
-            var utcNow = DateTime.UtcNow;
-            var timeSpan = utcNow - LastMined;
-            var num = CustomGameOptions.MineCd * 1000f;
-            var flag2 = num - (float) timeSpan.TotalMilliseconds < 0f;
-            if (flag2) return 0;
-            return (num - (float) timeSpan.TotalMilliseconds) / 1000f;
-        }
     }
 }

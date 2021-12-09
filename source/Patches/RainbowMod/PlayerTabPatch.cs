@@ -11,10 +11,13 @@ namespace TownOfUs.RainbowMod
     {
         public static bool Prefix(PlayerTab __instance)
         {
-            PlayerControl.SetPlayerMaterialColors(PlayerControl.LocalPlayer.Data.ColorId, __instance.DemoImage);
-            __instance.HatImage.SetHat(SaveManager.LastHat, PlayerControl.LocalPlayer.Data.ColorId);
-            PlayerControl.SetSkinImage(SaveManager.LastSkin, __instance.SkinImage);
-            PlayerControl.SetPetImage(SaveManager.LastPet, PlayerControl.LocalPlayer.Data.ColorId, __instance.PetImage);
+            var outfit = PlayerControl.LocalPlayer.CurrentOutfit;
+            var preview = __instance.PlayerPreview;
+            PlayerControl.SetPlayerMaterialColors(outfit.ColorId, preview.Body);
+            preview.HatSlot.SetHat(SaveManager.LastHat, outfit.ColorId);
+            preview.SetSkin(SaveManager.LastSkin);
+            PlayerControl.SetPetImage(SaveManager.LastPet, outfit.ColorId, preview.PetSlot);
+            __instance.currentColor = outfit.ColorId;
             var colors = Palette.PlayerColors;
             var num = colors.Length / 4f;
             for (int i = 0;i < colors.Length;i++)
@@ -28,11 +31,13 @@ namespace TownOfUs.RainbowMod
                 colorChip.Button.OnClick.AddListener((Action) (() =>
                 {
                     __instance.SelectColor(colorId);
-                    if (colorId <= 17) SaveManager.BodyColor = colorId;
+                    __instance.ClickEquip();
+                    SaveManager.BodyColor = colorId;
                 }));
                 colorChip.Inner.color = colors[i];
                 __instance.ColorChips.Add(colorChip);
             }
+
             return false;
         }
     }

@@ -1,4 +1,7 @@
+using Hazel;
+using Reactor;
 using System;
+using TownOfUs.Patches.Buttons;
 using UnityEngine;
 
 namespace TownOfUs.Roles
@@ -6,10 +9,12 @@ namespace TownOfUs.Roles
     public class Camouflager : Role
 
     {
-        public KillButtonManager _camouflageButton;
+        public KillButton _camouflageButton;
         public bool Enabled;
         public DateTime LastCamouflaged;
         public float TimeRemaining;
+
+        public ModdedButton CamouflageButton;
 
         public Camouflager(PlayerControl player) : base(player)
         {
@@ -19,20 +24,44 @@ namespace TownOfUs.Roles
             Color = Patches.Colors.Impostor;
             RoleType = RoleEnum.Camouflager;
             Faction = Faction.Impostors;
+
+            CamouflageButton = new ModdedButton(player);
+            CamouflageButton.ButtonType = ButtonType.AbilityButton;
+            CamouflageButton.ButtonTarget = ButtonTarget.None;
+            CamouflageButton.Sprite = TownOfUs.Camouflage;
+            CamouflageButton.SetAction(CamouflageAction);
+            CamouflageButton.SetCooldown(button => {return CustomGameOptions.CamouflagerCd + CustomGameOptions.CamouflagerDuration;});
+            CamouflageButton.SetDuration(button => {return CustomGameOptions.CamouflagerDuration;});
+            CamouflageButton.SetActionEnd(CamouflageActionEnd);
+            CamouflageButton.RegisterButton();
+
+            GenerateKillButton();
         }
+
+        public bool CamouflageAction(ModdedButton button)
+        {
+            if (!button.Enabled()) return false;
+
+            var writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId,
+                (byte)CustomRPC.Camouflage,
+                SendOption.Reliable, -1);
+            AmongUsClient.Instance.FinishRpcImmediately(writer);
+            Utils.Camouflage();
+            return false;
+        }
+
+        public void CamouflageActionEnd(ModdedButton button)
+        {
+            var writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId,
+            (byte)CustomRPC.UnCamouflage,
+            SendOption.Reliable, -1);
+            AmongUsClient.Instance.FinishRpcImmediately(writer);
+            Utils.UnCamouflage();
+        }
+
+        
 
         public bool Camouflaged => TimeRemaining > 0f;
-
-        public KillButtonManager CamouflageButton
-        {
-            get => _camouflageButton;
-            set
-            {
-                _camouflageButton = value;
-                ExtraButtons.Clear();
-                ExtraButtons.Add(value);
-            }
-        }
 
         public void Camouflage()
         {
@@ -46,16 +75,6 @@ namespace TownOfUs.Roles
             Enabled = false;
             LastCamouflaged = DateTime.UtcNow;
             Utils.UnCamouflage();
-        }
-
-        public float CamouflageTimer()
-        {
-            var utcNow = DateTime.UtcNow;
-            var timeSpan = utcNow - LastCamouflaged;
-            var num = CustomGameOptions.CamouflagerCd * 1000f;
-            var flag2 = num - (float) timeSpan.TotalMilliseconds < 0f;
-            if (flag2) return 0;
-            return (num - (float) timeSpan.TotalMilliseconds) / 1000f;
         }
     }
 }

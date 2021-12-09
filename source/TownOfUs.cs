@@ -23,8 +23,9 @@ namespace TownOfUs
     [BepInDependency(ReactorPlugin.Id)]
     public class TownOfUs : BasePlugin
     {
-        public const string Id = "com.slushiegoose.townofus";
-        
+        public const string Id = "com.ruiner.redux";
+        public static Sprite ReduxLogo;
+
         public static Sprite JanitorClean;
         public static Sprite EngineerFix;
         public static Sprite SwapperSwitch;
@@ -70,10 +71,10 @@ namespace TownOfUs
         {
             System.Console.WriteLine("000.000.000.000/000000000000000000");
 
-            _harmony = new Harmony("com.slushiegoose.townofus");
+            _harmony = new Harmony("com.ruiner.redux");
 
             Generate.GenerateAll();
-
+            ReduxLogo = CreateSprite("TownOfUs.Resources.ReduxLogo.png");
             JanitorClean = CreateSprite("TownOfUs.Resources.Janitor.png");
             EngineerFix = CreateSprite("TownOfUs.Resources.Engineer.png");
             SwapperSwitch = CreateSprite("TownOfUs.Resources.SwapperSwitch.png");

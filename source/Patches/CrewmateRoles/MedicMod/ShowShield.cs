@@ -46,7 +46,7 @@ namespace TownOfUs.CrewmateRoles.MedicMod
 
                 if (player.Data.IsDead || medic.Player.Data.IsDead)
                 {
-                    StopKill.BreakShield(medic.Player.PlayerId, player.PlayerId, true);
+                    StopKill.BreakShield(medic.Player.PlayerId, player.PlayerId, true, true);
                     continue;
                 }
 

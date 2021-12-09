@@ -69,6 +69,7 @@ namespace TownOfUs
         RewindRevive,
         Morph,
         Camouflage,
+        UnCamouflage,
         Mine,
         Swoop,
         Douse,
@@ -84,6 +85,7 @@ namespace TownOfUs
         SetMimic,
         RpcResetAnim,
         SetHacked,
+        RemoveHacked,
 
         ExecutionerToJester,
 

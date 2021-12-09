@@ -39,11 +39,14 @@ namespace TownOfUs.CustomOption
                 if (button.Setting != null)
                 {
                     button.Setting.gameObject.SetActive(true);
+                    button.Setting.transform.GetChild(1).gameObject.SetActive(true);
+
                     options.Add(button.Setting);
                 }
                 else
                 {
                     var toggle = Object.Instantiate(togglePrefab, togglePrefab.transform.parent).DontDestroy();
+                    toggle.transform.GetChild(1).gameObject.SetActive(true);
                     toggle.transform.GetChild(2).gameObject.SetActive(false);
                     toggle.transform.GetChild(0).localPosition += new Vector3(1f, 0f, 0f);
 

@@ -405,3 +405,4 @@ Desktop.ini
 
 .editorconfig
 TownOfUs.sln
+build/*

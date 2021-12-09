@@ -1,12 +1,14 @@
+using System;
 using UnityEngine;
 
 namespace TownOfUs.CustomOption
 {
     public class CustomStringOption : CustomOption
     {
-        protected internal CustomStringOption(int id, string name, string[] values) : base(id, name,
-            CustomOptionType.String,
-            0)
+        public Action IncreaseAction;
+        public Action DecreaseAction;
+        protected internal CustomStringOption(int id, string name, string[] values, String menuName = null) :
+            base(id, name, CustomOptionType.String,0, null, menuName)
         {
             Values = values;
             Format = value => Values[(int) value];
@@ -22,11 +24,14 @@ namespace TownOfUs.CustomOption
         protected internal void Increase()
         {
             Set(Mathf.Clamp(Get() + 1, 0, Values.Length - 1));
+            IncreaseAction?.Invoke();
         }
 
         protected internal void Decrease()
         {
+
             Set(Mathf.Clamp(Get() - 1, 0, Values.Length - 1));
+            DecreaseAction?.Invoke();
         }
 
         public override void OptionCreated()

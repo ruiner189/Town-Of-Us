@@ -14,8 +14,6 @@ namespace TownOfUs.ImpostorRoles.MinerMod
             foreach (var role in Role.GetRoles(RoleEnum.Miner))
             {
                 var miner = (Miner) role;
-                miner.LastMined = DateTime.UtcNow;
-                miner.LastMined = miner.LastMined.AddSeconds(-10f);
                 var vents = Object.FindObjectsOfType<Vent>();
                 miner.VentSize =
                     Vector2.Scale(vents[0].GetComponent<BoxCollider2D>().size, vents[0].transform.localScale) * 0.75f;

@@ -34,38 +34,6 @@ namespace TownOfUs.CrewmateRoles.AltruistMod
             var killButton = __instance.KillButton;
             DeadBody closestBody = null;
             var closestDistance = float.MaxValue;
-
-            foreach (var collider2D in allocs)
-            {
-                if (!flag || isDead || collider2D.tag != "DeadBody") continue;
-                var component = collider2D.GetComponent<DeadBody>();
-
-
-                if (!(Vector2.Distance(truePosition, component.TruePosition) <=
-                      maxDistance)) continue;
-
-                var distance = Vector2.Distance(truePosition, component.TruePosition);
-                if (!(distance < closestDistance)) continue;
-                closestBody = component;
-                closestDistance = distance;
-            }
-
-            if (isDead)
-            {
-                killButton.gameObject.SetActive(false);
-                killButton.isActive = false;
-            }
-            else
-            {
-                killButton.gameObject.SetActive(!MeetingHud.Instance);
-                killButton.isActive = !MeetingHud.Instance;
-            }
-
-            KillButtonTarget.SetTarget(killButton, closestBody, role);
-            __instance.KillButton.SetCoolDown(0f, 1f);
-
-            closestBody = null;
-            closestDistance = float.MaxValue;
             int arrowDistance = role.GetArrowDistance();
 
             if (arrowDistance > 0)

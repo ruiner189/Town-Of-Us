@@ -15,10 +15,20 @@ namespace TownOfUs.Roles.Modifiers
         public static readonly Dictionary<byte, Modifier> ModifierDictionary = new Dictionary<byte, Modifier>();
         public Func<string> TaskText;
 
+        public float SpeedFactor = 1;
+        public Vector3 SizeFactor;
+        public static Vector3 DefaultSize;
+
+
         protected Modifier(PlayerControl player)
         {
             Player = player;
             ModifierDictionary.Add(player.PlayerId, this);
+            var scale = player.transform.localScale;
+            if (DefaultSize.x == 0 && DefaultSize.y == 0 && DefaultSize.z == 0)
+                DefaultSize = new Vector3(scale.x, scale.y, scale.z);
+
+            SizeFactor = DefaultSize;
         }
 
         public static IEnumerable<Modifier> AllModifiers => ModifierDictionary.Values.ToList();

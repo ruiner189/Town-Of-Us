@@ -1,4 +1,5 @@
 using System;
+using TownOfUs.Patches.CustomOption;
 using UnityEngine;
 
 namespace TownOfUs.CustomOption
@@ -6,7 +7,8 @@ namespace TownOfUs.CustomOption
     public class CustomNumberOption : CustomOption
     {
         protected internal CustomNumberOption(int id, string name, float value, float min, float max, float increment,
-            Func<object, string> format = null) : base(id, name, CustomOptionType.Number, value, format)
+            Func<object, string> format = null, String menuName = null) :
+            base(id, name, CustomOptionType.Number, value, format, menuName)
         {
             Min = min;
             Max = max;
@@ -14,8 +16,8 @@ namespace TownOfUs.CustomOption
         }
 
         protected internal CustomNumberOption(bool indent, int id, string name, float value, float min, float max,
-            float increment,
-            Func<object, string> format = null) : this(id, name, value, min, max, increment, format)
+            float increment, Func<object, string> format = null, String menuName = null) 
+            : this(id, name, value, min, max, increment, format, menuName)
         {
             Indent = indent;
         }

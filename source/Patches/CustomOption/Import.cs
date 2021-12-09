@@ -43,6 +43,7 @@ namespace TownOfUs.CustomOption
                 else
                 {
                     var toggle = Object.Instantiate(togglePrefab, togglePrefab.transform.parent).DontDestroy();
+                    toggle.transform.GetChild(1).gameObject.SetActive(true);
                     toggle.transform.GetChild(2).gameObject.SetActive(false);
                     toggle.transform.GetChild(0).localPosition += new Vector3(1f, 0f, 0f);
 

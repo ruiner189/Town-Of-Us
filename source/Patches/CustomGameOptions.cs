@@ -4,6 +4,7 @@ using TownOfUs.CrewmateRoles.SeerMod;
 using TownOfUs.CustomOption;
 using TownOfUs.NeutralRoles.ExecutionerMod;
 using TownOfUs.NeutralRoles.ShifterMod;
+using TownOfUs.Roles;
 
 namespace TownOfUs
 {
@@ -99,6 +100,9 @@ namespace TownOfUs
         public static int MayorVoteBank => (int) Generate.MayorVoteBank.Get();
         public static bool MayorAnonymous => Generate.MayorAnonymous.Get();
         public static float ShifterCd => Generate.ShifterCd.Get();
+
+        public static float ShifterDuration => Generate.ShifterDuration.Get();
+        public static bool ShifterResetMeeting => Generate.ShifterCdResetAfterMeeting.Get();
         public static ShiftEnum WhoShifts => (ShiftEnum) Generate.WhoShifts.Get();
         public static float FootprintSize => Generate.FootprintSize.Get();
         public static float FootprintInterval => Generate.FootprintInterval.Get();
