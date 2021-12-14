@@ -35,7 +35,6 @@ namespace TownOfUs.Roles
             ShiftButton.SetCooldown(button => CustomGameOptions.ShifterCd);
             ShiftButton.SetDuration(button => CustomGameOptions.ShifterDuration);
             ShiftButton.ResetCooldownAtMeetingEnd = CustomGameOptions.ShifterResetMeeting;
-            ShiftButton.name = "shift button";
             ShiftButton.RegisterButton();
         }
 

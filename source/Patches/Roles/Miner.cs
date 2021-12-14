@@ -30,7 +30,6 @@ namespace TownOfUs.Roles
             MineButton.Sprite = TownOfUs.MineSprite;
             MineButton.SetAction(MineAction);
             MineButton.SetCooldown(button => CustomGameOptions.MineCd);
-            MineButton.name = "mineButton";
             MineButton.RegisterButton();
 
             GenerateKillButton();

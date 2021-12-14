@@ -53,8 +53,6 @@ namespace TownOfUs.Patches.Buttons
         public bool IsLocked = false;
         public bool ResetCooldownAtMeetingEnd = true;
         public Sprite LockedImage = Glitch.LockSprite;
-        public String name;
-
 
     public ModdedButton(PlayerControl player)
         {
@@ -228,7 +226,7 @@ namespace TownOfUs.Patches.Buttons
                 hud.KillButton.transform.position.y
             };
             float zValue = hud.UseButton.transform.position.z;
-            float distance = hud.UseButton.position.x - hud.ReportButton.transform.position.x;
+            float distance =  0.8f;
             float xStart = 0f;
             int sign = 1;
             switch (button.Alignment)
@@ -236,6 +234,7 @@ namespace TownOfUs.Patches.Buttons
                 case HudAlignment.BottomLeft:
                 case HudAlignment.TopLeft:
                     xStart = xValues[1];
+                    sign = 1;
                     break;
                 case HudAlignment.BottomRight:
                 case HudAlignment.TopRight:
@@ -247,10 +246,9 @@ namespace TownOfUs.Patches.Buttons
             // 0 ->[ ][ ]   1-> [x][ ]  2-> [ ] [ ] 3-> [ ][x]
             //     [x][ ]       [ ][ ]      [ ] [x]     [ ][ ]
 
-            int row = button.Offset % 2; // Row 0 or 1
-            int column = (button.Offset - row) / 2; // 1
+            int row = button.Offset % 2;
+            int column = (button.Offset - row) / 2; 
             float xValue = xStart + (sign * distance * column);
-
 
             return new Vector3(xValue, yValues[row], zValue);
         }

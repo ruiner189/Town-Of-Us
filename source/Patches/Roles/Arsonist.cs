@@ -34,11 +34,9 @@ namespace TownOfUs.Roles
             DouseButton.SetCooldown(button => CustomGameOptions.DouseCd);
             DouseButton.SetAction(DouseAction);
             DouseButton.SetFilter(DouseFilter);
-            DouseButton.name = "Douse Button";
             DouseButton.RegisterButton();
 
             IgniteButton = new ModdedButton(player);
-            IgniteButton.name = "Ignite Button";
             IgniteButton.ButtonType = ButtonType.KillButton;
             IgniteButton.ButtonTarget = ButtonTarget.None;
             IgniteButton.Sprite = TownOfUs.IgniteSprite;
