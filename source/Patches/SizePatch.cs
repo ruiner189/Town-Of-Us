@@ -18,6 +18,10 @@ namespace TownOfUs.Patches
                 if(modifier != null)
                 {
                     player.transform.localScale = modifier.SizeFactor;
+                } else
+                {
+                    if (Modifier.DefaultSize.magnitude != 0)
+                        player.transform.localScale = Modifier.DefaultSize;
                 }
             }
         }

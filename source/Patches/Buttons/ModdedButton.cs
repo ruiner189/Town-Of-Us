@@ -417,7 +417,20 @@ namespace TownOfUs.Patches.Buttons
 
         public static bool DefaultAction(ModdedButton button)
         {
-            PlayerControl.LocalPlayer.CmdCheckMurder(button.ClosestPlayer);
+            var target = button.ClosestPlayer;
+            if (target.IsShielded())
+            {
+                Medic.RpcInteractWithShield(target, true, true);
+                if (!Medic.InteractWithShield(target, true, true))
+                {
+                    button.ResetCooldown = false;
+                }
+                return false;
+            }
+            else
+            {
+                Utils.RpcMurderPlayer(button.Player, target);
+            }
             return false;
         }
 
