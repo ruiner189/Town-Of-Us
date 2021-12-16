@@ -103,7 +103,7 @@ namespace TownOfUs.CustomOption
             // Moves the scroller so we can see loading button. Saves previous scroll.
             var scroller = __instance.GetComponentInParent<Scroller>();
             scrollPerc = scroller.GetScrollPercY();
-            scrollSize = scroller.YBounds.max;
+            scrollSize = scroller.ContentYBounds.max;
             scroller.ScrollPercentY(0f);
 
             foreach (var option in OldButtons) option.gameObject.SetActive(false);
@@ -204,7 +204,7 @@ namespace TownOfUs.CustomOption
 
             // Moves scroll to top so we can see the loading button
             var scroller = __instance.GetComponentInParent<Scroller>();
-            scroller.YBounds.max = scrollSize;
+            scroller.ContentYBounds.max = scrollSize;
             scroller.ScrollPercentY(0f);
 
             foreach (var option in __instance.Children) option.gameObject.SetActive(false);
@@ -218,7 +218,7 @@ namespace TownOfUs.CustomOption
             __instance.Children = OldButtons.ToArray();
 
             // Moves scroller to stored spot
-            scroller.YBounds.max = scrollSize;
+            scroller.ContentYBounds.max = scrollSize;
             scroller.ScrollPercentY(scrollPerc);
 
             yield return new WaitForEndOfFrame();

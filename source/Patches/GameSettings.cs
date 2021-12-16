@@ -116,7 +116,7 @@ namespace TownOfUs
             public static void Postfix(ref GameOptionsMenu __instance)
             {
                 var size = __instance.Children.Count;
-                __instance.GetComponentInParent<Scroller>().YBounds.max = Mathf.Max((size * 0.5f) - 4f, 0.5f);
+                __instance.GetComponentInParent<Scroller>().ContentYBounds.max = Mathf.Max((size * 0.5f) - 4f, 0.5f);
             }
         }
     }
