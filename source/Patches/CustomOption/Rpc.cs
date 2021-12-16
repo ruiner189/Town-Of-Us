@@ -19,6 +19,7 @@ namespace TownOfUs.CustomOption
                 (byte) CustomRPC.SyncCustomSettings, SendOption.Reliable);
             foreach (var option in options)
             {
+                if (option.Type == CustomOptionType.Header || option.Type == CustomOptionType.Tab) continue;
                 writer.Write(option.ID);
                 if (option.Type == CustomOptionType.Toggle) writer.Write((bool) option.Value);
                 else if (option.Type == CustomOptionType.Number) writer.Write((float) option.Value);

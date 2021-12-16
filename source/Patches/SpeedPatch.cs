@@ -1,6 +1,7 @@
 ﻿using HarmonyLib;
 using Reactor;
 using TownOfUs.Extensions;
+using TownOfUs.Roles;
 using TownOfUs.Roles.Modifiers;
 
 namespace TownOfUs.Patches
@@ -15,11 +16,14 @@ namespace TownOfUs.Patches
         {
             if (__instance.AmOwner && GameData.Instance && __instance.myPlayer.CanMove)
             {
-                Modifier modifier = Modifier.GetModifier(__instance.myPlayer);
-                if(modifier != null)
-                {
-                    __instance.body.velocity *= modifier.SpeedFactor;
-                } 
+                float speedMultiplier = 1;
+                var modifier = Modifier.GetModifier(__instance.myPlayer);
+                if (modifier != null)
+                    speedMultiplier = modifier.SpeedFactor;
+                var role = Role.GetRole(__instance.myPlayer);
+                if (role != null && role.OverrideSpeed)
+                    speedMultiplier = role.SpeedFactor;
+                __instance.body.velocity *= speedMultiplier;
 
             }
 

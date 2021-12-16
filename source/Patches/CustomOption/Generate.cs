@@ -375,7 +375,7 @@ namespace TownOfUs.CustomOption
 
 
             CustomGameSettings =
-                new CustomHeaderOption(num++, "Redux Settings", MenuLoader.ReduxMenuName);
+                new CustomHeaderOption(num++, "<color=#8b69a0>Redux Settings</color>", MenuLoader.ReduxMenuName);
             ColourblindComms = 
                 new CustomToggleOption(num++, "Camouflaged Comms", false, MenuLoader.ReduxMenuName);
             MeetingColourblind = 
@@ -397,7 +397,7 @@ namespace TownOfUs.CustomOption
 
             SubMenus = new CustomHeaderOption(-1, "Menus", MenuLoader.ReduxMenuName);
             // Role Menu
-            RoleChance = new CustomTabOption(num++, "<color=#e08bbd>Role Chances</color>", MenuLoader.ReduxMenuName);
+            RoleChance = new CustomTabOption(-1, "<color=#e08bbd>Role Chances</color>", MenuLoader.ReduxMenuName);
             RoleChance.AddOptions(CrewmateRoles, MayorOn, SheriffOn, EngineerOn, SwapperOn, InvestigatorOn,
                 TimeLordOn, MedicOn, SeerOn, SpyOn, SnitchOn, AltruistOn, NeutralRoles, JesterOn,
                 ShifterOn, GlitchOn, ExecutionerOn, ArsonistOn, PhantomOn, ImpostorRoles, AssassinOn,
@@ -711,8 +711,8 @@ namespace TownOfUs.CustomOption
             AssassinTab.AddOptions(AssassinOn, AssassinMax, AssassinKills, AssassinCrewmateGuess,
                 AssassinGuessNeutrals, AssassinMultiKill);
 
-            ModifierDivider = new CustomHeaderOption(-1, "Modifiers", MenuLoader.ReduxMenuName);
-            ModifierChance = new CustomTabOption(num++, "Modifier Chances", MenuLoader.ReduxMenuName);
+            ModifierDivider = new CustomHeaderOption(num++, "Modifiers", MenuLoader.ReduxMenuName);
+            ModifierChance = new CustomTabOption(-1, "Modifier Chances", MenuLoader.ReduxMenuName);
             ModifierChance.AddOptions(LoversOn, ButtonBarryOn, FlashOn, BigBoiOn,
                 DiseasedOn, TorchOn, TiebreakerOn, DrunkOn);
             // Lover Settings

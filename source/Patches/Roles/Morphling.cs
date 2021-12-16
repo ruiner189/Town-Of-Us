@@ -65,14 +65,14 @@ namespace TownOfUs.Roles
         public bool MorphAction(ModdedButton button)
         {
             RpcSetMorph(SampledPlayer);
-            Utils.Morph(Player, SampledPlayer.Data.DefaultOutfit);
+            Morph(Player, SampledPlayer);
             return false;
         }
 
         public void MorphActionEnd(ModdedButton button)
         {
             RpcSetMorph(Player);
-            Utils.Morph(Player, Player.Data.DefaultOutfit);
+            Morph(Player, Player);
         }
 
         public bool MorphActionEnable(ModdedButton button)
@@ -90,7 +90,31 @@ namespace TownOfUs.Roles
             writer.Write(Player.PlayerId);
             writer.Write(target.PlayerId);
             AmongUsClient.Instance.FinishRpcImmediately(writer);
-            Utils.Morph(Player, target.Data.DefaultOutfit);
+        }
+
+        public static void Morph(PlayerControl morphling, PlayerControl target)
+        {
+            var morphlingRole = Role.GetRole(morphling);
+            var targetModifier = Modifier.GetModifier(target);
+
+            if(morphling == target)
+            {
+                morphlingRole.OverrideSize = false;
+                morphlingRole.OverrideSpeed = false;
+            } else if(targetModifier != null)
+            {
+                morphlingRole.SpeedFactor = targetModifier.SpeedFactor;
+                morphlingRole.SizeFactor = targetModifier.SizeFactor;
+                morphlingRole.OverrideSize = true;
+                morphlingRole.OverrideSpeed = true;
+            } else
+            {
+                morphlingRole.SpeedFactor = 1;
+                morphlingRole.SizeFactor = Modifier.DefaultSize;
+                morphlingRole.OverrideSize = true;
+                morphlingRole.OverrideSpeed = true;
+            }
+            Utils.Morph(morphling, target.Data.DefaultOutfit);
         }
     }
 }

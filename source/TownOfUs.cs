@@ -125,7 +125,7 @@ namespace TownOfUs
 
             SceneManager.add_sceneLoaded((Action<Scene, LoadSceneMode>) ((scene, loadSceneMode) =>
             {
-                ModManager.Instance.ShowModStamp();
+                ModManager.Instance?.ShowModStamp();
             }));
 
             _harmony.PatchAll();

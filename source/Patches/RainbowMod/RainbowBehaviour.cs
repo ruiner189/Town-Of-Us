@@ -20,7 +20,7 @@ namespace TownOfUs.RainbowMod
 
             if (RainbowUtils.IsRainbow(Id))
             {
-                //RainbowUtils.SetRainbow(Renderer);
+                RainbowUtils.SetRainbow(Renderer);
             }
         }
 

@@ -1,4 +1,5 @@
 using HarmonyLib;
+using TownOfUs.Roles;
 
 namespace TownOfUs.Modifiers.LoversMod
 {
@@ -22,10 +23,11 @@ namespace TownOfUs.Modifiers.LoversMod
         {
             public static void Postfix(HudManager __instance)
             {
+                if (Role.GetRole(PlayerControl.LocalPlayer) == null) return;
                 if (PlayerControl.LocalPlayer.IsLover() & !__instance.Chat.isActiveAndEnabled)
-                    __instance.Chat.SetVisible(true);
+                    __instance.Chat?.SetVisible(true);
                 else if (!PlayerControl.LocalPlayer.IsLover() & !PlayerControl.LocalPlayer.Data.IsDead & __instance.Chat.isActiveAndEnabled)
-                    __instance.Chat.SetVisible(false); ;
+                    __instance.Chat?.SetVisible(false); ;
             }
         }
     }

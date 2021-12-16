@@ -604,7 +604,7 @@ namespace TownOfUs.Patches.Buttons
             public static void Postfix(HudManager __instance)
             {
                 var localPlayer = PlayerControl.LocalPlayer;
-                if (localPlayer.Data == null || localPlayer.Data.Role == null)
+                if (localPlayer.Data == null || localPlayer.Data.Role == null || Role.GetRole(localPlayer) == null)
                     return;
                 foreach (ModdedButton moddedButton in AllButtons)
                 {

@@ -27,14 +27,16 @@ namespace TownOfUs.Roles
         public Func<string> ImpostorText;
         public Func<string> TaskText;
         public ModdedButton KillButton;
+        public Vector3 SizeFactor;
+        public float SpeedFactor = 1;
+        public bool OverrideSize;
+        public bool OverrideSpeed;
 
         protected Role(PlayerControl player)
         {
             Player = player;
             RoleDictionary.Add(player.PlayerId, this);
             ModdedButton.UnregisterAllButtonsFromPlayer(player);
-            //TotalTasks = player.Data.Tasks.Count;
-            //TasksLeft = TotalTasks;
         }
 
         public String FactionString()
@@ -127,6 +129,7 @@ namespace TownOfUs.Roles
         }
 
         protected bool Tier4 = false;
+
         public bool GetTier4 => Tier4;
         public void SetTier4(bool flag)
         {

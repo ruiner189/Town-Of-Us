@@ -271,7 +271,6 @@ namespace TownOfUs
                         new Engineer(Utils.PlayerById(readByte));
                         break;
 
-
                     case CustomRPC.SetJanitor:
                         new Janitor(Utils.PlayerById(reader.ReadByte()));
 
@@ -324,7 +323,6 @@ namespace TownOfUs
                         Modifier.GetModifier<Lover>(winnerlover).Win();
                         break;
 
-
                     case CustomRPC.JesterLose:
                         foreach (var role in Role.AllRoles)
                             if (role.RoleType == RoleEnum.Jester)
@@ -338,12 +336,10 @@ namespace TownOfUs
 
                         break;
 
-
                     case CustomRPC.GlitchLose:
                         foreach (var role in Role.AllRoles)
                             if (role.RoleType == RoleEnum.Glitch)
                                 ((Glitch)role).Loses();
-
                         break;
 
                     case CustomRPC.ShifterLose:
@@ -357,7 +353,6 @@ namespace TownOfUs
                         foreach (var role in Role.AllRoles)
                             if (role.RoleType == RoleEnum.Executioner)
                                 ((Executioner)role).Loses();
-
                         break;
 
                     case CustomRPC.NobodyWins:
@@ -379,10 +374,6 @@ namespace TownOfUs
                         break;
 
                     case CustomRPC.Start:
-                        /*
-                        EngineerMod.PerformKill.UsedThisRound = false;
-                        EngineerMod.PerformKill.SabotageTime = DateTime.UtcNow.AddSeconds(-100);
-                        */
                         Utils.ShowDeadBodies = false;
                         Murder.KilledPlayers.Clear();
                         Role.NobodyWins = false;
@@ -483,12 +474,7 @@ namespace TownOfUs
                     case CustomRPC.SetMimic:
                         var glitchPlayer = Utils.PlayerById(reader.ReadByte());
                         var mimicPlayer = Utils.PlayerById(reader.ReadByte());
-                        var glitchRole = Role.GetRole<Glitch>(glitchPlayer);
-                        if (glitchPlayer == mimicPlayer)
-                            glitchRole.IsUsingMimic = false;
-                        else
-                            glitchRole.IsUsingMimic = true;
-                        Utils.Morph(glitchPlayer, mimicPlayer.Data.DefaultOutfit);
+                        Glitch.Mimic(glitchPlayer, mimicPlayer);
                         break;
 
                     case CustomRPC.RpcResetAnim:
@@ -523,7 +509,7 @@ namespace TownOfUs
                     case CustomRPC.Morph:
                         var morphling = Utils.PlayerById(reader.ReadByte());
                         var morphTarget = Utils.PlayerById(reader.ReadByte());
-                        Utils.Morph(morphling, morphTarget.Data.DefaultOutfit);
+                        Morphling.Morph(morphling, morphTarget);
                         break;
                     case CustomRPC.SetExecutioner:
                         new Executioner(Utils.PlayerById(reader.ReadByte()));

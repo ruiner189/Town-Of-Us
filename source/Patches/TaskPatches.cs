@@ -1,4 +1,5 @@
 using HarmonyLib;
+using TownOfUs.Roles;
 using UnityEngine;
 
 namespace TownOfUs
@@ -10,6 +11,7 @@ namespace TownOfUs
         {
             private static bool Prefix(GameData __instance)
             {
+                if (Role.GetRole(PlayerControl.LocalPlayer) == null) return false;
                 __instance.TotalTasks = 0;
                 __instance.CompletedTasks = 0;
                 for (var i = 0; i < __instance.AllPlayers.Count; i++)

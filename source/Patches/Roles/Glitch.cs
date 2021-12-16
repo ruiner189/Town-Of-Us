@@ -209,10 +209,11 @@ namespace TownOfUs.Roles
                                         MimicList.Toggle();
                                         MimicList.SetVisible(false);
                                         MimicList = null;
-                                        RpcSetMimicked(PlayerControl.AllPlayerControls.ToArray().Where(x =>
+                                        var target = PlayerControl.AllPlayerControls.ToArray().Where(x =>
                                                 x.Data.PlayerName == bubble.Cast<ChatBubble>().NameText.text)
-                                            .FirstOrDefault());
-                                        IsUsingMimic = true;
+                                            .FirstOrDefault();
+                                        RpcSetMimicked(target);
+                                        Mimic(Player, target);
                                         MimicButton.SwitchToActionTimer();
                                         break;
                                     }
@@ -226,8 +227,38 @@ namespace TownOfUs.Roles
 
         public void MimicEnd(ModdedButton button)
         {
+            Mimic(Player, Player);
             RpcSetMimicked(Player);
-            IsUsingMimic = false;
+        }
+
+        public static void Mimic(PlayerControl glitch, PlayerControl target)
+        {
+            var glitchRole = Role.GetRole<Glitch>(glitch);
+            var targetModifier = Modifier.GetModifier(target);
+
+            if (glitch == target)
+            {
+                glitchRole.IsUsingMimic = false;
+                glitchRole.OverrideSize = false;
+                glitchRole.OverrideSpeed = false;
+            }
+            else if (targetModifier != null)
+            {
+                glitchRole.IsUsingMimic = true;
+                glitchRole.SpeedFactor = targetModifier.SpeedFactor;
+                glitchRole.SizeFactor = targetModifier.SizeFactor;
+                glitchRole.OverrideSize = true;
+                glitchRole.OverrideSpeed = true;
+            }
+            else
+            {
+                glitchRole.IsUsingMimic = true;
+                glitchRole.SpeedFactor = 1;
+                glitchRole.SizeFactor = Modifier.DefaultSize;
+                glitchRole.OverrideSize = true;
+                glitchRole.OverrideSpeed = true;
+            }
+            Utils.Morph(glitch, target.Data.DefaultOutfit);
         }
 
         public void RpcSetMimicked(PlayerControl target)
@@ -238,7 +269,6 @@ namespace TownOfUs.Roles
             writer.Write(Player.PlayerId);
             writer.Write(target.PlayerId);
             AmongUsClient.Instance.FinishRpcImmediately(writer);
-            Utils.Morph(Player, target.Data.DefaultOutfit);
         }
 
         public void RpcSetHacked(PlayerControl target)
