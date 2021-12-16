@@ -27,13 +27,10 @@ namespace TownOfUs
 {
     public static class RpcHandling
     {
-        private static readonly List<(Type, CustomRPC, int)> CrewmateRoles = new List<(Type, CustomRPC, int)>();
-        private static readonly List<(Type, CustomRPC, int)> NeutralRoles = new List<(Type, CustomRPC, int)>();
-        private static readonly List<(Type, CustomRPC, int)> ImpostorRoles = new List<(Type, CustomRPC, int)>();
-        private static readonly List<(Type, CustomRPC, int)> CrewmateModifiers = new List<(Type, CustomRPC, int)>();
-        private static readonly List<(Type, CustomRPC, int)> GlobalModifiers = new List<(Type, CustomRPC, int)>();
-        private static bool LoversOn;
+        private static readonly List<(Type, Faction, CustomRPC, int)> RolePool = new List<(Type, Faction, CustomRPC, int)>();
+        private static readonly List<(Type, CustomRPC, Faction[], int)> ModifierPool = new List<(Type, CustomRPC, Faction[], int)>();
         private static bool PhantomOn;
+        private static int NeutralsLeft;
 
         internal static bool Check(int probability)
         {
@@ -42,35 +39,6 @@ namespace TownOfUs
             var num = Random.RandomRangeInt(1, 101);
             return num <= probability;
         }
-
-        /*
-        private static void GenExe(List<GameData.PlayerInfo> infected, List<PlayerControl> crewmates)
-        {
-            PlayerControl pc;
-            var targets = Utils.getCrewmates(infected).Where(x =>
-            {
-                var role = Role.GetRole(x);
-                if (role == null) return true;
-                return role.Faction == Faction.Crewmates;
-            }).ToList();
-            if (targets.Count > 1)
-            {
-                var rand = Random.RandomRangeInt(0, targets.Count);
-                pc = targets[rand];
-                var role = Role.Gen(typeof(Executioner), crewmates.Where(x => x.PlayerId != pc.PlayerId).ToList(),
-                    CustomRPC.SetExecutioner);
-                if (role != null)
-                {
-                    crewmates.Remove(role.Player);
-                    var writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId,
-                        (byte) CustomRPC.SetTarget, SendOption.Reliable, -1);
-                    writer.Write(role.Player.PlayerId);
-                    writer.Write(pc.PlayerId);
-                    AmongUsClient.Instance.FinishRpcImmediately(writer);
-                    ((Executioner) role).target = pc;
-                }
-            }
-        }*/
 
         private static void SortRoles(List<(Type, CustomRPC, int)> roles, int max = int.MaxValue)
         {
@@ -86,170 +54,39 @@ namespace TownOfUs
                     roles.RemoveAt(roles.Count - 1);
         }
 
-        private static void GenEachImpostorRole(List<GameData.PlayerInfo> players)
-        {
-            List<PlayerControl> impostors = new List<PlayerControl>();
-            foreach (var player in players)
-            {
-                if (player.Role.TeamType == RoleTeamTypes.Impostor) impostors.Add(player.Object);
-            }
-            impostors.Shuffle();
-            while (ImpostorRoles.Count < impostors.Count)
-            {
-                ImpostorRoles.Add((typeof(Impostor), CustomRPC.SetImpostor, 1));
-                PluginSingleton<TownOfUs>.Instance.Log.LogMessage($"Impostor filler added!");
-            }
-            SortRoles(ImpostorRoles, Math.Min(impostors.Count, CustomGameOptions.MaxImpostorRoles));
-            while (impostors.Count > 0)
-            {
-                var (type, rpc, _) = ImpostorRoles.TakeFirst();
-                if (type == null) break;
-                Role.Gen<Role>(type, impostors.TakeFirst(), rpc);
-            }
-        }
-
-        private static void GenEachCrewmateAndNeutralRole(List<GameData.PlayerInfo> players)
-        {
-            List<PlayerControl> crewmates = new List<PlayerControl>();
-            foreach (var player in players)
-            {
-                if (player.Role.TeamType == RoleTeamTypes.Crewmate) crewmates.Add(player.Object);
-            }
-            crewmates.Shuffle();
-            while (CrewmateRoles.Count + NeutralRoles.Count < crewmates.Count)
-            {
-                CrewmateRoles.Add((typeof(Crewmate), CustomRPC.SetCrewmate, 1));
-                PluginSingleton<TownOfUs>.Instance.Log.LogMessage($"Crewmate filler added!");
-            }
-            SortRoles(CrewmateRoles);
-            SortRoles(NeutralRoles, CustomGameOptions.MaxNeutralRoles);
-
-            var crewAndNeutralRoles = new List<(Type, CustomRPC, int)>();
-            crewAndNeutralRoles.AddRange(NeutralRoles);
-            crewAndNeutralRoles.AddRange(CrewmateRoles);
-            SortRoles(crewAndNeutralRoles, crewmates.Count);
-
-            List<PlayerControl> executionerList = new List<PlayerControl>();
-
-            foreach (var (type, rpc, _) in crewAndNeutralRoles)
-            {
-                if (rpc == CustomRPC.SetExecutioner)
-                {
-                    var executioner = crewmates[Random.RandomRangeInt(0, crewmates.Count)];
-                    executionerList.Add(executioner);
-                    crewmates.Remove(executioner);
-                    continue;
-                }
-
-                Role.Gen<Role>(type, crewmates, rpc);
-            }
-
-            if (executionerList.Count > 0)
-            {
-                var targets = new List<PlayerControl>();
-                foreach (var player in players)
-                {
-                    if (player.Role.TeamType == RoleTeamTypes.Crewmate) targets.Add(player.Object);
-                }
-
-                foreach (var executioner in executionerList)
-                {
-                    if (targets.Count > 0)
-                    {
-                        var exec = Role.Gen<Executioner>(
-                            typeof(Executioner),
-                            executioner,
-                            CustomRPC.SetExecutioner
-                        );
-                        var target = exec.target = targets[Random.RandomRangeInt(0, targets.Count)];
-
-                        var writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId,
-                            (byte)CustomRPC.SetTarget, SendOption.Reliable, -1);
-                        writer.Write(executioner.PlayerId);
-                        writer.Write(target.PlayerId);
-                        AmongUsClient.Instance.FinishRpcImmediately(writer);
-                        targets.Remove(target);
-                    }
-                    else
-                        Role.Gen<Role>(typeof(Crewmate), executioner, CustomRPC.SetExecutioner);
-                }
-
-            }
-        }
-
         private static void GenEachRole(List<PlayerControl> impostors)
         {
-            PluginSingleton<TownOfUs>.Instance.Log.LogMessage($"impostor count: {impostors.Count}");
             var crewmates = Utils.GetCrewmates(impostors);
+            PluginSingleton<TownOfUs>.Instance.Log.LogMessage($"impostor count: {impostors.Count}");
             PluginSingleton<TownOfUs>.Instance.Log.LogMessage($"crewmate count: {crewmates.Count}");
             crewmates.Shuffle();
             impostors.Shuffle();
             PluginSingleton<TownOfUs>.Instance.Log.LogMessage($"Lists are now shuffled!");
 
-            PluginSingleton<TownOfUs>.Instance.Log.LogMessage($"Adding Crewmate fillers");
-            while (CrewmateRoles.Count + NeutralRoles.Count < crewmates.Count)
-            {
-                CrewmateRoles.Add((typeof(Crewmate), CustomRPC.SetCrewmate, 1));
-                PluginSingleton<TownOfUs>.Instance.Log.LogMessage($"Crewmate filler added!");
-            }
-            while (ImpostorRoles.Count < impostors.Count)
-            {
-                ImpostorRoles.Add((typeof(Impostor), CustomRPC.SetImpostor, 1));
-                PluginSingleton<TownOfUs>.Instance.Log.LogMessage($"Impostor filler added!");
-            }
-
-            PluginSingleton<TownOfUs>.Instance.Log.LogMessage($"Sorting roles");
-            SortRoles(CrewmateRoles);
-            SortRoles(NeutralRoles, CustomGameOptions.MaxNeutralRoles);
-            SortRoles(ImpostorRoles, Math.Min(impostors.Count, CustomGameOptions.MaxImpostorRoles));
-            SortRoles(CrewmateModifiers, crewmates.Count);
-            SortRoles(GlobalModifiers, crewmates.Count + impostors.Count);
-            PluginSingleton<TownOfUs>.Instance.Log.LogMessage($"Sort completed");
-            PluginSingleton<TownOfUs>.Instance.Log.LogMessage($"Combining crewmate and neutral lists");
-            var crewAndNeutralRoles = new List<(Type, CustomRPC, int)>();
-            crewAndNeutralRoles.AddRange(NeutralRoles);
-            crewAndNeutralRoles.AddRange(CrewmateRoles);
-            SortRoles(crewAndNeutralRoles, crewmates.Count);
-            PluginSingleton<TownOfUs>.Instance.Log.LogMessage($"Combination completed");
-
             if (Check(CustomGameOptions.VanillaGame))
             {
-                CrewmateRoles.Clear();
-                NeutralRoles.Clear();
-                CrewmateModifiers.Clear();
-                GlobalModifiers.Clear();
-                ImpostorRoles.Clear();
-                LoversOn = false;
+                RolePool.Clear();
+                ModifierPool.Clear();
                 PhantomOn = false;
             }
 
-            List<PlayerControl> executionerList = new List<PlayerControl>();
+            PluginSingleton<TownOfUs>.Instance.Log.LogMessage($"Selecting crewmate and neutral roles!");
 
-            foreach (var (type, rpc, _) in crewAndNeutralRoles)
+            NeutralsLeft = CustomGameOptions.MaxNeutralRoles;
+            var executionerList = new List<PlayerControl>();
+
+            foreach (var player in crewmates)
             {
-                if (rpc == CustomRPC.SetExecutioner)
-                {
-                    var executioner = crewmates[Random.RandomRangeInt(0, crewmates.Count)];
-                    executionerList.Add(executioner);
-                    crewmates.Remove(executioner);
-                    continue;
-                }
-
-                Role.Gen<Role>(type, crewmates, rpc);
+                GenCrewmateOrNeutralRole(player, executionerList);
             }
 
-            while (impostors.Count > 0)
+            PluginSingleton<TownOfUs>.Instance.Log.LogMessage($"Selecting impostor roles!");
+
+            foreach (var player in impostors)
             {
-                var (type, rpc, _) = ImpostorRoles.TakeFirst();
-                if (type == null) break;
-                Role.Gen<Role>(type, impostors.TakeFirst(), rpc);
+                GenImpostorRole(player);
             }
 
-            foreach (var crewmate in crewmates)
-                Role.Gen<Role>(typeof(Crewmate), crewmate, CustomRPC.SetCrewmate);
-
-            foreach (var impostor in impostors)
-                Role.Gen<Role>(typeof(Impostor), impostor, CustomRPC.SetImpostor);
 
             if (executionerList.Count > 0)
             {
@@ -258,53 +95,11 @@ namespace TownOfUs
                 ).ToList();
                 foreach (var executioner in executionerList)
                 {
-                    if (targets.Count > 0)
-                    {
-                        var exec = Role.Gen<Executioner>(
-                            typeof(Executioner),
-                            executioner,
-                            CustomRPC.SetExecutioner
-                        );
-                        var target = exec.target = targets[Random.RandomRangeInt(0, targets.Count)];
-
-                        var writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId,
-                            (byte)CustomRPC.SetTarget, SendOption.Reliable, -1);
-                        writer.Write(executioner.PlayerId);
-                        writer.Write(target.PlayerId);
-                        AmongUsClient.Instance.FinishRpcImmediately(writer);
-                        targets.Remove(target);
-                    }
-                    else
-                        Role.Gen<Role>(typeof(Crewmate), executioner, CustomRPC.SetExecutioner);
-                }
-
-            }
-
-            var canHaveModifier = PlayerControl.AllPlayerControls.ToArray().ToList();
-            canHaveModifier.Shuffle();
-
-            foreach (var (type, rpc, _) in GlobalModifiers)
-            {
-                if (canHaveModifier.Count == 0) break;
-                if (rpc == CustomRPC.SetCouple)
-                {
-                    if (canHaveModifier.Count == 1) continue;
-                    Lover.Gen(canHaveModifier);
-                }
-                else
-                {
-                    Role.Gen<Modifier>(type, canHaveModifier, rpc);
+                    GenExecutionerRole(executioner, targets);
                 }
             }
 
-            canHaveModifier.RemoveAll(player => player.Data.Role.IsImpostor);
-            canHaveModifier.Shuffle();
-
-            while (canHaveModifier.Count > 0 && CrewmateModifiers.Count > 0)
-            {
-                var (type, rpc, _) = CrewmateModifiers.TakeFirst();
-                Role.Gen<Modifier>(type, canHaveModifier.TakeFirst(), rpc);
-            }
+            GenModifiers();
 
             if (PhantomOn)
             {
@@ -331,6 +126,118 @@ namespace TownOfUs
                 AmongUsClient.Instance.FinishRpcImmediately(writer);
             }
             PluginSingleton<TownOfUs>.Instance.Log.LogMessage($"Made it to the end!");
+        }
+
+        private static void GenCrewmateOrNeutralRole(PlayerControl player, List<PlayerControl> executionerList = null)
+        {
+            var crewmate = (typeof(Crewmate), Faction.Crewmates, CustomRPC.SetCrewmate, 0);
+            (Type, Faction, CustomRPC, int) items = crewmate;
+            if (RolePool.Count > 0)
+            {
+                items = RolePool.FirstOrDefault(role =>
+                {
+                    if (role.Item2 == Faction.Crewmates) return true;
+                    if (role.Item2 == Faction.Neutral)
+                    {
+                        if (NeutralsLeft == 0) return false;
+                        if (executionerList == null && role.Item3 == CustomRPC.SetExecutioner) return false;
+                        NeutralsLeft--;
+                        return true;
+                    }
+                    return false;
+                });
+                if (items.Item1 == null) items = crewmate;
+                else
+                {
+                    RolePool.Remove(items);
+                }
+            }
+            else items = crewmate;
+
+            if (items.Item3 == CustomRPC.SetExecutioner)
+            {
+                executionerList.Add(player);
+                return;
+            }
+            Role.Gen<Role>(items.Item1, player, items.Item3);
+        }
+
+        private static void GenExecutionerRole(PlayerControl player, List<PlayerControl> targets)
+        {
+            if (targets.Count > 0)
+            {
+                var exec = Role.Gen<Executioner>(
+                    typeof(Executioner),
+                    player,
+                    CustomRPC.SetExecutioner
+                );
+                var target = exec.target = targets[Random.RandomRangeInt(0, targets.Count)];
+
+                var writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId,
+                    (byte)CustomRPC.SetTarget, SendOption.Reliable, -1);
+                writer.Write(player.PlayerId);
+                writer.Write(target.PlayerId);
+                AmongUsClient.Instance.FinishRpcImmediately(writer);
+                targets.Remove(target);
+            }
+            else
+            {
+                GenCrewmateOrNeutralRole(player);
+            }
+        }
+
+        private static void GenImpostorRole(PlayerControl player)
+        {
+            var impostor = (typeof(Impostor), Faction.Impostors, CustomRPC.SetImpostor, 0);
+            (Type, Faction, CustomRPC, int) items = impostor;
+            if (RolePool.Count > 0)
+            {
+                items = RolePool.FirstOrDefault(role =>
+                {
+                    if (role.Item2 == Faction.Impostors) return true;
+                    return false;
+                });
+                if (items.Item1 == null) items = impostor;
+                else
+                {
+                    RolePool.Remove(items);
+                }
+            }
+            else items = impostor;
+
+            Role.Gen<Role>(items.Item1, player, items.Item3);
+        }
+
+        private static void GenModifiers()
+        {
+
+            var canHaveModifier = PlayerControl.AllPlayerControls.ToArray().ToList();
+            canHaveModifier.Shuffle();
+
+            foreach (var (type, rpc, factions, _) in ModifierPool)
+            {
+                if (canHaveModifier.Count == 0) break;
+
+                if (rpc == CustomRPC.SetCouple)
+                {
+                    if (canHaveModifier.Count == 1) continue;
+                    Lover.Gen(canHaveModifier);
+                }
+                else
+                {
+                    var player = canHaveModifier.First(p => {
+                        var role = Role.GetRole(p);
+                        if (role == null) return false;
+                        if (factions.Contains(role.Faction)) return true;
+                        return false;
+                    });
+                    if (player != null)
+                    {
+                        Role.Gen<Modifier>(type, player, rpc);
+                        canHaveModifier.Remove(player);
+                    }
+                }
+            }
         }
 
 
@@ -825,9 +732,7 @@ namespace TownOfUs
             public static void Postfix(RoleManager __instance)
             {
                 ClearData();
-                GenerateCrewRoles();
-                GenerateNeutralRoles();
-                GenerateImpostorRoles();
+                GenerateRolePool();
                 GenerateModifiers();
                 var impostors = new List<PlayerControl>();
                 foreach (var player in PlayerControl.AllPlayerControls)
@@ -843,145 +748,153 @@ namespace TownOfUs
             {
                 Utils.ShowDeadBodies = false;
                 Role.NobodyWins = false;
-                CrewmateRoles.Clear();
-                NeutralRoles.Clear();
-                ImpostorRoles.Clear();
-                CrewmateModifiers.Clear();
-                GlobalModifiers.Clear();
+                RolePool.Clear();
+                ModifierPool.Clear();
                 RecordRewind.points.Clear();
                 Murder.KilledPlayers.Clear();
             }
 
-            private static void GenerateImpostorRoles()
+            private static void GenerateRolePool()
             {
-                for (int i = 0; i < CustomGameOptions.UndertakerMax; i++)
-                    if (Check(CustomGameOptions.UndertakerOn))
-                        ImpostorRoles.Add((typeof(Undertaker), CustomRPC.SetUndertaker, CustomGameOptions.UndertakerOn));
-
-                for (int i = 0; i < CustomGameOptions.AssassinMax; i++)
-                    if (Check(CustomGameOptions.AssassinOn))
-                        ImpostorRoles.Add((typeof(Assassin), CustomRPC.SetAssassin, CustomGameOptions.AssassinOn));
-
-                for (int i = 0; i < CustomGameOptions.UnderdogMax; i++)
-                    if (Check(CustomGameOptions.UnderdogOn))
-                        ImpostorRoles.Add((typeof(Underdog), CustomRPC.SetUnderdog, CustomGameOptions.UnderdogOn));
-
-                for (int i = 0; i < CustomGameOptions.MorphlingMax; i++)
-                    if (Check(CustomGameOptions.MorphlingOn))
-                        ImpostorRoles.Add((typeof(Morphling), CustomRPC.SetMorphling, CustomGameOptions.MorphlingOn));
-
-                for (int i = 0; i < CustomGameOptions.CamouflagerMax; i++)
-                    if (Check(CustomGameOptions.CamouflagerOn))
-                        ImpostorRoles.Add((typeof(Camouflager), CustomRPC.SetCamouflager, CustomGameOptions.CamouflagerOn));
-
-                for (int i = 0; i < CustomGameOptions.MinerMax; i++)
-                    if (Check(CustomGameOptions.MinerOn))
-                        ImpostorRoles.Add((typeof(Miner), CustomRPC.SetMiner, CustomGameOptions.MinerOn));
-
-                for (int i = 0; i < CustomGameOptions.SwooperMax; i++)
-                    if (Check(CustomGameOptions.SwooperOn))
-                        ImpostorRoles.Add((typeof(Swooper), CustomRPC.SetSwooper, CustomGameOptions.SwooperOn));
-
-                for (int i = 0; i < CustomGameOptions.JanitorMax; i++)
-                    if (Check(CustomGameOptions.JanitorOn))
-                        ImpostorRoles.Add((typeof(Janitor), CustomRPC.SetJanitor, CustomGameOptions.JanitorOn));
-            }
-
-            private static void GenerateCrewRoles()
-            {
+                RolePool.Clear();
+                // Crew Roles
                 for (int i = 0; i < CustomGameOptions.MayorMax; i++)
                     if (Check(CustomGameOptions.MayorOn))
-                        CrewmateRoles.Add((typeof(Mayor), CustomRPC.SetMayor, CustomGameOptions.MayorOn));
+                        RolePool.Add((typeof(Mayor), Faction.Crewmates, CustomRPC.SetMayor, CustomGameOptions.MayorOn));
 
                 for (int i = 0; i < CustomGameOptions.SheriffMax; i++)
                     if (Check(CustomGameOptions.SheriffOn))
-                        CrewmateRoles.Add((typeof(Sheriff), CustomRPC.SetSheriff, CustomGameOptions.SheriffOn));
+                        RolePool.Add((typeof(Sheriff), Faction.Crewmates, CustomRPC.SetSheriff, CustomGameOptions.SheriffOn));
 
                 for (int i = 0; i < CustomGameOptions.EngineerMax; i++)
                     if (Check(CustomGameOptions.EngineerOn))
-                        CrewmateRoles.Add((typeof(Engineer), CustomRPC.SetEngineer, CustomGameOptions.EngineerOn));
+                        RolePool.Add((typeof(Engineer), Faction.Crewmates, CustomRPC.SetEngineer, CustomGameOptions.EngineerOn));
 
                 for (int i = 0; i < CustomGameOptions.SwapperMax; i++)
                     if (Check(CustomGameOptions.SwapperOn))
-                        CrewmateRoles.Add((typeof(Swapper), CustomRPC.SetSwapper, CustomGameOptions.SwapperOn));
+                        RolePool.Add((typeof(Swapper), Faction.Crewmates, CustomRPC.SetSwapper, CustomGameOptions.SwapperOn));
 
                 for (int i = 0; i < CustomGameOptions.InvestigatorMax; i++)
                     if (Check(CustomGameOptions.InvestigatorOn))
-                        CrewmateRoles.Add((typeof(Investigator), CustomRPC.SetInvestigator, CustomGameOptions.InvestigatorOn));
+                        RolePool.Add((typeof(Investigator), Faction.Crewmates, CustomRPC.SetInvestigator, CustomGameOptions.InvestigatorOn));
 
                 for (int i = 0; i < CustomGameOptions.TimeLordMax; i++)
                     if (Check(CustomGameOptions.TimeLordOn))
-                        CrewmateRoles.Add((typeof(TimeLord), CustomRPC.SetTimeLord, CustomGameOptions.TimeLordOn));
+                        RolePool.Add((typeof(TimeLord), Faction.Crewmates, CustomRPC.SetTimeLord, CustomGameOptions.TimeLordOn));
 
                 for (int i = 0; i < CustomGameOptions.MedicMax; i++)
                     if (Check(CustomGameOptions.MedicOn))
-                        CrewmateRoles.Add((typeof(Medic), CustomRPC.SetMedic, CustomGameOptions.MedicOn));
+                        RolePool.Add((typeof(Medic), Faction.Crewmates, CustomRPC.SetMedic, CustomGameOptions.MedicOn));
 
                 for (int i = 0; i < CustomGameOptions.SeerMax; i++)
                     if (Check(CustomGameOptions.SeerOn))
-                        CrewmateRoles.Add((typeof(Seer), CustomRPC.SetSeer, CustomGameOptions.SeerOn));
+                        RolePool.Add((typeof(Seer), Faction.Crewmates, CustomRPC.SetSeer, CustomGameOptions.SeerOn));
 
                 for (int i = 0; i < CustomGameOptions.SpyMax; i++)
                     if (Check(CustomGameOptions.SpyOn))
-                        CrewmateRoles.Add((typeof(Spy), CustomRPC.SetSpy, CustomGameOptions.SpyOn));
+                        RolePool.Add((typeof(Spy), Faction.Crewmates, CustomRPC.SetSpy, CustomGameOptions.SpyOn));
 
                 for (int i = 0; i < CustomGameOptions.SnitchMax; i++)
                     if (Check(CustomGameOptions.SnitchOn))
-                        CrewmateRoles.Add((typeof(Snitch), CustomRPC.SetSnitch, CustomGameOptions.SnitchOn));
+                        RolePool.Add((typeof(Snitch), Faction.Crewmates, CustomRPC.SetSnitch, CustomGameOptions.SnitchOn));
 
                 for (int i = 0; i < CustomGameOptions.AltruistMax; i++)
                     if (Check(CustomGameOptions.AltruistOn))
-                        CrewmateRoles.Add((typeof(Altruist), CustomRPC.SetAltruist, CustomGameOptions.AltruistOn));
-            }
+                        RolePool.Add((typeof(Altruist), Faction.Crewmates, CustomRPC.SetAltruist, CustomGameOptions.AltruistOn));
 
-            private static void GenerateNeutralRoles()
-            {
+                // Impostor Roles
+                for (int i = 0; i < CustomGameOptions.UndertakerMax; i++)
+                    if (Check(CustomGameOptions.UndertakerOn))
+                        RolePool.Add((typeof(Undertaker), Faction.Impostors, CustomRPC.SetUndertaker, CustomGameOptions.UndertakerOn));
+
+                for (int i = 0; i < CustomGameOptions.AssassinMax; i++)
+                    if (Check(CustomGameOptions.AssassinOn))
+                        RolePool.Add((typeof(Assassin), Faction.Impostors, CustomRPC.SetAssassin, CustomGameOptions.AssassinOn));
+
+                for (int i = 0; i < CustomGameOptions.UnderdogMax; i++)
+                    if (Check(CustomGameOptions.UnderdogOn))
+                        RolePool.Add((typeof(Underdog), Faction.Impostors, CustomRPC.SetUnderdog, CustomGameOptions.UnderdogOn));
+
+                for (int i = 0; i < CustomGameOptions.MorphlingMax; i++)
+                    if (Check(CustomGameOptions.MorphlingOn))
+                        RolePool.Add((typeof(Morphling), Faction.Impostors, CustomRPC.SetMorphling, CustomGameOptions.MorphlingOn));
+
+                for (int i = 0; i < CustomGameOptions.CamouflagerMax; i++)
+                    if (Check(CustomGameOptions.CamouflagerOn))
+                        RolePool.Add((typeof(Camouflager), Faction.Impostors, CustomRPC.SetCamouflager, CustomGameOptions.CamouflagerOn));
+
+                for (int i = 0; i < CustomGameOptions.MinerMax; i++)
+                    if (Check(CustomGameOptions.MinerOn))
+                        RolePool.Add((typeof(Miner), Faction.Impostors, CustomRPC.SetMiner, CustomGameOptions.MinerOn));
+
+                for (int i = 0; i < CustomGameOptions.SwooperMax; i++)
+                    if (Check(CustomGameOptions.SwooperOn))
+                        RolePool.Add((typeof(Swooper), Faction.Impostors, CustomRPC.SetSwooper, CustomGameOptions.SwooperOn));
+
+                for (int i = 0; i < CustomGameOptions.JanitorMax; i++)
+                    if (Check(CustomGameOptions.JanitorOn))
+                        RolePool.Add((typeof(Janitor), Faction.Impostors, CustomRPC.SetJanitor, CustomGameOptions.JanitorOn));
+
+                // Neutral Roles
                 for (int i = 0; i < CustomGameOptions.ArsonistMax; i++)
                     if (Check(CustomGameOptions.ArsonistOn))
-                        NeutralRoles.Add((typeof(Arsonist), CustomRPC.SetArsonist, CustomGameOptions.ArsonistOn));
+                        RolePool.Add((typeof(Arsonist), Faction.Neutral, CustomRPC.SetArsonist, CustomGameOptions.ArsonistOn));
 
                 for (int i = 0; i < CustomGameOptions.ExecutionerMax; i++)
                     if (Check(CustomGameOptions.ExecutionerOn))
-                        NeutralRoles.Add((typeof(Executioner), CustomRPC.SetExecutioner, CustomGameOptions.ExecutionerOn));
+                        RolePool.Add((typeof(Executioner), Faction.Neutral, CustomRPC.SetExecutioner, CustomGameOptions.ExecutionerOn));
 
                 for (int i = 0; i < CustomGameOptions.JesterMax; i++)
                     if (Check(CustomGameOptions.JesterOn))
-                        NeutralRoles.Add((typeof(Jester), CustomRPC.SetJester, CustomGameOptions.JesterOn));
+                        RolePool.Add((typeof(Jester), Faction.Neutral, CustomRPC.SetJester, CustomGameOptions.JesterOn));
 
                 for (int i = 0; i < CustomGameOptions.ShifterMax; i++)
                     if (Check(CustomGameOptions.ShifterOn))
-                        NeutralRoles.Add((typeof(Shifter), CustomRPC.SetShifter, CustomGameOptions.ShifterOn));
+                        RolePool.Add((typeof(Shifter), Faction.Neutral, CustomRPC.SetShifter, CustomGameOptions.ShifterOn));
 
                 for (int i = 0; i < CustomGameOptions.GlitchMax; i++)
                     if (Check(CustomGameOptions.GlitchOn))
-                        NeutralRoles.Add((typeof(Glitch), CustomRPC.SetGlitch, CustomGameOptions.GlitchOn));
+                        RolePool.Add((typeof(Glitch), Faction.Neutral, CustomRPC.SetGlitch, CustomGameOptions.GlitchOn));
+                RolePool.Shuffle();
+                RolePool.Sort((a, b) =>
+                {
+                    var a_ = a.Item4 == 100 ? 0 : 100;
+                    var b_ = b.Item4 == 100 ? 0 : 100;
+                    return a_.CompareTo(b_);
+                });
             }
 
             private static void GenerateModifiers()
             {
+                ModifierPool.Clear();
+                var global = new Faction[] { Faction.Crewmates, Faction.Impostors, Faction.Neutral };
+                var crewAndNeutrals = new Faction[]{ Faction.Crewmates, Faction.Neutral };
+
                 if (Check(CustomGameOptions.TorchOn))
-                    CrewmateModifiers.Add((typeof(Torch), CustomRPC.SetTorch, CustomGameOptions.TorchOn));
+                    ModifierPool.Add((typeof(Torch), CustomRPC.SetTorch, new[] { Faction.Crewmates }, CustomGameOptions.TorchOn));
 
                 if (Check(CustomGameOptions.DiseasedOn))
-                    CrewmateModifiers.Add((typeof(Diseased), CustomRPC.SetDiseased, CustomGameOptions.DiseasedOn));
+                    ModifierPool.Add((typeof(Diseased), CustomRPC.SetDiseased, new []{ Faction.Crewmates}, CustomGameOptions.DiseasedOn));
 
                 if (Check(CustomGameOptions.TiebreakerOn))
-                    GlobalModifiers.Add((typeof(Tiebreaker), CustomRPC.SetTiebreaker, CustomGameOptions.TiebreakerOn));
+                    ModifierPool.Add((typeof(Tiebreaker), CustomRPC.SetTiebreaker, crewAndNeutrals, CustomGameOptions.TiebreakerOn));
 
                 if (Check(CustomGameOptions.FlashOn))
-                    GlobalModifiers.Add((typeof(Flash), CustomRPC.SetFlash, CustomGameOptions.FlashOn));
+                    ModifierPool.Add((typeof(Flash), CustomRPC.SetFlash, global, CustomGameOptions.FlashOn));
 
                 if (Check(CustomGameOptions.DrunkOn))
-                    GlobalModifiers.Add((typeof(Drunk), CustomRPC.SetDrunk, CustomGameOptions.DrunkOn));
+                    ModifierPool.Add((typeof(Drunk), CustomRPC.SetDrunk, global, CustomGameOptions.DrunkOn));
 
                 if (Check(CustomGameOptions.BigBoiOn))
-                    GlobalModifiers.Add((typeof(BigBoi), CustomRPC.SetBigBoi, CustomGameOptions.BigBoiOn));
+                    ModifierPool.Add((typeof(BigBoi), CustomRPC.SetBigBoi, global, CustomGameOptions.BigBoiOn));
 
                 if (Check(CustomGameOptions.ButtonBarryOn))
-                    GlobalModifiers.Add(
-                        (typeof(ButtonBarry), CustomRPC.SetButtonBarry, CustomGameOptions.ButtonBarryOn));
+                    ModifierPool.Add(
+                        (typeof(ButtonBarry), CustomRPC.SetButtonBarry, global, CustomGameOptions.ButtonBarryOn));
                 if (Check(CustomGameOptions.LoversOn))
-                    GlobalModifiers.Add((typeof(Lover), CustomRPC.SetCouple, CustomGameOptions.LoversOn));
+                    ModifierPool.Add((typeof(Lover), CustomRPC.SetCouple, global, CustomGameOptions.LoversOn));
+
+                ModifierPool.Shuffle();
             }
         }
 
